@@ -1,5 +1,3 @@
-// pages/api/todos/[id].js
-
 import dbConnect from '../../../lib/dbConnect';
 import Todo from '../../../models/task';
 

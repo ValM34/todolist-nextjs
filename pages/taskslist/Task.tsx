@@ -22,7 +22,7 @@ interface Taskprops {
   }
 }
 
-export default function Task( props : Taskprops) {
+export default function Task(props : Taskprops) {
   const { task, emergencyFilter } = props;
   console.log(emergencyFilter);
 

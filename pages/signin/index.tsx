@@ -1,7 +1,38 @@
 import "../../app/globals.css";
 import { NumberedListIcon } from '@heroicons/react/24/solid'
+import Link from "next/link";
+import { useRef } from 'react';
+import { authUser } from "../services/users/auth";
 
-export default function SignIn() {
+interface signUpProps {
+  handleSignInState: () => void
+}
+
+export default function SignUp(props : signUpProps) {
+  const { handleSignInState } = props;
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  async function handleSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    if(
+      !emailRef.current?.value ||
+      !passwordRef.current?.value
+    ) {
+      alert('Veuillez remplir tous les champs');
+      return;
+    }
+    const data = {
+      email: emailRef.current?.value,
+      password: passwordRef.current?.value,
+    }
+    const res = await authUser(data);
+    const user = res.data;
+    localStorage.setItem('user', JSON.stringify(user));
+    handleSignInState();
+    console.log(user);
+  }
+  
   return (
     <>
       {/*
@@ -28,6 +59,7 @@ export default function SignIn() {
               </label>
               <div className="mt-2">
                 <input
+                  ref={emailRef}
                   id="email"
                   name="email"
                   type="email"
@@ -43,14 +75,10 @@ export default function SignIn() {
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                   Mot de passe
                 </label>
-                <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                    Mot de passe oublié?
-                  </a>
-                </div>
               </div>
               <div className="mt-2">
                 <input
+                  ref={passwordRef}
                   id="password"
                   name="password"
                   type="password"
@@ -63,21 +91,21 @@ export default function SignIn() {
 
             <div>
               <button
+                onClick={handleSignIn}
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Connexion
+                Sign in
               </button>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Pas de compte?{' '}
-            <a href="/subscribe" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+            <Link href="/signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
               Inscrivez-vous
-            </a>
+            </Link>
           </p>
-
         </div>
       </div>
     </>

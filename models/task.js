@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const TodoSchema = new mongoose.Schema({
+const TaskSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Le titre est requis'],
@@ -25,4 +25,4 @@ const TodoSchema = new mongoose.Schema({
 },
 );
 
-export default mongoose.models.Task || mongoose.model('Task', TodoSchema);
+export default mongoose.models.Task || mongoose.model('Task', TaskSchema);
