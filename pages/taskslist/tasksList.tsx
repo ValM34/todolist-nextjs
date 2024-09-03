@@ -38,7 +38,6 @@ export default function TasksList() {
     async function loadData() {
       try {
         const data = await fetchTasks();
-        console.log(data)
         setTasks(data);
       } catch(error) {
         console.log(error)
@@ -49,7 +48,7 @@ export default function TasksList() {
   }, []);
 
   return (
-    <MainLayout>
+    <>
       <h1>Ma Todolist</h1>
 
       <div>
@@ -78,6 +77,6 @@ export default function TasksList() {
         )) : "Loading..."}
       </ul>
       <TaskForm tasks={tasks} setTasks={setTasks} />
-    </MainLayout>
+    </>
   );
 }

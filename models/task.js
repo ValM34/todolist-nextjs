@@ -19,6 +19,10 @@ const TaskSchema = new mongoose.Schema({
     enum: ['Urgent', 'Normal', 'Pas urgent'],
     default: 'Normal',
   },
+  project: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project',
+  },
 },
 {
   timestamps: true,

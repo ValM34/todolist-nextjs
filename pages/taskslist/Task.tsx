@@ -24,7 +24,6 @@ interface Taskprops {
 
 export default function Task(props : Taskprops) {
   const { task, emergencyFilter } = props;
-  console.log(emergencyFilter);
 
   let display = true;
   if(task.emergency === "Urgent" && emergencyFilter.urgent === false) return display = false;

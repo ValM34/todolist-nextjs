@@ -1,9 +1,8 @@
-import Image from "next/image";
-import SignIn from "../pages/signin";
-import Header from "../components/layouts/header";
-import Footer from "../components/layouts/footer";
+import SignIn from "./signin/signin";
+import TasksList from "./taskslist/tasksList";
 import MainLayout from "../components/layouts/mainLayout";
 import { useState, useEffect } from 'react';
+import { verifyToken } from "./services/verifyToken";
 
 export default function Home() {
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -11,20 +10,27 @@ export default function Home() {
   const handleSignInState = () => {
     setIsSignedIn(true);
   }
-  console.log(isSignedIn)
 
   useEffect(() => {
-    const storedUser : any | null = localStorage.getItem('user');
+    let storedUser : any | null = localStorage.getItem('user');
     if (storedUser) {
-      setUser(storedUser);
+      storedUser = JSON.parse(storedUser);
       setIsSignedIn(true);
+      const getUserByToken = async () => {
+        const userDecoded = await verifyToken(storedUser.token);
+        setUser(userDecoded);
+      }
+      if(!user) {
+        getUserByToken();
+      }
     }
-  }, []);
+  }, [user]);
+  
   return (
     <>
-      <Header />
-      {isSignedIn ? <div>blmablabla</div> : <SignIn handleSignInState={handleSignInState} />}
-      <Footer />
+      <MainLayout>
+        {isSignedIn ? <TasksList /> : <SignIn handleSignInState={handleSignInState} />}
+      </MainLayout>
     </>
   );
 }

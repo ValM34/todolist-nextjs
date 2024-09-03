@@ -17,6 +17,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Le mot de passe est requis'],
   },
+  projects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+    },
+  ],
 },
 {
   timestamps: true,

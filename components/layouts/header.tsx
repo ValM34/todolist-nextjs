@@ -19,7 +19,10 @@ export default function Header() {
                 <XMarkIcon aria-hidden="true" className="hidden h-6 w-6 group-data-[open]:block" />
               </DisclosureButton>
             </div>
-            <div className="flex flex-shrink-0 items-center">
+            <Link
+              className="flex flex-shrink-0 items-center"
+              href="/"
+            >
               <Image
                 width={38}
                 height={32}
@@ -27,7 +30,7 @@ export default function Header() {
                 src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
                 className="h-8 w-auto"
               />
-            </div>
+            </Link>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
               <Link
