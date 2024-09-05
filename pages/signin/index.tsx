@@ -3,15 +3,13 @@ import { NumberedListIcon } from '@heroicons/react/24/solid'
 import Link from "next/link";
 import { useRef } from 'react';
 import { authUser } from "../services/users/auth";
+import MainLayout from "../../components/layouts/mainLayout";
+import { useRouter } from 'next/router';
 
-interface signUpProps {
-  handleSignInState: () => void
-}
-
-export default function SignUp(props : signUpProps) {
-  const { handleSignInState } = props;
+export default function SignUp() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -29,12 +27,11 @@ export default function SignUp(props : signUpProps) {
     const res = await authUser(data);
     const user = res.data;
     localStorage.setItem('user', JSON.stringify(user));
-    handleSignInState();
-    console.log(user);
+    router.push('/');
   }
   
   return (
-    <>
+    <MainLayout>
       {/*
         This example requires updating your template:
 
@@ -108,6 +105,6 @@ export default function SignUp(props : signUpProps) {
           </p>
         </div>
       </div>
-    </>
+    </MainLayout>
   )
 }

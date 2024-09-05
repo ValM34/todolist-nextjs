@@ -18,3 +18,23 @@ export async function createProject(project) {
     throw error;
   }
 }
+
+export async function fetchProjectsByUser(token) {
+  try {
+    const response = await fetch("/api/projects", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch projects');
+    }
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('An error occurred while fetching projects:', error);
+    throw error;
+  }
+}

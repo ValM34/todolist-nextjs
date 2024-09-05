@@ -37,8 +37,6 @@ export default function SignUp() {
     } catch (error) {
       alert("L'utilisateur existe déjà");
     }
-
-    console.log(data)
   }
   
   return (
@@ -162,7 +160,7 @@ export default function SignUp() {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Déjà inscrit?{' '}
-            <Link href="/signin" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+            <Link href="/" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
               Connectez-vous
             </Link>
           </p>

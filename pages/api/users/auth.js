@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import User from '../../../models/user';
 import jwt from 'jsonwebtoken';
 import dbConnect from '../../../lib/dbConnect';
+import { cookies } from 'next/headers'
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -21,6 +22,15 @@ export default async function handler(req, res) {
         const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {
           expiresIn: '1d',
         });
+
+        // const cookieStore = cookies();
+
+        // cookieStore.set('token', token);
+        res.setHeader(
+          'Set-Cookie',
+          `token=${token}; Max-Age=3600 * 24; Path=/; HttpOnly; Secure; SameSite=Strict`
+        );
+
         res.status(200).json({ success: true, data: { token } });
       } catch (error) {
         res.status(400).json({ success: false });
