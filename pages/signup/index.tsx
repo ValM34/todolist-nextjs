@@ -3,6 +3,7 @@ import { NumberedListIcon } from '@heroicons/react/24/solid'
 import Link from "next/link";
 import { useRef } from 'react';
 import { createUser } from "../services/users";
+import { useRouter } from 'next/router';
 
 export default function SignUp() {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -10,6 +11,8 @@ export default function SignUp() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
@@ -34,6 +37,7 @@ export default function SignUp() {
 
     try {
       await createUser(data);
+      router.push('/signin');
     } catch (error) {
       alert("L'utilisateur existe déjà");
     }
@@ -41,17 +45,8 @@ export default function SignUp() {
   
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <NumberedListIcon className="mx-auto h-10 w-auto" />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Inscription
           </h2>

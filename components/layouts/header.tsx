@@ -20,6 +20,8 @@ export default function Header() {
     }
   }
 
+  console.log(router.asPath)
+
   return (
     <Disclosure as="nav" className="bg-white shadow">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -50,13 +52,19 @@ export default function Header() {
               {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
               <Link
                 href="/"
-                className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
+                className={`
+                  inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium
+                  ${router.asPath === '/' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}
+                `}
               >
                 Mes listes
               </Link>
               <Link
                 href="/projects"
-                className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                className={`
+                  inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium
+                  ${router.asPath === '/projects' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}
+                `}
               >
                 Mes projects
               </Link>
@@ -111,14 +119,9 @@ export default function Header() {
                   className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                 >
                   <MenuItem>
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                    <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
                       Your Profile
-                    </a>
-                  </MenuItem>
-                  <MenuItem>
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                      Settings
-                    </a>
+                    </Link>
                   </MenuItem>
                   <MenuItem>
                     <button onClick={handleSignOut} type="button" className="w-full text-left block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">

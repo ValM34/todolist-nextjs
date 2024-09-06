@@ -91,7 +91,6 @@ export default function TasksList() {
 
   return (
     <MainLayout>
-      <h1>Ma Todolist</h1>
       {
         Array.isArray(projects) ? (
           <Filters 
