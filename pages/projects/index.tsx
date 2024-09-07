@@ -1,5 +1,5 @@
 import MainLayout from "../../components/layouts/mainLayout";
-import { fetchProjectsByUser } from "../services/projects";
+import { fetchProjectsByUser, deleteProject } from "../services/projects";
 import { useEffect, useState } from "react";
 
 interface Project {
@@ -30,6 +30,16 @@ export default function Projects() {
     }
   })
 
+  const handleDeleteProject = async (projectId: string) => {
+    let storedUser : any | null = localStorage.getItem('user');
+    if (storedUser) {
+      storedUser = JSON.parse(storedUser);
+      (async () => {
+        const projectDeleted = await deleteProject(storedUser.token, projectId);
+      })();
+    }
+  }
+
   return (
     <MainLayout>
       {
@@ -37,6 +47,8 @@ export default function Projects() {
           projects.map((project: Project) => (
             <div key={project._id}>
               <h1>{project.title}</h1>
+              <p>{project.description}</p>
+              <button onClick={() => handleDeleteProject(project._id)}>Supprimer</button>
             </div>
           ))
         ) : (
