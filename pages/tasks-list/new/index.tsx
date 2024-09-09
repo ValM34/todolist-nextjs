@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { createTask } from "../../services/tasks";
-import MainLayout from "../../../components/layouts/main-layout";
 import { fetchProjectsByUser } from "../../services/projects";
 import Link from "next/link";
 import { useRouter } from 'next/router';
@@ -72,7 +71,7 @@ export default function TaskForm() {
   });
 
   return (
-    <MainLayout>
+    <>
       <h1 className="text-3xl font-bold mb-4 text-center">Ajouter une tâche</h1>
       {projects ? (
         <form className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
@@ -209,6 +208,6 @@ export default function TaskForm() {
           <Link href="/projects/new" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour ajouter un nouveau projet.</Link>
         </div>
       )}
-    </MainLayout>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import MainLayout from "../../components/layouts/main-layout";
 import { fetchProjectsByUser, deleteProject } from "../services/projects";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -42,7 +41,7 @@ export default function Projects() {
   };
 
   return (
-    <MainLayout>
+    <>
       <h1 className="text-3xl font-bold mb-4 text-center">Mes projets</h1>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {Array.isArray(projects) ? (
@@ -74,6 +73,6 @@ export default function Projects() {
           </div>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

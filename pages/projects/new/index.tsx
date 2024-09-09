@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import '../../../app/globals.css';
 import { createProject } from '../../services/projects';
-import { verifyToken } from "../../services/verifyToken";
-import MainLayout from "../../../components/layouts/main-layout";
+import { verifyToken } from "../../services/verify-token";
 import { useRouter } from 'next/router';
 
 export default function Projects() {
@@ -48,7 +46,7 @@ export default function Projects() {
 
 
   return (
-    <MainLayout>
+    <>
       <h1 className="text-3xl font-bold mb-4 text-center">Ajouter un projet</h1>
       <form className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
         <h2 className="font-semibold text-xl mb-4">Ajouter un projet</h2>
@@ -95,6 +93,6 @@ export default function Projects() {
           </button>
         </div>
       </form>
-    </MainLayout>
+    </>
   );
 }

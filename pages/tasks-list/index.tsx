@@ -1,8 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import "../../app/globals.css";
 import TasksTable from "./tasks-table";
-import MainLayout from "../../components/layouts/main-layout";
 import { fetchTasksByProjectId } from "../services/tasks";
 import { fetchProjectsByUser } from "../services/projects";
 import Filters from "./filters";
@@ -168,7 +166,7 @@ export default function TasksList() {
   }, [projects]);
 
   return (
-    <MainLayout>
+    <>
       <h1 className="text-3xl font-bold mb-4 text-center">Mes listes de tâches</h1>
       {Array.isArray(projects) ? (
         <>
@@ -211,6 +209,6 @@ export default function TasksList() {
           <Link href="/projects/new" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour ajouter un nouveau projet.</Link>
         </div>
       )}
-    </MainLayout>
+    </>
   );
 }

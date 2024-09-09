@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import MainLayout from "../../../components/layouts/main-layout";
 import { useRouter } from 'next/router';
 import { fetchTaskById, updateTask, deleteTask } from "../../services/tasks";
 import Link from 'next/link';
@@ -106,7 +105,7 @@ export default function TaskFormUpdate() {
   }, [id, projects]);
 
   return (
-    <MainLayout>
+    <>
       <h1 className="text-3xl font-bold mb-4 text-center">Modifier une tâche</h1>
       {task?.title && task?.description && task?.completed && task?.emergency && task?.importance && task?.project && projects ? (
         <>
@@ -256,6 +255,6 @@ export default function TaskFormUpdate() {
           <Link href="/" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour retourner sur la liste des tâches.</Link>
         </div>
       )}
-    </MainLayout>
+    </>
   );
 }

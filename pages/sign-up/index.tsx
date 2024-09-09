@@ -1,5 +1,3 @@
-import "../../app/globals.css";
-import { NumberedListIcon } from '@heroicons/react/24/solid'
 import Link from "next/link";
 import { useRef } from 'react';
 import { createUser } from "../services/users";

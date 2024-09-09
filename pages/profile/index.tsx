@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import MainLayout from "../../components/layouts/main-layout";
 import { updateUser, getUser } from "../services/users";
 
 export default function Profil() {
@@ -38,7 +37,7 @@ export default function Profil() {
   }
 
   return (
-    <MainLayout>
+    <>
       <h1 className="text-3xl font-bold mb-4 text-center">Modifier le profil</h1>
       <form className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
         <h2 className="font-semibold text-xl mb-4">Profil</h2>
@@ -85,6 +84,6 @@ export default function Profil() {
           </button>
         </div>
       </form>
-    </MainLayout>
+    </>
   );
 }
