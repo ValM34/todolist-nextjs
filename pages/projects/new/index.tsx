@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../../../app/globals.css';
 import { createProject } from '../../services/projects';
 import { verifyToken } from "../../services/verifyToken";
 import MainLayout from "../../../components/layouts/mainLayout";
+import { useRouter } from 'next/router';
 
 export default function Projects() {
+  const inputTitleRef = useRef<HTMLInputElement>(null);
+  const inputDescriptionRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
   const [newProject, setNewProject] = useState({
     title: "",
     description: "",
@@ -13,14 +17,21 @@ export default function Projects() {
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newProject.title || !newProject.description) {
+    let storedUser : any | null = localStorage.getItem('user');
+    if (!storedUser) return;
+    const token = JSON.parse(storedUser).token;
+    if(
+      !inputTitleRef.current?.value ||
+      !inputDescriptionRef.current?.value
+    ) {
       return;
     }
-    const data = await createProject({
-      title: newProject.title,
-      description: newProject.description,
-      user: userId,
-    });
+
+    await createProject({
+      title: inputTitleRef.current?.value,
+      description: inputDescriptionRef.current?.value
+    }, token);
+    router.push('/projects');
   };
 
   useEffect(() => {
@@ -38,6 +49,7 @@ export default function Projects() {
 
   return (
     <MainLayout>
+      <h1 className="text-3xl font-bold mb-4 text-center">Ajouter un projet</h1>
       <form className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
         <h2 className="font-semibold text-xl mb-4">Ajouter un projet</h2>
         <div className="flex flex-col">
@@ -53,8 +65,7 @@ export default function Projects() {
             name="title"
             required={true}
             type="text"
-            value={newProject.title}
-            onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+            ref={inputTitleRef}
           />
         </div>
         <div className="flex flex-col mt-4">
@@ -70,10 +81,7 @@ export default function Projects() {
             name="description"
             required={true}
             type="text"
-            value={newProject.description}
-            onChange={(e) =>
-              setNewProject({ ...newProject, description: e.target.value })
-            }
+            ref={inputDescriptionRef}
           />
         </div>
 

@@ -14,6 +14,8 @@ interface Task {
   title: string;
   completed: string;
   emergency: string;
+  importance: string;
+  project: string;
   createdAt: string;
   updatedAt: string;
   description: string;
@@ -26,19 +28,24 @@ interface TasksList {
 interface TasksListProps {
   tasks: Task[];
   emergencyFilter: {
-    urgent: boolean,
-    normal: boolean,
-    pasUrgent: boolean,
+    forte: boolean,
+    moyenne: boolean,
+    faible: boolean,
   }
   completedFilter: {
     aFaire: boolean,
     enCours: boolean,
     terminee: boolean,
   }
+  importanceFilter: {
+    forte: boolean,
+    moyenne: boolean,
+    faible: boolean,
+  }
 }
 
 export default function TasksTable(props: TasksListProps) {
-  const { tasks, emergencyFilter, completedFilter } = props;
+  const { tasks, emergencyFilter, completedFilter, importanceFilter } = props;
   return (
     <div>
       <div className="mt-8 flow-root">
@@ -50,11 +57,14 @@ export default function TasksTable(props: TasksListProps) {
                   <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                     Titre
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 w-1/2">
                     Description
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     Urgence
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    Importance
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     Statut
@@ -65,10 +75,11 @@ export default function TasksTable(props: TasksListProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {tasks.map((task) => (
+                {tasks && tasks.map((task) => (
                   <Task
                     key={task._id}
                     task={task}
+                    importanceFilter={importanceFilter}
                     emergencyFilter={emergencyFilter}
                     completedFilter={completedFilter}
                   />
@@ -85,28 +96,37 @@ export default function TasksTable(props: TasksListProps) {
 interface TaskProps {
   task: Task;
   emergencyFilter: {
-    urgent: boolean,
-    normal: boolean,
-    pasUrgent: boolean,
+    forte: boolean,
+    moyenne: boolean,
+    faible: boolean,
   }
   completedFilter: {
     aFaire: boolean,
     enCours: boolean,
     terminee: boolean,
   }
+  importanceFilter: {
+    forte: boolean,
+    moyenne: boolean,
+    faible: boolean,
+  }
 }
 
 function Task(props: TaskProps) {
-  const { task, emergencyFilter, completedFilter } = props;
+  const { task, emergencyFilter, completedFilter, importanceFilter } = props;
 
   let display = true;
-  if(task.emergency === "Urgent" && emergencyFilter.urgent === false) return display = false;
-  if(task.emergency === "Normal" && emergencyFilter.normal === false) return display = false;
-  if(task.emergency === "Pas urgent" && emergencyFilter.pasUrgent === false) return display = false;
+  if(task.emergency === "Forte" && emergencyFilter.forte === false) return display = false;
+  if(task.emergency === "Moyenne" && emergencyFilter.moyenne === false) return display = false;
+  if(task.emergency === "Faible" && emergencyFilter.faible === false) return display = false;
 
   if(task.completed === "A faire" && completedFilter.aFaire === false) return display = false;
   if(task.completed === "En cours" && completedFilter.enCours === false) return display = false;
   if(task.completed === "Terminée" && completedFilter.terminee === false) return display = false;
+
+  if(task.importance === "Forte" && importanceFilter.forte === false) return display = false;
+  if(task.importance === "Moyenne" && importanceFilter.moyenne === false) return display = false;
+  if(task.importance === "Faible" && importanceFilter.faible === false) return display = false;
 
   return (
     <tr 
@@ -119,24 +139,25 @@ function Task(props: TaskProps) {
         </div>
       </div>
     </td>
-    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-      <div className="text-gray-900">{task.description}</div>
+    <td className="px-3 py-5 text-sm text-gray-500 w-3xl max-w-3xl">
+      <div className="text-gray-900 text-ellipsis overflow-hidden">{task.description}</div>
     </td>
     <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
       <span 
         className={`
           inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
           ${
-            task.emergency === "Urgent" ? "bg-red-50 text-red-700 ring-red-600/20" : ""
+            task.emergency === "Forte" ? "bg-red-50 text-red-700 ring-red-600/20" : ""
           } ${
-            task.emergency === "Normal" ? "bg-yellow-50 text-yellow-700 ring-yellow-600/20" : ""
+            task.emergency === "Moyenne" ? "bg-yellow-50 text-yellow-700 ring-yellow-600/20" : ""
           } ${
-            task.emergency === "Pas urgent" ? "bg-green-50 text-green-700 ring-green-600/20" : ""
+            task.emergency === "Faible" ? "bg-green-50 text-green-700 ring-green-600/20" : ""
           }
         `}>
         {task.emergency}
       </span>
     </td>
+    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">{task.importance}</td>
     <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">{task.completed}</td>
     <td className="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
       <a href="#" className="text-indigo-600 hover:text-indigo-900">

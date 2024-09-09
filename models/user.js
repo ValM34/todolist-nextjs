@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const Project = mongoose.model('Project');
+import Project from './project';
 
 const UserSchema = new mongoose.Schema({
   firstName: {
@@ -30,16 +30,17 @@ const UserSchema = new mongoose.Schema({
 },
 );
 
-UserSchema.pre('remove', function(next) {
-  const userId = this._id;
-  Project.remove({ user: userId }, (err) => {
-    if (err) {
-      next(err);
-    } else {
-      next();
-    }
-  });
-});
+// Suppression en CASCADE qui ne fonctionne pas
+// UserSchema.pre('remove', function(next) {
+//   const userId = this._id;
+//   Project.remove({ user: userId }, (err) => {
+//     if (err) {
+//       next(err);
+//     } else {
+//       next();
+//     }
+//   });
+// });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
 

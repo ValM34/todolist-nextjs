@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const Task = mongoose.model("Task");
+import Task from './task';
 
 const ProjectSchema = new mongoose.Schema(
   {
@@ -28,14 +28,15 @@ const ProjectSchema = new mongoose.Schema(
   }
 );
 
-ProjectSchema.pre('findOneAndDelete', async function(next) {
-  console.log('flsdkgjdfskljgljkfdgljkgfdljkgfljk')
-  const doc = await this.model.findOne(this.getFilter()); // Récupère le projet qui est supprimé
-  if (doc) {
-    // Supprime toutes les tâches liées au projet
-    await Task.deleteMany({ _id: { $in: doc.tasks } });
-  }
-  next();
-});
+// Suppression en CASCADE qui ne fonctionne pas
+// ProjectSchema.pre('findOneAndDelete', async function(next) {
+//   console.log('flsdkgjdfskljgljkfdgljkgfdljkgfljk')
+//   const doc = await this.model.findOne(this.getFilter()); // Récupère le projet qui est supprimé
+//   if (doc) {
+//     // Supprime toutes les tâches liées au projet
+//     await Task.deleteMany({ _id: { $in: doc.tasks } });
+//   }
+//   next();
+// });
 
 export default mongoose.models.Project || mongoose.model('Project', ProjectSchema);

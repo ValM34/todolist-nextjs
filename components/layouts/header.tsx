@@ -20,8 +20,6 @@ export default function Header() {
     }
   }
 
-  console.log(router.asPath)
-
   return (
     <Disclosure as="nav" className="bg-white shadow">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

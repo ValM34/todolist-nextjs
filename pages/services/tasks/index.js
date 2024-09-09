@@ -1,6 +1,6 @@
-export async function fetchTasks() {
+export async function fetchTasksByProjectId(projectId) {
   try {
-    const response = await fetch("/api/tasks"); // Attend la réponse de l'API
+    const response = await fetch("/api/tasks/" + projectId); // Attend la réponse de l'API
     if (!response.ok) {
       throw new Error('Failed to fetch tasks');
     }
@@ -12,12 +12,13 @@ export async function fetchTasks() {
   }
 }
 
-export async function createTask(task) {
+export async function createTask(task, token) {
   try {
     const response = await fetch("/api/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": token
       },
       body: JSON.stringify(task),
     });

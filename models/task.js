@@ -12,16 +12,22 @@ const TaskSchema = new mongoose.Schema({
   completed: {
     type: String,
     enum: ['A faire', 'En cours', 'Terminée'],
-    default: 'A faire',
+    required: [true, 'Le statut est requis'],
   },
   emergency: {
     type: String,
-    enum: ['Urgent', 'Normal', 'Pas urgent'],
-    default: 'Normal',
+    enum: ['Faible', 'Moyenne', 'Forte'],
+    required: [true, 'L\'urgence est requise'],
+  },
+  importance: {
+    type: String,
+    enum: ['Faible', 'Moyenne', 'Forte'],
+    required: [true, 'L\'importance est requise'],
   },
   project: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
+    required: [true, 'Le projet est requis'],
   },
 },
 {

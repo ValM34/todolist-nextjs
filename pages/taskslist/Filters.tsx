@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 interface Project {
   _id: string,
   title: string,
@@ -7,14 +9,32 @@ interface Project {
   createdAt: string,
 }
 
+interface Task {
+  _id: string;
+  title: string;
+  completed: string;
+  emergency: string;
+  importance: string;
+  project: string;
+  createdAt: string;
+  updatedAt: string;
+  description: string;
+}
+
+interface TasksList {
+  tasks: Task[];
+}
+
 interface HandleEmergencyFilterProps {
   handleEmergencyFilter: (e: React.MouseEvent<HTMLInputElement>) => void;
   handleCompletedFilter: (e: React.MouseEvent<HTMLInputElement>) => void;
+  handleImportanceFilter: (e: React.MouseEvent<HTMLInputElement>) => void;
+  handleTasksFilter: (e: ChangeEvent<HTMLSelectElement>) => void;
   projects: Project[];
 }
 
 export default function Filters(props: HandleEmergencyFilterProps) {
-  const { handleEmergencyFilter, handleCompletedFilter, projects } = props;
+  const { handleEmergencyFilter, handleCompletedFilter, handleImportanceFilter, handleTasksFilter, projects } = props;
   return (
     <div className="border border-gray-200 my-10 p-6">
       <h2 className="mb-4 font-bold text-2xl">Filtres</h2>
@@ -28,17 +48,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleEmergencyFilter(e)}
-                    value="urgent"
-                    id="urgent"
-                    name="urgent"
+                    value="forte"
+                    id="forte"
+                    name="forte"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="urgent" className="font-medium text-gray-900">
-                    Urgent
+                  <label htmlFor="forte" className="font-medium text-gray-900">
+                    Forte
                   </label>
                 </div>
               </div>
@@ -46,17 +66,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleEmergencyFilter(e)}
-                    value="normal"
-                    id="normal"
-                    name="normal"
+                    value="moyenne"
+                    id="moyenne"
+                    name="moyenne"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="normal" className="font-medium text-gray-900">
-                    Normal
+                  <label htmlFor="moyenne" className="font-medium text-gray-900">
+                    Moyenne
                   </label>
                 </div>
               </div>
@@ -64,9 +84,9 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleEmergencyFilter(e)}
-                    value="pasUrgent"
-                    id="pasUrgent"
-                    name="pasUrgent"
+                    value="faible"
+                    id="faible"
+                    name="faible"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -74,10 +94,75 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 </div>
                 <div className="ml-3 text-sm leading-6">
                   <label
-                    htmlFor="pasUrgent"
+                    htmlFor="faible"
                     className="font-medium text-gray-900"
                   >
-                    Pas urgent
+                    Faible
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div className="mr-20 sm:w-40 w-full">
+          <b className="mb-4 block">Importance</b>
+          <fieldset>
+            <div className="space-y-5">
+              <div className="relative flex items-start">
+                <div className="flex h-6 items-center">
+                  <input
+                    onClick={(e) => handleImportanceFilter(e)}
+                    value="forte"
+                    id="forte"
+                    name="forte"
+                    type="checkbox"
+                    defaultChecked={true}
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  />
+                </div>
+                <div className="ml-3 text-sm leading-6">
+                  <label htmlFor="forte" className="font-medium text-gray-900">
+                    Forte
+                  </label>
+                </div>
+              </div>
+              <div className="relative flex items-start">
+                <div className="flex h-6 items-center">
+                  <input
+                    onClick={(e) => handleImportanceFilter(e)}
+                    value="moyenne"
+                    id="moyenne"
+                    name="moyenne"
+                    type="checkbox"
+                    defaultChecked={true}
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  />
+                </div>
+                <div className="ml-3 text-sm leading-6">
+                  <label htmlFor="moyenne" className="font-medium text-gray-900">
+                    Moyenne
+                  </label>
+                </div>
+              </div>
+              <div className="relative flex items-start">
+                <div className="flex h-6 items-center">
+                  <input
+                    onClick={(e) => handleImportanceFilter(e)}
+                    value="faible"
+                    id="faible"
+                    name="faible"
+                    type="checkbox"
+                    defaultChecked={true}
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  />
+                </div>
+                <div className="ml-3 text-sm leading-6">
+                  <label
+                    htmlFor="faible"
+                    className="font-medium text-gray-900"
+                  >
+                    Faible
                   </label>
                 </div>
               </div>
@@ -150,7 +235,7 @@ export default function Filters(props: HandleEmergencyFilterProps) {
           </fieldset>
         </div>
 
-        <div className="sm:w-40 w-full">
+        <div className="sm:w-60 w-full">
           <label htmlFor="project" className="block font-medium leading-6 text-gray-900">
             <b className="mb-4 block">Projet</b>
           </label>
@@ -158,6 +243,7 @@ export default function Filters(props: HandleEmergencyFilterProps) {
             id="project"
             name="project"
             className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            onChange={(e) => handleTasksFilter(e)}
           >
             {
               Array.isArray(projects) && projects.map((project) => {

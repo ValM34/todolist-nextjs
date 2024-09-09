@@ -1,9 +1,10 @@
-export async function createProject(project) {
+export async function createProject(project, token) {
   try {
     const response = await fetch("/api/projects", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": token,
       },
       body: JSON.stringify(project),
     });

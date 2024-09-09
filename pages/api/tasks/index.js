@@ -1,5 +1,6 @@
 import dbConnect from '../../../lib/dbConnect';
 import Todo from '../../../models/task';
+import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -17,6 +18,11 @@ export default async function handler(req, res) {
       break;
 
     case 'POST':
+      const token = req.headers.authorization;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if(!decoded) {
+        return res.status(400).json({ success: false, message: 'Invalid token' });
+      }
       try {
         const todo = await Todo.create(req.body);
         res.status(201).json({ success: true, data: todo });
