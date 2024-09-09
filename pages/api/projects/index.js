@@ -6,6 +6,9 @@ export default async function handler(req, res) {
   const { method } = req;
   const token = req.headers.authorization;
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  if(!decoded) {
+    return res.status(400).json({ success: false, message: 'Invalid token' });
+  }
 
   await dbConnect();
 
@@ -20,9 +23,6 @@ export default async function handler(req, res) {
       break;
 
     case 'POST':
-      if(!decoded) {
-        return res.status(400).json({ success: false, message: 'Invalid token' });
-      }
       try {
         const project = await Project.create({...req.body, user: decoded.userId});
         res.status(201).json({ success: true, data: project });
@@ -33,7 +33,6 @@ export default async function handler(req, res) {
       
     case 'DELETE':
       try {
-        const decoded = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
         const project = await Project.findById(req.body);
         if (project.user != decoded.userId) {
           return res.status(400).json({ success: false });

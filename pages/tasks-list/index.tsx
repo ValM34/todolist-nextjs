@@ -5,6 +5,7 @@ import { fetchTasksByProjectId } from "../services/tasks";
 import { fetchProjectsByUser } from "../services/projects";
 import Filters from "./filters";
 import Link from 'next/link';
+import { getJwt } from "../../utils/jwt";
 
 interface Task {
   _id: string;
@@ -139,30 +140,15 @@ export default function TasksList() {
   };
 
   useEffect(() => {
-    let storedUser: any | null = localStorage.getItem("user");
-    if (storedUser) {
-      storedUser = JSON.parse(storedUser);
-      (async () => {
-        const projectsList = await fetchProjectsByUser(storedUser.token);
-        if (projectsList && projectsList.length > 0 && projects === null) {
-          setProjects(projectsList);
-          const firstProjectId = projectsList[0]._id;
-          const data = await fetchTasksByProjectId(firstProjectId);
-          filterTasksByEmergencyAndImportance(data);
-        }
-      })();
-    }
-
-    // async function loadData() {
-    //   try {
-    //     const data = await fetchTasksByProjectId();
-    //     setTasks(data);
-    //   } catch(error) {
-    //     console.log(error)
-    //     // @TODO handle error
-    //   }
-    // }
-    // loadData();
+    (async () => {
+      const projectsList = await fetchProjectsByUser();
+      if (projectsList && projectsList.length > 0 && projects === null) {
+        setProjects(projectsList);
+        const firstProjectId = projectsList[0]._id;
+        const data = await fetchTasksByProjectId(firstProjectId);
+        filterTasksByEmergencyAndImportance(data);
+      }
+    })();
   }, [projects]);
 
   return (

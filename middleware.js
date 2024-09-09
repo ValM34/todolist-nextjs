@@ -6,7 +6,7 @@ export async function middleware(req) {
   const cookieStore = cookies();
 
   if(!cookieStore.get('token')) {
-    return NextResponse.redirect(new URL('/signin', req.url));
+    return NextResponse.redirect(new URL('/sign-in', req.url));
   }
 
   try {
@@ -17,7 +17,7 @@ export async function middleware(req) {
     );
     return NextResponse.next();
   } catch (error) {
-    return NextResponse.redirect(new URL('/signin', req.url));
+    return NextResponse.redirect(new URL('/sign-in', req.url));
   }
 }
 
@@ -33,6 +33,6 @@ export const config = {
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      * - signin
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|signin|signup).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|sign-in|sign-up).*)',
   ],
 }

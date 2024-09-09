@@ -17,8 +17,9 @@ export default async function handler(req, res) {
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+    break;
 
+    // Create user
     case 'POST':
       const { email, password } = req.body;
       const salt = await bcrypt.genSalt(10);

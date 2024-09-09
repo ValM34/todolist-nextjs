@@ -1,11 +1,11 @@
-export async function verifyToken(token) {
+export async function getTokenPayload(token) {
   try {
-    const response = await fetch("/api/verifyToken", {
-      method: "POST",
+    const response = await fetch("/api/get-token-payload", {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token }),
+        "Authorization": token
+      }
     });
     if (!response.ok) {
       throw new Error('Failed to verify token');

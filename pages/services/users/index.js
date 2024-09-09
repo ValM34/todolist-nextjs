@@ -1,5 +1,7 @@
+import { getJwt } from "../../utils/jwt";
+
 export async function getUser() {
-  const token = JSON.parse(localStorage.getItem("user")).token;
+  const token = getJwt();
   if(!token) return;
   try {
     const response = await fetch("/api/users", {
@@ -43,7 +45,7 @@ export async function createUser(user) {
 }
 
 export async function updateUser(user) {
-  const token = JSON.parse(localStorage.getItem("user")).token;
+  const token = getJwt();
   if(!token) return;
 
   const filteredUser = Object.fromEntries(

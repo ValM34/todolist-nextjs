@@ -1,6 +1,15 @@
+import { getJwt } from "../../../utils/jwt";
+
 export async function fetchTasksByProjectId(projectId) {
   try {
-    const response = await fetch("/api/tasks/" + projectId);
+    const token = getJwt();
+    if(!token) return;
+    const response = await fetch("/api/tasks/" + projectId, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token
+      },
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch tasks');
     }
@@ -12,8 +21,10 @@ export async function fetchTasksByProjectId(projectId) {
   }
 }
 
-export async function createTask(task, token) {
+export async function createTask(task) {
   try {
+    const token = getJwt();
+    if(!token) return;
     const response = await fetch("/api/tasks", {
       method: "POST",
       headers: {
@@ -33,8 +44,10 @@ export async function createTask(task, token) {
   }
 }
 
-export async function fetchTaskById(taskId, token) {
+export async function fetchTaskById(taskId) {
   try {
+    const token = getJwt();
+    if(!token) return;
     const response = await fetch("/api/tasks/one/" + taskId, {
       headers: {
         "Content-Type": "application/json",

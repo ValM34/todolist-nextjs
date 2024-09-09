@@ -3,6 +3,7 @@ import { createTask } from "../../services/tasks";
 import { fetchProjectsByUser } from "../../services/projects";
 import Link from "next/link";
 import { useRouter } from 'next/router';
+import { getJwt } from "../../../utils/jwt";
 
 interface Project {
   _id: string;
@@ -30,7 +31,7 @@ export default function TaskForm() {
   const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let token = localStorage.getItem("user");
+    let token = getJwt();
     if (!token) return;
     token = JSON.parse(token).token;
 
@@ -52,22 +53,19 @@ export default function TaskForm() {
       importance: selectImportanceRef.current?.value,
       description: inputDescriptionRef.current?.value,
       project: selectProjectRef.current?.value,
-    }, token);
-    router.push("/taskslist");
+    });
+    router.push("/tasks-list");
   };
 
   useEffect(() => {
-    let storedUser: any | null = localStorage.getItem("user");
-    if (storedUser) {
-      storedUser = JSON.parse(storedUser);
-      (async () => {
-        const projectsList = await fetchProjectsByUser(storedUser.token);
-        if (projectsList && projectsList.length > 0 && projects === null) {
-          console.log(projectsList);
-          setProjects(projectsList);
-        }
-      })();
-    }
+    (async () => {
+      const projectsList = await fetchProjectsByUser();
+      if (projectsList && projectsList.length > 0 && projects === null) {
+        console.log(projectsList);
+        setProjects(projectsList);
+      }
+    })();
+    
   });
 
   return (

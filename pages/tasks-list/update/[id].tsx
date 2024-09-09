@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { fetchTaskById, updateTask, deleteTask } from "../../services/tasks";
 import Link from 'next/link';
 import { fetchProjectsByUser } from "../../services/projects";
-
+import { getJwt } from "../../../utils/jwt";
 
 interface Task {
   title: string | null;
@@ -68,38 +68,33 @@ export default function TaskFormUpdate() {
     };
 
     console.log(taskUpdated)
-    const storageUser = localStorage.getItem("user");
-    if (!storageUser) return;
-    const token = JSON.parse(storageUser).token;
+    const token = getJwt();
+    if (!token) return;
     await updateTask(taskUpdated, token);
     router.push("/");
   };
 
   const handleDeleteTask = async () => {
     if (!id) return;
-    const storageUser = localStorage.getItem("user");
-    if (!storageUser) return;
-    const token = JSON.parse(storageUser).token;
+    const token = getJwt();
+    if (!token) return;
     await deleteTask(id, token);
     router.push("/");
   }
 
   useEffect(() => {
-    let storedUser: any | null = localStorage.getItem("user");
-    if (storedUser) {
-      storedUser = JSON.parse(storedUser);
-      (async () => {
-        const projectsList = await fetchProjectsByUser(storedUser.token);
-        if (projectsList && projectsList.length > 0 && projects === null) {
-          console.log(projectsList);
-          setProjects(projectsList);
-        }
-      })();
-    }
+    let token = getJwt();
     (async () => {
-      console.log(id)
+      const projectsList = await fetchProjectsByUser();
+      if (projectsList && projectsList.length > 0 && projects === null) {
+        console.log(projectsList);
+        setProjects(projectsList);
+      }
+    })();
+    
+    (async () => {
       if (!id) return;
-      let data = await fetchTaskById(id, storedUser.token);
+      let data = await fetchTaskById(id);
       setTask(data);
     })();
   }, [id, projects]);

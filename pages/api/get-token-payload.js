@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 export default function handler(req, res) {
   const { method } = req;
   switch (method) {
-    case 'POST':
-      const { token } = req.body;
+    case 'GET':
+      const token = req.headers.authorization;
       const secret = process.env.JWT_SECRET;
 
       if(!secret){

@@ -1,6 +1,7 @@
 import { fetchProjectsByUser, deleteProject } from "../services/projects";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getJwt } from "../../utils/jwt";
 
 interface Project {
   _id: string;
@@ -18,26 +19,20 @@ interface Projects {
 export default function Projects() {
   const [projects, setProjects] = useState<Project | null>(null);
   useEffect(() => {
-    let storedUser: any | null = localStorage.getItem("user");
-    if (storedUser) {
-      storedUser = JSON.parse(storedUser);
-      (async () => {
-        const projectsList = await fetchProjectsByUser(storedUser.token);
-        if (projectsList && projects === null && projectsList.length > 0) {
-          setProjects(projectsList);
-        }
-      })();
-    }
+    (async () => {
+      const projectsList = await fetchProjectsByUser();
+      if (projectsList && projects === null && projectsList.length > 0) {
+        setProjects(projectsList);
+      }
+    })();
+    
   });
 
   const handleDeleteProject = async (projectId: string) => {
-    let storedUser: any | null = localStorage.getItem("user");
-    if (storedUser) {
-      storedUser = JSON.parse(storedUser);
-      (async () => {
-        const projectDeleted = await deleteProject(storedUser.token, projectId);
-      })();
-    }
+    (async () => {
+      const projectDeleted = await deleteProject(projectId);
+    })();
+    
   };
 
   return (

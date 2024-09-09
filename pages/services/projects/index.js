@@ -1,5 +1,9 @@
-export async function createProject(project, token) {
+import { getJwt } from "../../../utils/jwt";
+
+export async function createProject(project) {
   try {
+    const token = getJwt();
+    if(!token) return;
     const response = await fetch("/api/projects", {
       method: "POST",
       headers: {
@@ -20,8 +24,10 @@ export async function createProject(project, token) {
   }
 }
 
-export async function fetchProjectsByUser(token) {
+export async function fetchProjectsByUser() {
   try {
+    const token = getJwt();
+    if(!token) return;
     const response = await fetch("/api/projects", {
       method: "GET",
       headers: {
@@ -40,8 +46,10 @@ export async function fetchProjectsByUser(token) {
   }
 }
 
-export async function deleteProject(token, projectId) {
+export async function deleteProject(projectId) {
   try {
+    const token = getJwt();
+    if(!token) return;
     const response = await fetch("/api/projects", {
       method: "DELETE",
       headers: {

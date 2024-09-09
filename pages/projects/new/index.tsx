@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { createProject } from '../../services/projects';
-import { verifyToken } from "../../services/verify-token";
+import { getTokenPayload } from "../../services/get-token-payload";
 import { useRouter } from 'next/router';
+import { getJwt } from "../../../utils/jwt";
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
@@ -15,9 +16,6 @@ export default function Projects() {
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    let storedUser : any | null = localStorage.getItem('user');
-    if (!storedUser) return;
-    const token = JSON.parse(storedUser).token;
     if(
       !inputTitleRef.current?.value ||
       !inputDescriptionRef.current?.value
@@ -28,22 +26,20 @@ export default function Projects() {
     await createProject({
       title: inputTitleRef.current?.value,
       description: inputDescriptionRef.current?.value
-    }, token);
+    });
     router.push('/projects');
   };
 
   useEffect(() => {
-    let storedUser : any | null = localStorage.getItem('user');
-    if (storedUser) {
-      storedUser = JSON.parse(storedUser);
+    let token = getJwt();
+    if (token) {
       const getUserByToken = async () => {
-        const userDecoded = await verifyToken(storedUser.token);
+        const userDecoded = await getTokenPayload(token);
         setUserId(userDecoded.user.userId);
       }
       getUserByToken();
     }
   })
-
 
   return (
     <>
