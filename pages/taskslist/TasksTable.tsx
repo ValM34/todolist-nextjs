@@ -1,13 +1,4 @@
-const people = [
-  {
-    _id: '1',
-    title: 'Lindsay Walton',
-    completed: 'En cours',
-    description: 'Front-end Developer',
-    emergency: 'Member',
-  },
-  // More people...
-]
+import Link from "next/link";
 
 interface Task {
   _id: string;
@@ -160,9 +151,9 @@ function Task(props: TaskProps) {
     <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">{task.importance}</td>
     <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">{task.completed}</td>
     <td className="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-      <a href="#" className="text-indigo-600 hover:text-indigo-900">
-        Edit<span className="sr-only">, {task.title}</span>
-      </a>
+      <Link href={`/taskslist/update/${task._id}`} className="text-indigo-600 hover:text-indigo-900">
+        Edit
+      </Link>
     </td>
   </tr>
   )

@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import "../../app/globals.css";
-import TaskOld from "./TaskOld";
 import TasksTable from "./TasksTable";
 import MainLayout from "../../components/layouts/mainLayout";
 import { fetchTasksByProjectId } from "../services/tasks";
