@@ -1,9 +1,9 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import TasksTable from "./tasks-table";
+import TasksTable from "../../components/pages/tasks-list/tasks-table";
 import { fetchTasksByProjectId } from "../services/tasks";
 import { fetchProjectsByUser } from "../services/projects";
-import Filters from "./filters";
+import Filters from "../../components/pages/tasks-list/filters";
 import Link from 'next/link';
 import { getJwt } from "../../utils/jwt";
 

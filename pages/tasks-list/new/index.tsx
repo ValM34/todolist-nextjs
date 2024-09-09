@@ -33,7 +33,6 @@ export default function TaskForm() {
 
     let token = getJwt();
     if (!token) return;
-    token = JSON.parse(token).token;
 
     if (
       !inputTitleRef.current?.value ||
