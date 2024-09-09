@@ -1,4 +1,4 @@
-import MainLayout from "../../components/layouts/mainLayout";
+import MainLayout from "../../components/layouts/main-layout";
 import { fetchProjectsByUser, deleteProject } from "../services/projects";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -54,7 +54,7 @@ export default function Projects() {
               <div className="min-w-0 flex-1">
                 <div>
                   <div className="flex justify-between">
-                    <Link href={`/taskslist/${project._id}`} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                    <Link href={`/tasks-list/${project._id}`} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                       {project.title}
                     </Link>
                     <button className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500" onClick={() => handleDeleteProject(project._id)}>Supprimer</button>

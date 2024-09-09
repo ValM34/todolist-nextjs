@@ -1,4 +1,4 @@
-import dbConnect from '../../../lib/dbConnect';
+import dbConnect from '../../../lib/db-connect';
 import Todo from '../../../models/task';
 
 export default async function handler(req, res) {

@@ -3,7 +3,7 @@ import { NumberedListIcon } from '@heroicons/react/24/solid'
 import Link from "next/link";
 import { useRef } from 'react';
 import { authUser } from "../services/users/auth";
-import MainLayout from "../../components/layouts/mainLayout";
+import MainLayout from "../../components/layouts/main-layout";
 import { useRouter } from 'next/router';
 
 export default function SignUp() {
@@ -83,14 +83,14 @@ export default function SignUp() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
+                Connexion
               </button>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Pas de compte?{' '}
-            <Link href="/signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+            <Link href="/sign-up" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
               Inscrivez-vous
             </Link>
           </p>

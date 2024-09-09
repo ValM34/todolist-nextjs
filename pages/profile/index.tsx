@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import MainLayout from "../../components/layouts/mainLayout";
+import MainLayout from "../../components/layouts/main-layout";
 import { updateUser, getUser } from "../services/users";
 
 export default function Profil() {

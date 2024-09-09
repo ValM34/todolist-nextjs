@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../../../models/user';
 import jwt from 'jsonwebtoken';
-import dbConnect from '../../../lib/dbConnect';
+import dbConnect from '../../../lib/db-connect';
 import { cookies } from 'next/headers'
 
 export default async function handler(req, res) {

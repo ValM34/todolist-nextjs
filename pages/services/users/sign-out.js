@@ -1,6 +1,6 @@
 export async function signOutUser() {
   try {
-    const response = await fetch("/api/users/signout", {
+    const response = await fetch("/api/users/sign-out", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -1,11 +1,11 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import "../../app/globals.css";
-import TasksTable from "./TasksTable";
-import MainLayout from "../../components/layouts/mainLayout";
+import TasksTable from "./tasks-table";
+import MainLayout from "../../components/layouts/main-layout";
 import { fetchTasksByProjectId } from "../services/tasks";
 import { fetchProjectsByUser } from "../services/projects";
-import Filters from "./Filters";
+import Filters from "./filters";
 import Link from 'next/link';
 
 interface Task {
@@ -197,7 +197,7 @@ export default function TasksList() {
                 Vous n&apos;avez pas encore créé de
                 tâche liée au projet sélectionné. Il vous faut <b>créer une tâche</b>.
               </div>
-              <Link href="/taskslist/new" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour ajouter une nouvelle tâche.</Link>
+              <Link href="/tasks-list/new" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour ajouter une nouvelle tâche.</Link>
             </div>
           )}
         </>

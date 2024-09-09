@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createTask } from "../../services/tasks";
-import MainLayout from "../../../components/layouts/mainLayout";
+import MainLayout from "../../../components/layouts/main-layout";
 import { fetchProjectsByUser } from "../../services/projects";
 import Link from "next/link";
 import { useRouter } from 'next/router';

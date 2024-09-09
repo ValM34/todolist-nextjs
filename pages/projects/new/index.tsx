@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import '../../../app/globals.css';
 import { createProject } from '../../services/projects';
 import { verifyToken } from "../../services/verifyToken";
-import MainLayout from "../../../components/layouts/mainLayout";
+import MainLayout from "../../../components/layouts/main-layout";
 import { useRouter } from 'next/router';
 
 export default function Projects() {

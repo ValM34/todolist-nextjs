@@ -151,7 +151,7 @@ function Task(props: TaskProps) {
     <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">{task.importance}</td>
     <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">{task.completed}</td>
     <td className="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-      <Link href={`/taskslist/update/${task._id}`} className="text-indigo-600 hover:text-indigo-900">
+      <Link href={`/tasks-list/update/${task._id}`} className="text-indigo-600 hover:text-indigo-900">
         Edit
       </Link>
     </td>

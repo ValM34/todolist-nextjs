@@ -33,9 +33,14 @@ export async function createTask(task, token) {
   }
 }
 
-export async function fetchTaskById(taskId) {
+export async function fetchTaskById(taskId, token) {
   try {
-    const response = await fetch("/api/tasks/one/" + taskId);
+    const response = await fetch("/api/tasks/one/" + taskId, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token
+      },
+    });
     if (!response.ok) {
       return;
     }
@@ -64,6 +69,26 @@ export async function updateTask(task, token) {
     return data;
   } catch (error) {
     console.error('An error occurred while updating task:', error);
+    throw error;
+  }
+}
+
+export async function deleteTask(taskId, token) {
+  try {
+    const response = await fetch("/api/tasks/one/" + taskId, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete task');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('An error occurred while deleting task:', error);
     throw error;
   }
 }

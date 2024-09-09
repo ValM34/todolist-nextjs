@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOutUser } from '../../pages/services/users/signout';
+import { signOutUser } from '../../pages/services/users/sign-out';
 
 export default function Header() {
   const router = useRouter();
@@ -71,7 +71,7 @@ export default function Header() {
           <div className="flex items-center">
             <div className="flex-shrink-0 mr-6">
               <Link
-                href="/taskslist/new"
+                href="/tasks-list/new"
                 className="relative inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <PlusIcon aria-hidden="true" className="-ml-0.5 h-5 w-5" />
