@@ -1,20 +1,6 @@
 import { fetchProjectsByUser, deleteProject } from "../services/projects";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getJwt } from "../../utils/jwt";
-
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  user: string;
-  updatedAt: string;
-  createdAt: string;
-}
-
-interface Projects {
-  projects: Project[];
-}
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project | null>(null);

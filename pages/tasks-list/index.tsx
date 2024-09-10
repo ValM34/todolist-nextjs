@@ -5,58 +5,6 @@ import { fetchTasksByProjectId } from "../services/tasks";
 import { fetchProjectsByUser } from "../services/projects";
 import Filters from "../../components/pages/tasks-list/filters";
 import Link from 'next/link';
-import { getJwt } from "../../utils/jwt";
-
-interface Task {
-  _id: string;
-  title: string;
-  completed: string;
-  emergency: string;
-  importance: string;
-  project: string;
-  createdAt: string;
-  updatedAt: string;
-  description: string;
-  score: number;
-}
-
-interface TasksList {
-  tasks: Task[];
-}
-
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  user: string;
-  updatedAt: string;
-  createdAt: string;
-}
-
-interface Projects {
-  projects: Project[];
-}
-
-interface EmergencyFilter {
-  [key: string]: boolean;
-  forte: boolean;
-  moyenne: boolean;
-  faible: boolean;
-}
-
-interface CompletedFilter {
-  [key: string]: boolean;
-  aFaire: boolean;
-  enCours: boolean;
-  terminee: boolean;
-}
-
-interface ImportanceFilter {
-  [key: string]: boolean;
-  forte: boolean;
-  moyenne: boolean;
-  faible: boolean;
-}
 
 export default function TasksList() {
   const [tasks, setTasks] = useState<Task[]>([]);

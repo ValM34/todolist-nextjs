@@ -1,5 +1,5 @@
 import dbConnect from '../../../lib/db-connect';
-import Todo from '../../../models/task';
+import Task from '../../../models/task';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
@@ -14,33 +14,31 @@ export default async function handler(req, res) {
   await dbConnect();
 
   switch (method) {
-    // fetch tasks by project id
     case 'GET':
       try {
-        const todo = await Todo.find({ project: req.query.id });
-        if (!todo) {
+        const task = await Task.findById(id);
+        if (!task) {
           return res.status(404).json({ success: false });
         }
-        res.status(200).json({ success: true, data: todo });
+        res.status(200).json({ success: true, data: task });
       } catch (error) {
         res.status(400).json({ success: false });
       }
       break;
 
-    case 'DELETE':
+    case 'PUT':
       try {
-        const deletedTodo = await Todo.deleteOne({ _id: id });
-        if (!deletedTodo) {
+        const task = await Task.findByIdAndUpdate(id, req.body, {
+          new: true,
+          runValidators: true,
+        });
+        if (!task) {
           return res.status(404).json({ success: false });
         }
-        res.status(200).json({ success: true, data: {} });
+        res.status(200).json({ success: true, data: task });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
-
-    default:
-      res.status(405).json({ success: false });
       break;
   }
 }

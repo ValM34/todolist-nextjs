@@ -4,7 +4,7 @@ export async function fetchTasksByProjectId(projectId) {
   try {
     const token = getJwt();
     if(!token) return;
-    const response = await fetch("/api/tasks/" + projectId, {
+    const response = await fetch("/api/tasks/tasks-by-project-id/" + projectId, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": token
@@ -48,7 +48,7 @@ export async function fetchTaskById(taskId) {
   try {
     const token = getJwt();
     if(!token) return;
-    const response = await fetch("/api/tasks/one/" + taskId, {
+    const response = await fetch("/api/tasks/" + taskId, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": token
@@ -67,7 +67,7 @@ export async function fetchTaskById(taskId) {
 
 export async function updateTask(task, token) {
   try {
-    const response = await fetch("/api/tasks/one/" + task._id, {
+    const response = await fetch("/api/tasks/" + task._id, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

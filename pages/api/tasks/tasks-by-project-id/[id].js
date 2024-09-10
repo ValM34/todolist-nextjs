@@ -1,5 +1,5 @@
 import dbConnect from '../../../../lib/db-connect';
-import Task from '../../../../models/task';
+import Todo from '../../../../models/task';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
@@ -14,28 +14,14 @@ export default async function handler(req, res) {
   await dbConnect();
 
   switch (method) {
+    // fetch tasks by project id
     case 'GET':
       try {
-        const task = await Task.findById(id);
-        if (!task) {
+        const todo = await Todo.find({ project: req.query.id });
+        if (!todo) {
           return res.status(404).json({ success: false });
         }
-        res.status(200).json({ success: true, data: task });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-
-    case 'PUT':
-      try {
-        const task = await Task.findByIdAndUpdate(id, req.body, {
-          new: true,
-          runValidators: true,
-        });
-        if (!task) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: task });
+        res.status(200).json({ success: true, data: todo });
       } catch (error) {
         res.status(400).json({ success: false });
       }
@@ -43,14 +29,18 @@ export default async function handler(req, res) {
 
     case 'DELETE':
       try {
-        const deletedTask = await Task.deleteOne({ _id: id });
-        if (!deletedTask) {
+        const deletedTodo = await Todo.deleteOne({ _id: id });
+        if (!deletedTodo) {
           return res.status(404).json({ success: false });
         }
         res.status(200).json({ success: true, data: {} });
       } catch (error) {
         res.status(400).json({ success: false });
       }
+      break;
+
+    default:
+      res.status(405).json({ success: false });
       break;
   }
 }

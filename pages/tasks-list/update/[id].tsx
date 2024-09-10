@@ -5,36 +5,22 @@ import Link from 'next/link';
 import { fetchProjectsByUser } from "../../services/projects";
 import { getJwt } from "../../../utils/jwt";
 
-interface Task {
-  title: string | null;
-  description: string | null;
-  completed: string | null;
-  emergency: string | null;
-  importance: string | null;
-  project: string | null;
-}
-
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  user: string;
-  updatedAt: string;
-  createdAt: string;
-}
-
 interface Projects extends Array<Project> {}
 
 export default function TaskFormUpdate() {
   const router = useRouter();
   const { id } = router.query;
   const [task, setTask] = useState<Task>({
-    title: null,
-    description: null,
-    completed: null,
-    emergency: null,
-    importance: null,
-    project: null,
+    title: "",
+    description: "",
+    completed: "",
+    emergency: "",
+    importance: "",
+    project: "",
+    _id: "",
+    createdAt: "",
+    updatedAt: "",
+    score: 0,
   });
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const inputDescriptionRef = useRef<HTMLInputElement>(null);
