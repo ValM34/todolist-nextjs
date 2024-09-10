@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { fetchTaskById, updateTask, deleteTask } from "../../services/tasks";
 import Link from 'next/link';
 import { fetchProjectsByUser } from "../../services/projects";
-import { getJwt } from "../../../utils/jwt";
 
 interface Projects extends Array<Project> {}
 
@@ -53,23 +52,17 @@ export default function TaskFormUpdate() {
       project: selectProjectRef.current?.value,
     };
 
-    console.log(taskUpdated)
-    const token = getJwt();
-    if (!token) return;
-    await updateTask(taskUpdated, token);
+    await updateTask(taskUpdated);
     router.push("/");
   };
 
   const handleDeleteTask = async () => {
     if (!id) return;
-    const token = getJwt();
-    if (!token) return;
-    await deleteTask(id, token);
+    await deleteTask(id);
     router.push("/");
   }
 
   useEffect(() => {
-    let token = getJwt();
     (async () => {
       const projectsList = await fetchProjectsByUser();
       if (projectsList && projectsList.length > 0 && projects === null) {

@@ -40,5 +40,17 @@ export default async function handler(req, res) {
         res.status(400).json({ success: false });
       }
       break;
+
+    case 'DELETE':
+      try {
+        const deletedTask = await Task.deleteOne({ _id: id });
+        if (!deletedTask) {
+          return res.status(404).json({ success: false });
+        }
+        res.status(200).json({ success: true, data: {} });
+      } catch (error) {
+        res.status(400).json({ success: false });
+      }
+      break;
   }
 }

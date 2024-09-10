@@ -65,8 +65,10 @@ export async function fetchTaskById(taskId) {
   }
 }
 
-export async function updateTask(task, token) {
+export async function updateTask(task) {
   try {
+    const token = getJwt();
+    if(!token) return;
     const response = await fetch("/api/tasks/" + task._id, {
       method: "PUT",
       headers: {
@@ -86,9 +88,11 @@ export async function updateTask(task, token) {
   }
 }
 
-export async function deleteTask(taskId, token) {
+export async function deleteTask(taskId) {
   try {
-    const response = await fetch("/api/tasks/one/" + taskId, {
+    const token = getJwt();
+    if(!token) return;
+    const response = await fetch("/api/tasks/" + taskId, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
