@@ -7,6 +7,11 @@ interface Project {
   createdAt: string;
 }
 
-interface Projects {
-  projects: Project[];
+interface Projects extends Array<Project> {}
+
+interface ModaleProps {
+  handleOpenModale: (boolean: boolean) => void;
+  openModale: boolean;
+  projectToDelete: Project | null;
+  handleDeleteProject: (projectId: string) => void;
 }

@@ -43,6 +43,7 @@ export default async function handler(req, res) {
 
     case 'DELETE':
       try {
+        // @TODO => Check if the task belongs to the user
         const deletedTask = await Task.deleteOne({ _id: id });
         if (!deletedTask) {
           return res.status(404).json({ success: false });
