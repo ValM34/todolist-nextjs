@@ -8,11 +8,6 @@ export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const inputDescriptionRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const [newProject, setNewProject] = useState({
-    title: "",
-    description: "",
-  });
-  const [userId, setUserId] = useState(null);
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,17 +24,6 @@ export default function Projects() {
     });
     router.push('/projects');
   };
-
-  useEffect(() => {
-    let token = getJwt();
-    if (token) {
-      const getUserByToken = async () => {
-        const userDecoded = await getTokenPayload(token);
-        setUserId(userDecoded.user.userId);
-      }
-      getUserByToken();
-    }
-  })
 
   return (
     <>
