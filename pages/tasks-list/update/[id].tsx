@@ -22,7 +22,7 @@ export default function TaskFormUpdate() {
     score: 0,
   });
   const inputTitleRef = useRef<HTMLInputElement>(null);
-  const inputDescriptionRef = useRef<HTMLInputElement>(null);
+  const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const selectCompletedRef = useRef<HTMLSelectElement>(null);
   const selectEmergencyRef = useRef<HTMLSelectElement>(null);
   const selectImportanceRef = useRef<HTMLSelectElement>(null);
@@ -33,7 +33,7 @@ export default function TaskFormUpdate() {
     e.preventDefault();
     if (
       !inputTitleRef.current?.value ||
-      !inputDescriptionRef.current?.value ||
+      !textAreaDescriptionRef.current?.value ||
       !selectCompletedRef.current?.value ||
       !selectEmergencyRef.current?.value ||
       !selectImportanceRef.current?.value ||
@@ -45,7 +45,7 @@ export default function TaskFormUpdate() {
     const taskUpdated = {
       _id: id,
       title: inputTitleRef.current?.value,
-      description: inputDescriptionRef.current?.value,
+      description: textAreaDescriptionRef.current?.value,
       completed: selectCompletedRef.current?.value,
       emergency: selectEmergencyRef.current?.value,
       importance: selectImportanceRef.current?.value,
@@ -83,7 +83,7 @@ export default function TaskFormUpdate() {
       <h1 className="text-3xl font-bold mb-4 text-center">Modifier une tâche</h1>
       {task?.title && task?.description && task?.completed && task?.emergency && task?.importance && task?.project && projects ? (
         <>
-          <form className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
+          <form className="w-80 mx-auto border-2 border-gray-300 p-4 rounded-xl">
             <div className="flex flex-col">
               <label
                 htmlFor="title"
@@ -108,15 +108,14 @@ export default function TaskFormUpdate() {
               >
                 Description
               </label>
-              <input
-                ref={inputDescriptionRef}
-                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              <textarea
+                ref={textAreaDescriptionRef}
+                className="resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 id="description"
                 name="description"
                 required={true}
-                type="text"
                 defaultValue={task.description}
-              />
+              ></textarea>
             </div>
             <div className="flex flex-col mt-4">
               <label

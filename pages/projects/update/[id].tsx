@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
-  const inputDescriptionRef = useRef<HTMLInputElement>(null);
+  const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
   const { id } = router.query;
   const [project, setProject] = useState<Project>({
@@ -22,7 +22,7 @@ export default function Projects() {
     e.preventDefault();
     if(
       !inputTitleRef.current?.value ||
-      !inputDescriptionRef.current?.value
+      !textAreaDescriptionRef.current?.value
     ) {
       return;
     }
@@ -30,7 +30,7 @@ export default function Projects() {
     await updateProject({
       _id: id,
       title: inputTitleRef.current?.value,
-      description: inputDescriptionRef.current?.value
+      description: textAreaDescriptionRef.current?.value
     });
     router.push('/projects');
   };
@@ -47,9 +47,8 @@ export default function Projects() {
     <>
       {project?.title && project?.description ? (
         <>
-          <h1 className="text-3xl font-bold mb-4 text-center">Ajouter un projet</h1>
-          <form className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
-            <h2 className="font-semibold text-xl mb-4">Ajouter un projet</h2>
+          <h1 className="text-3xl font-bold mb-4 text-center">Modifier le projet</h1>
+          <form className="w-80 mx-auto border-2 border-gray-300 p-4 rounded-xl">
             <div className="flex flex-col">
               <label
                 htmlFor="title"
@@ -74,15 +73,14 @@ export default function Projects() {
               >
                 Description
               </label>
-              <input
-                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              <textarea
+                className="resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 id="description"
                 name="description"
                 required={true}
-                type="text"
-                ref={inputDescriptionRef}
+                ref={textAreaDescriptionRef}
                 defaultValue={project.description}
-              />
+              ></textarea>
             </div>
     
             <div className="flex justify-center">
