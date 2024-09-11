@@ -1,4 +1,4 @@
-import { getJwt } from "../../utils/jwt";
+import { getJwt } from "../../../utils/jwt";
 
 export async function getUser() {
   const token = getJwt();
