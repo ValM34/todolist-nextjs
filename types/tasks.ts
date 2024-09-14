@@ -9,6 +9,7 @@ interface Task {
   updatedAt: string;
   description: string;
   score: number;
+  user: string;
 }
 
 // @TODO revoir cette interface

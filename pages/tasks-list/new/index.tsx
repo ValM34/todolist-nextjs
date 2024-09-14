@@ -58,7 +58,7 @@ export default function TaskForm() {
     <>
       <h1 className="text-3xl font-bold mb-4 text-center">Ajouter une tâche</h1>
       {projects ? (
-        <form className="w-80 mx-auto border-2 border-gray-300 p-4 rounded-xl">
+        <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
           <div className="flex flex-col">
             <label
               htmlFor="title"

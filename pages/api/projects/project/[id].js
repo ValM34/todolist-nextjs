@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const project = await Project.findById(req.query.id);
+        const project = await Project.find({ _id: req.query.id, user: decoded.userId });
         res.status(200).json({ success: true, data: project });
       } catch (error) {
         res.status(400).json({ success: false });
@@ -23,8 +23,10 @@ export default async function handler(req, res) {
       break;
 
     case 'PUT':
+      console.log(req.body._id);
+      console.log(decoded.userId);
       try {
-        const project = await Project.findByIdAndUpdate(req.query.id, req.body, {
+        const project = await Project.findOneAndUpdate({ _id: req.body._id, user: decoded.userId }, req.body, {
           new: true,
           runValidators: true,
         });

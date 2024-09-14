@@ -28,7 +28,7 @@ export default function Projects() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-4 text-center">Ajouter un projet</h1>
-      <form className="w-80 mx-auto border-2 border-gray-300 p-4 rounded-xl">
+      <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
         <h2 className="font-semibold text-xl mb-4">Ajouter un projet</h2>
         <div className="flex flex-col">
           <label

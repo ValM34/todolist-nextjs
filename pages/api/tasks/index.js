@@ -1,5 +1,7 @@
 import dbConnect from '../../../lib/db-connect';
-import Todo from '../../../models/task';
+import Task from '../../../models/task';
+import User from '../../../models/user';
+import Project from '../../../models/project';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
@@ -13,19 +15,15 @@ export default async function handler(req, res) {
   await dbConnect();
 
   switch (method) {
-    // case 'GET':
-    //   try {
-    //     const todos = await Todo.find({});
-    //     res.status(200).json({ success: true, data: todos });
-    //   } catch (error) {
-    //     res.status(400).json({ success: false });
-    //   }
-    //   break;
-
     case 'POST':
       try {
-        const todo = await Todo.create(req.body);
-        res.status(201).json({ success: true, data: todo });
+        const project = await Project.find({_id: req.body.project, user: decoded.userId});
+        if (!project || project.length === 0) {
+          return res.status(404).json({ success: false, message: 'Projet non trouvé' });
+        }
+        const taskObject = { ...req.body, user: decoded.userId };
+        const task = await Task.create(taskObject);
+        res.status(201).json({ success: true, data: task });
       } catch (error) {
         res.status(400).json({ success: false });
       }

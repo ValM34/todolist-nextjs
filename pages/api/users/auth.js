@@ -2,12 +2,12 @@ import bcrypt from 'bcryptjs';
 import User from '../../../models/user';
 import jwt from 'jsonwebtoken';
 import dbConnect from '../../../lib/db-connect';
-import { cookies } from 'next/headers'
 
 export default async function handler(req, res) {
   await dbConnect();
   const { method } = req;
   const { email, password } = req.body;
+
   switch (method) {
     case 'POST':
       try {
@@ -23,9 +23,6 @@ export default async function handler(req, res) {
           expiresIn: '1d',
         });
 
-        // const cookieStore = cookies();
-
-        // cookieStore.set('token', token);
         res.setHeader(
           'Set-Cookie',
           `token=${token}; Max-Age=3600 * 24; Path=/; HttpOnly; Secure; SameSite=Strict`

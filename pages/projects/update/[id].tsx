@@ -39,7 +39,7 @@ export default function Projects() {
     (async () => {
       if (!id) return;
       let data = await fetchProjectById(id);
-      setProject(data);
+      setProject(data[0]);
     })();
   }, [id]);
 
@@ -48,7 +48,7 @@ export default function Projects() {
       {project?.title && project?.description ? (
         <>
           <h1 className="text-3xl font-bold mb-4 text-center">Modifier le projet</h1>
-          <form className="w-80 mx-auto border-2 border-gray-300 p-4 rounded-xl">
+          <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
             <div className="flex flex-col">
               <label
                 htmlFor="title"

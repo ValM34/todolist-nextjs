@@ -20,6 +20,7 @@ export default function TaskFormUpdate() {
     createdAt: "",
     updatedAt: "",
     score: 0,
+    user: "",
   });
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -66,7 +67,6 @@ export default function TaskFormUpdate() {
     (async () => {
       const projectsList = await fetchProjectsByUser();
       if (projectsList && projectsList.length > 0 && projects === null) {
-        console.log(projectsList);
         setProjects(projectsList);
       }
     })();
@@ -74,7 +74,7 @@ export default function TaskFormUpdate() {
     (async () => {
       if (!id) return;
       let data = await fetchTaskById(id);
-      setTask(data);
+      setTask(data[0]);
     })();
   }, [id, projects]);
 
@@ -83,7 +83,7 @@ export default function TaskFormUpdate() {
       <h1 className="text-3xl font-bold mb-4 text-center">Modifier une tâche</h1>
       {task?.title && task?.description && task?.completed && task?.emergency && task?.importance && task?.project && projects ? (
         <>
-          <form className="w-80 mx-auto border-2 border-gray-300 p-4 rounded-xl">
+          <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
             <div className="flex flex-col">
               <label
                 htmlFor="title"

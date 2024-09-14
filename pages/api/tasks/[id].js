@@ -1,5 +1,6 @@
 import dbConnect from '../../../lib/db-connect';
 import Task from '../../../models/task';
+import User from '../../../models/user';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const task = await Task.findById(id);
+        const task = await Task.find({ _id: id, user: decoded.userId });
         if (!task) {
           return res.status(404).json({ success: false });
         }
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
 
     case 'PUT':
       try {
-        const task = await Task.findByIdAndUpdate(id, req.body, {
+        const task = await Task.findOneAndUpdate({_id: id, user: decoded.userId }, req.body, {
           new: true,
           runValidators: true,
         });
@@ -43,8 +44,7 @@ export default async function handler(req, res) {
 
     case 'DELETE':
       try {
-        // @TODO => Check if the task belongs to the user
-        const deletedTask = await Task.deleteOne({ _id: id });
+        const deletedTask = await Task.deleteOne({ _id: id, user: decoded.userId });
         if (!deletedTask) {
           return res.status(404).json({ success: false });
         }

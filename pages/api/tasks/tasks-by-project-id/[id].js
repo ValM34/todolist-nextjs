@@ -1,5 +1,5 @@
 import dbConnect from '../../../../lib/db-connect';
-import Todo from '../../../../models/task';
+import Task from '../../../../models/task';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
@@ -17,23 +17,11 @@ export default async function handler(req, res) {
     // fetch tasks by project id
     case 'GET':
       try {
-        const todo = await Todo.find({ project: req.query.id });
-        if (!todo) {
+        const tasks = await Task.find({ project: req.query.id, user: decoded.userId });
+        if (!tasks) {
           return res.status(404).json({ success: false });
         }
-        res.status(200).json({ success: true, data: todo });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-
-    case 'DELETE':
-      try {
-        const deletedTodo = await Todo.deleteOne({ _id: id });
-        if (!deletedTodo) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: {} });
+        res.status(200).json({ success: true, data: tasks });
       } catch (error) {
         res.status(400).json({ success: false });
       }

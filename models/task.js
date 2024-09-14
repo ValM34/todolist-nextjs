@@ -29,6 +29,11 @@ const TaskSchema = new mongoose.Schema({
     ref: 'Project',
     required: [true, 'Le projet est requis'],
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'L\'utilisateur est requis'],
+  },
 },
 {
   timestamps: true,
