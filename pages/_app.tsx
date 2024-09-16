@@ -1,8 +1,8 @@
 import React from "react";
 import type { AppProps } from 'next/app';
-import Header from "../components/layouts/header";
-import Footer from "../components/layouts/footer";
-import "../style/globals.css";
+import Header from "@/components/layouts/header";
+import Footer from "@/components/layouts/footer";
+import "@/style/globals.css";
  
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (

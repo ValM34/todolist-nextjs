@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { updateUser, getUser } from "../services/users";
+import { updateUser, getUser } from "@/pages/services/users";
 
 export default function Profil() {
   const firstNameRef = useRef<HTMLInputElement>(null);

@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { createProject } from '../../services/projects';
-import { getTokenPayload } from "../../services/get-token-payload";
+import { useRef } from 'react';
+import { createProject } from '@/pages/services/projects';
 import { useRouter } from 'next/router';
-import { getJwt } from "../../../utils/jwt";
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);

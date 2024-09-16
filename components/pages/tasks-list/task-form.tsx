@@ -1,20 +1,5 @@
 import { useState, useRef } from "react";
-import { createTask } from "../../../pages/services/tasks";
-
-interface Task {
-  _id: string;
-  title: string;
-  completed: string;
-  emergency: string;
-  createdAt: string;
-  updatedAt: string;
-  description: string;
-}
-
-interface TaskFormProps {
-  tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-}
+import { createTask } from "@/pages/services/tasks";
 
 export default function TaskForm(props : TaskFormProps) {
   const { tasks, setTasks } = props;

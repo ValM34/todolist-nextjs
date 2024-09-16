@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRef } from 'react';
-import { createUser } from "../services/users";
+import { createUser } from "@/pages/services/users";
 import { useRouter } from 'next/router';
 
 export default function SignUp() {

@@ -1,6 +1,5 @@
-import dbConnect from '../../../lib/db-connect';
-import Task from '../../../models/task';
-import User from '../../../models/user';
+import dbConnect from '@/lib/db-connect';
+import Task from '@/models/task';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {

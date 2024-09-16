@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { updateProject } from '../../services/projects';
+import { updateProject } from '@/pages/services/projects';
 import { useRouter } from 'next/router';
-import { fetchProjectById } from "../../services/projects";
+import { fetchProjectById } from "@/pages/services/projects";
 import Link from 'next/link';
 
 export default function Projects() {

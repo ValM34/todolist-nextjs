@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOutUser } from '../../pages/services/users/sign-out';
+import { signOutUser } from '@/pages/services/users/sign-out';
 
 export default function Header() {
   const router = useRouter();

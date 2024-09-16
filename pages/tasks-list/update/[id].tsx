@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { fetchTaskById, updateTask, deleteTask } from "../../services/tasks";
+import { fetchTaskById, updateTask, deleteTask } from "@/pages/services/tasks";
 import Link from 'next/link';
-import { fetchProjectsByUser } from "../../services/projects";
+import { fetchProjectsByUser } from "@/pages/services/projects";
 
 interface Projects extends Array<Project> {}
 

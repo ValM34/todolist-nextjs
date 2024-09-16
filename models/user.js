@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import Project from './project';
 
 const UserSchema = new mongoose.Schema({
   firstName: {

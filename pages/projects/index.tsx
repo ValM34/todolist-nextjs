@@ -1,8 +1,8 @@
-import { fetchProjectsByUser, deleteProject } from "../services/projects";
+import { fetchProjectsByUser, deleteProject } from "@/pages/services/projects";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from 'next/router';
-import Modale from "../../components/modale";
+import Modale from "@/components/modale";
 
 export default function Projects() {
   const router = useRouter();
@@ -23,14 +23,6 @@ export default function Projects() {
     })();
   });
 
-  const displayModaleToDeleteProject = (projectId: string) => {
-    // Active la modale
-
-    // If oui alors handleDeleteProject(projectId)
-
-    // If non alors on ferme la modale (rien)
-  }
-
   const handleDeleteProject = async (projectId: string) => {
     (async () => {
       if(!projects) return;
@@ -41,8 +33,6 @@ export default function Projects() {
       setProjects(projectsFilteredAfterDeletion);
     })();
   };
-
-  console.log(projectToDelete)
 
   return (
     <>

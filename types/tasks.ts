@@ -18,6 +18,25 @@ interface TasksList {
   tasks: Task[];
 }
 
+interface TasksListProps {
+  tasks: Task[];
+  emergencyFilter: {
+    forte: boolean,
+    moyenne: boolean,
+    faible: boolean,
+  }
+  completedFilter: {
+    aFaire: boolean,
+    enCours: boolean,
+    terminee: boolean,
+  }
+  importanceFilter: {
+    forte: boolean,
+    moyenne: boolean,
+    faible: boolean,
+  }
+}
+
 interface EmergencyFilter {
   [key: string]: boolean;
   forte: boolean;
@@ -37,4 +56,9 @@ interface ImportanceFilter {
   forte: boolean;
   moyenne: boolean;
   faible: boolean;
+}
+
+interface TaskFormProps {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }

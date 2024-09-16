@@ -1,5 +1,5 @@
-import dbConnect from '../../../../lib/db-connect';
-import Project from '../../../../models/project';
+import dbConnect from '@/lib/db-connect';
+import Project from '@/models/project';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
