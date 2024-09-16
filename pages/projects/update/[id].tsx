@@ -3,6 +3,7 @@ import { updateProject } from '@/pages/services/projects';
 import { useRouter } from 'next/router';
 import { fetchProjectById } from "@/pages/services/projects";
 import Link from 'next/link';
+import mongoose from 'mongoose';
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
@@ -27,6 +28,7 @@ export default function Projects() {
       return;
     }
 
+    if(!id || Array.isArray(id)) return;
     await updateProject({
       _id: id,
       title: inputTitleRef.current?.value,
@@ -37,8 +39,8 @@ export default function Projects() {
 
   useEffect(() => {
     (async () => {
-      if (!id) return;
-      let data = await fetchProjectById(id);
+      if (!id || Array.isArray(id)) return;
+      let data = await fetchProjectById(new mongoose.Schema.Types.ObjectId(id));
       setProject(data[0]);
     })();
   }, [id]);

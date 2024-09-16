@@ -1,6 +1,7 @@
 import { getJwt } from "../../../utils/jwt";
 
-export async function fetchTasksByProjectId(projectId) {
+// @TODO réussir à mettre le type ObjectId
+export async function fetchTasksByProjectId(projectId : string) {
   try {
     const token = getJwt();
     if(!token) return;
@@ -21,7 +22,7 @@ export async function fetchTasksByProjectId(projectId) {
   }
 }
 
-export async function createTask(task) {
+export async function createTask(task : NewTask) {
   try {
     const token = getJwt();
     if(!token) return;
@@ -44,7 +45,7 @@ export async function createTask(task) {
   }
 }
 
-export async function fetchTaskById(taskId) {
+export async function fetchTaskById(taskId : string) {
   try {
     const token = getJwt();
     if(!token) return;
@@ -65,7 +66,7 @@ export async function fetchTaskById(taskId) {
   }
 }
 
-export async function updateTask(task) {
+export async function updateTask(task : UpdateTask) {
   try {
     const token = getJwt();
     if(!token) return;
@@ -88,7 +89,7 @@ export async function updateTask(task) {
   }
 }
 
-export async function deleteTask(taskId) {
+export async function deleteTask(taskId : string) {
   try {
     const token = getJwt();
     if(!token) return;

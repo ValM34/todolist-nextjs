@@ -1,4 +1,4 @@
-import { getJwt } from "../../../utils/jwt";
+import { getJwt } from "@/utils/jwt";
 
 export async function getUser() {
   const token = getJwt();
@@ -23,7 +23,7 @@ export async function getUser() {
   }
 }
 
-export async function createUser(user) {
+export async function createUser(user : NewUser) {
   try {
     const response = await fetch("/api/users", {
       method: "POST",
@@ -44,7 +44,7 @@ export async function createUser(user) {
   }
 }
 
-export async function updateUser(user) {
+export async function updateUser(user : UpdateUser) {
   const token = getJwt();
   if(!token) return;
 

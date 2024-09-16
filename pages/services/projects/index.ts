@@ -1,6 +1,6 @@
-import { getJwt } from "../../../utils/jwt";
+import { getJwt } from "@/utils/jwt";
 
-export async function createProject(project) {
+export async function createProject(project : NewProject) {
   try {
     const token = getJwt();
     if(!token) return;
@@ -24,7 +24,7 @@ export async function createProject(project) {
   }
 }
 
-export async function updateProject(project) {
+export async function updateProject(project : UpdateProject) {
   try {
     const token = getJwt();
     if(!token) return;
@@ -70,7 +70,7 @@ export async function fetchProjectsByUser() {
   }
 }
 
-export async function fetchProjectById(id) {
+export async function fetchProjectById(id : string) {
   try {
     const token = getJwt();
     if(!token) return;
@@ -91,7 +91,7 @@ export async function fetchProjectById(id) {
   }
 }
 
-export async function deleteProject(id) {
+export async function deleteProject(id : string) {
   try {
     const token = getJwt();
     if(!token) return;

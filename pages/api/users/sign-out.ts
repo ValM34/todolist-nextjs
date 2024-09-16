@@ -1,4 +1,6 @@
-export default async function handler(req, res) {
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   res.setHeader(
     'Set-Cookie',
     `token=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict`

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import Modale from "@/components/modale";
+import mongoose from 'mongoose';
 
 export default function Projects() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function Projects() {
       if(!projects) return;
       console.log(projectId)
 
-      await deleteProject(projectId);
+      await deleteProject(new mongoose.Schema.Types.ObjectId(projectId));
       let projectsFilteredAfterDeletion = projects.filter((project) => project._id !== projectId);
       setProjects(projectsFilteredAfterDeletion);
     })();

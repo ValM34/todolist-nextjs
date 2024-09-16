@@ -1,4 +1,4 @@
-export async function authUser(data) {
+export async function authUser(data : AuthUser) {
   try {
     const response = await fetch("/api/users/auth", {
       method: "POST",

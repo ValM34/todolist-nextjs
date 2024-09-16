@@ -62,3 +62,20 @@ interface TaskFormProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
+
+interface NewTask {
+  title: string;
+  completed: string;
+  emergency: string;
+  description: string;
+}
+
+interface UpdateTask {
+  _id: string;
+  title: string;
+  description: string;
+  completed: string;
+  emergency: string;
+  importance: string;
+  project: string;
+}

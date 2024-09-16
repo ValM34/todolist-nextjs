@@ -34,7 +34,8 @@ export default function SignUp() {
     }
 
     try {
-      await createUser(data);
+      const user = await createUser(data);
+      if(!user) return; // @TODO gérer erreur
       router.push('/signin');
     } catch (error) {
       alert("L'utilisateur existe déjà");

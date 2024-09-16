@@ -1,12 +1,16 @@
 import dbConnect from '@/lib/db-connect';
 import Task from '@/models/task';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
   const { id } = req.query;
   const token = req.headers.authorization;
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  if(!token) return res.status(400).json({ success: false });
+  const jwtSecret = process.env.JWT_SECRET;
+  if(!jwtSecret || jwtSecret === undefined) return res.status(400).json({ success: false });
+  const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
   if(!decoded) {
     return res.status(400).json({ success: false, message: 'Invalid token' });
   }

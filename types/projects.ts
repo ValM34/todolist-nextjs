@@ -15,3 +15,14 @@ interface ModaleProps {
   projectToDelete: Project | null;
   handleDeleteProject: (projectId: string) => void;
 }
+
+interface NewProject {
+  title: string;
+  description: string;
+}
+
+interface UpdateProject {
+  _id: string;
+  title: string;
+  description: string;
+}

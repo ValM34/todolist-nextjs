@@ -4,8 +4,6 @@ import { fetchTaskById, updateTask, deleteTask } from "@/pages/services/tasks";
 import Link from 'next/link';
 import { fetchProjectsByUser } from "@/pages/services/projects";
 
-interface Projects extends Array<Project> {}
-
 export default function TaskFormUpdate() {
   const router = useRouter();
   const { id } = router.query;
@@ -43,6 +41,7 @@ export default function TaskFormUpdate() {
       return;
     }
 
+    if(!id || Array.isArray(id)) return;
     const taskUpdated = {
       _id: id,
       title: inputTitleRef.current?.value,
@@ -58,7 +57,7 @@ export default function TaskFormUpdate() {
   };
 
   const handleDeleteTask = async () => {
-    if (!id) return;
+    if (!id || Array.isArray(id)) return;
     await deleteTask(id);
     router.push("/");
   }
@@ -72,7 +71,7 @@ export default function TaskFormUpdate() {
     })();
     
     (async () => {
-      if (!id) return;
+      if (!id || Array.isArray(id)) return;
       let data = await fetchTaskById(id);
       setTask(data[0]);
     })();

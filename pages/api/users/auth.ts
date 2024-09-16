@@ -2,11 +2,14 @@ import bcrypt from 'bcryptjs';
 import User from '@/models/user';
 import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/db-connect';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   await dbConnect();
   const { method } = req;
   const { email, password } = req.body;
+  const jwtSecret = process.env.JWT_SECRET;
+  if(!jwtSecret || jwtSecret === undefined) return res.status(400).json({ success: false });
 
   switch (method) {
     case 'POST':
@@ -19,7 +22,7 @@ export default async function handler(req, res) {
         if (!isMatch) {
           return res.status(400).json({ success: false });
         }
-        const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ userId: user._id, email: user.email }, jwtSecret, {
           expiresIn: '1d',
         });
 
