@@ -5,7 +5,6 @@ import { fetchTasksByProjectId } from "@/pages/services/tasks";
 import { fetchProjectsByUser } from "@/pages/services/projects";
 import Filters from "@/components/pages/tasks-list/filters";
 import Link from 'next/link';
-import mongoose from 'mongoose';
 
 export default function TasksList() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -48,7 +47,7 @@ export default function TasksList() {
   };
 
   const handleTasksFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newTasksList = await fetchTasksByProjectId(new mongoose.Schema.Types.ObjectId(e.target.value));
+    const newTasksList = await fetchTasksByProjectId(e.target.value);
     filterTasksByEmergencyAndImportance(newTasksList);
   };
 
@@ -119,11 +118,6 @@ export default function TasksList() {
               completedFilter={completedFilter}
               importanceFilter={importanceFilter}
             />
-            // <ul className="flex flex-wrap justify-evenly">
-            // {tasks ? tasks.map((task) => (
-            //   <TaskOld key={task._id} task={task} emergencyFilter={emergencyFilter} completedFilter={completedFilter} />
-            // )) : "Loading..."}
-            // </ul>
           ) : (
             <div>
               <div className="">
