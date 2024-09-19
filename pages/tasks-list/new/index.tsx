@@ -4,7 +4,7 @@ import { fetchProjectsByUser } from "@/pages/services/projects";
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { getJwt } from "@/utils/jwt";
-import { TaskValidationForm } from "@/utils/form-inputs-length-validation/task";
+import { TaskValidationForm } from "@/utils/form-validation/task";
 
 export default function TaskForm() {
   const router = useRouter();
@@ -26,25 +26,12 @@ export default function TaskForm() {
     let token = getJwt();
     if (!token) return;
     
-    if (
-      !selectCompletedRef.current?.value ||
-      !selectEmergencyRef.current?.value ||
-      !selectImportanceRef.current?.value ||
-      !selectProjectRef.current?.value
-    ) {
-      return;
-    }
-    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
-    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") {
-      return;
-    }
-    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
     const newTask = {
       title: inputTitleRef.current?.value,
       completed: selectCompletedRef.current?.value,
       emergency: selectEmergencyRef.current?.value,
       importance: selectImportanceRef.current?.value,
-      description: description,
+      description: textAreaDescriptionRef.current?.value,
       project: selectProjectRef.current?.value,
     }
     
@@ -55,7 +42,7 @@ export default function TaskForm() {
       return;
     }
 
-    await createTask(verifyForm.task);
+    await createTask(verifyForm.taskVerified);
     router.push("/tasks-list");
   };
 

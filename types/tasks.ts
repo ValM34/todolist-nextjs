@@ -65,19 +65,38 @@ interface TaskFormProps {
 
 interface NewTask {
   title: string;
-  description: string | null;
+  description: string;
   completed: string;
   emergency: string;
   importance: string;
   project: string;
 }
 
+interface NewTaskValidation {
+  title: string | undefined;
+  description: string | undefined;
+  completed: string | undefined;
+  emergency: string | undefined;
+  importance: string | undefined;
+  project: string | undefined;
+}
+
 interface UpdateTask {
   _id: string;
   title: string;
-  description: string | null;
+  description: string;
   completed: string;
   emergency: string;
   importance: string;
   project: string;
+}
+
+interface UpdateTaskValidation {
+  _id: string;
+  title: string | undefined;
+  description: string | undefined;
+  completed: string | undefined;
+  emergency: string | undefined;
+  importance: string | undefined;
+  project: string | undefined;
 }

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { fetchTaskById, updateTask, deleteTask } from "@/pages/services/tasks";
 import Link from 'next/link';
 import { fetchProjectsByUser } from "@/pages/services/projects";
-import { TaskValidationForm } from "@/utils/form-inputs-length-validation/task";
+import { TaskValidationForm } from "@/utils/form-validation/task";
 
 export default function TaskFormUpdate() {
   const router = useRouter();
@@ -35,19 +35,6 @@ export default function TaskFormUpdate() {
  
   const handleUpdateTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !selectCompletedRef.current?.value ||
-      !selectEmergencyRef.current?.value ||
-      !selectImportanceRef.current?.value ||
-      !selectProjectRef.current?.value
-    ) {
-      return;
-    }
-    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
-    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") {
-      return;
-    }
-    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
     if(!id || Array.isArray(id)) return;
     const taskUpdated = {
       _id: id,
@@ -55,7 +42,7 @@ export default function TaskFormUpdate() {
       completed: selectCompletedRef.current?.value,
       emergency: selectEmergencyRef.current?.value,
       importance: selectImportanceRef.current?.value,
-      description: description,
+      description: textAreaDescriptionRef.current?.value,
       project: selectProjectRef.current?.value,
     }
 
@@ -66,7 +53,7 @@ export default function TaskFormUpdate() {
       return;
     }
 
-    await updateTask(verifyForm.task);
+    await updateTask(verifyForm.taskVerified);
     router.push("/");
   };
 

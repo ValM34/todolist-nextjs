@@ -10,7 +10,6 @@ const ProjectSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      minlength: [10, "La description doit contenir au moins 10 caractères"],
       maxlength: [500, "La description ne doit pas contenir plus de 500 caractères"],
       required: false,
     },

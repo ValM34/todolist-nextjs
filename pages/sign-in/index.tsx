@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRef, useState } from 'react';
 import { authUser } from "@/pages/services/users/auth";
 import { useRouter } from 'next/router';
-import { UserValidationForm } from "@/utils/form-inputs-length-validation/user";
+import { UserValidationForm } from "@/utils/form-validation/user";
 
 export default function SignUp() {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -15,8 +15,6 @@ export default function SignUp() {
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
-    if(!emailRef.current?.value) return setFormErrorsState({ ...formErrorsState, email: "L'email est obligatoire" });
-    if(!passwordRef.current?.value) return setFormErrorsState({ ...formErrorsState, password: "Le mot de passe est obligatoire" });
     const data = {
       email: emailRef.current?.value,
       password: passwordRef.current?.value,
@@ -29,7 +27,7 @@ export default function SignUp() {
       return;
     }
 
-    const res = await authUser(verifyForm.user);
+    const res = await authUser(verifyForm.userVerified);
     const user = res.data;
     localStorage.setItem('user', JSON.stringify(user));
     router.push('/');

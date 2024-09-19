@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { updateUser, getUser } from "@/pages/services/users";
-import { UserValidationForm } from "@/utils/form-inputs-length-validation/user";
+import { UserValidationForm } from "@/utils/form-validation/user";
 
 export default function Profil() {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -29,12 +29,9 @@ export default function Profil() {
   
   const handleUpdateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(!firstNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, firstName: "Le prénom est obligatoire" });
-    if(!lastNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, lastName: "Le nom est obligatoire" });
-    const firstName = firstNameRef.current?.value === '' ? null : firstNameRef.current?.value;
-    const lastName = lastNameRef.current?.value === '' ? null : lastNameRef.current?.value;
+    const firstName = firstNameRef.current?.value;
+    const lastName = lastNameRef.current?.value;
     const user = { firstName, lastName };
-
     const validateForm = new UserValidationForm();
     const verifyForm = validateForm.verifyUpdateProfilForm(user);
     if(!verifyForm.success) {
@@ -42,7 +39,7 @@ export default function Profil() {
       return;
     }
 
-    await updateUser(verifyForm.user);
+    await updateUser(verifyForm.userVerified);
     setFormErrorsState({
       firstName: null as string | null,
       lastName: null as string | null,

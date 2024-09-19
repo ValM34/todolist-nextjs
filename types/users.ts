@@ -19,12 +19,30 @@ interface NewUser {
   confirmPassword: string;
 }
 
+interface NewUserValidation {
+  firstName: string | undefined;
+  lastName: string | undefined;
+  email: string | undefined;
+  password: string | undefined;
+  confirmPassword: string | undefined;
+}
+
 interface UpdateUser {
-  firstName: string | null;
-  lastName: string | null;
+  firstName: string;
+  lastName: string;
+}
+
+interface UpdateUserValidation {
+  firstName: string | undefined;
+  lastName: string | undefined;
 }
 
 interface AuthUser {
   email: string;
   password: string;
+}
+
+interface AuthUserValidation {
+  email: string | undefined;
+  password: string | undefined;
 }

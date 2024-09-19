@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRef, useState } from 'react';
 import { createUser } from "@/pages/services/users";
 import { useRouter } from 'next/router';
-import { UserValidationForm } from "@/utils/form-inputs-length-validation/user";
+import { UserValidationForm } from "@/utils/form-validation/user";
 
 export default function SignUp() {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -23,12 +23,6 @@ export default function SignUp() {
 
   async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
-    if(!firstNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, firstName: "Le prénom est obligatoire" });
-    if(!lastNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, lastName: "Le nom est obligatoire" });
-    if(!emailRef.current?.value) return setFormErrorsState({ ...formErrorsState, email: "L'email est obligatoire" });
-    if(!passwordRef.current?.value) return setFormErrorsState({ ...formErrorsState, password: "Le mot de passe est obligatoire" });
-    if(!confirmPasswordRef.current?.value) return setFormErrorsState({ ...formErrorsState, confirmPassword: "La confirmation du mot de passe est obligatoire" });
-    
     const data = {
       firstName: firstNameRef.current?.value,
       lastName: lastNameRef.current?.value,
@@ -45,12 +39,13 @@ export default function SignUp() {
     }
 
     try {
-      const user = await createUser(verifyForm.user);
+      const user = await createUser(verifyForm.userVerified);
       if(!user) return; // @TODO gérer erreur
       router.push('/signin');
     } catch (error) {
       setFormErrorsState({ ...formErrorsState, email: "L'email existe déjà" });
     }
+    
   }
   
   return (

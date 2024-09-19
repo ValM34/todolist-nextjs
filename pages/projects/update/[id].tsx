@@ -3,7 +3,7 @@ import { updateProject } from '@/pages/services/projects';
 import { useRouter } from 'next/router';
 import { fetchProjectById } from "@/pages/services/projects";
 import Link from 'next/link';
-import { ProjectValidationForm } from "@/utils/form-inputs-length-validation/project";
+import { ProjectValidationForm } from "@/utils/form-validation/project";
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
@@ -25,14 +25,11 @@ export default function Projects() {
 
   const handleUpdateProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
-    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") return;
     if(!id || Array.isArray(id)) return;
-    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
     const projectToUpdate = {
       _id: id,
       title: inputTitleRef.current?.value,
-      description: description
+      description: textAreaDescriptionRef.current?.value
     }
 
     const validateForm = new ProjectValidationForm();
@@ -42,7 +39,7 @@ export default function Projects() {
       return;
     }
 
-    await updateProject(verifyForm.project);
+    await updateProject(verifyForm.projectVerified);
     router.push('/projects');
   };
 

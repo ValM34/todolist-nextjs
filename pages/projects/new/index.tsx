@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { createProject } from '@/pages/services/projects';
 import { useRouter } from 'next/router';
-import { ProjectValidationForm } from "@/utils/form-inputs-length-validation/project";
+import { ProjectValidationForm } from "@/utils/form-validation/project";
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
@@ -14,12 +14,9 @@ export default function Projects() {
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
-    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") return;
-    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
     const projectToUpdate = {
       title: inputTitleRef.current?.value,
-      description: description
+      description: textAreaDescriptionRef.current?.value
     }
 
     const validateForm = new ProjectValidationForm();
@@ -29,7 +26,7 @@ export default function Projects() {
       return;
     }
 
-    await createProject(projectToUpdate);
+    await createProject(verifyForm.projectVerified);
     router.push('/projects');
   };
 

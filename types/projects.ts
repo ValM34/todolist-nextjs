@@ -18,11 +18,22 @@ interface ModaleProps {
 
 interface NewProject {
   title: string;
-  description: string | null;
+  description: string;
+}
+
+interface NewProjectValidation {
+  title: string | undefined;
+  description: string | undefined;
 }
 
 interface UpdateProject {
   _id: string;
   title: string;
-  description: string | null;
+  description: string;
+}
+
+interface UpdateProjectValidation {
+  _id: string;
+  title: string | undefined;
+  description: string | undefined;
 }
