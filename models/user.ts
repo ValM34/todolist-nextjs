@@ -26,35 +26,11 @@ const UserSchema = new mongoose.Schema({
     minlength: [10, 'Le mot de passe doit contenir au moins 10 caractères'],
     maxlength: [100, 'Le mot de passe doit contenir au maximum 100 caractères'],
   },
-  projects: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
-    },
-  ],
-  tasks: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
-    },
-  ],
 },
 {
   timestamps: true,
 },
 );
-
-// Suppression en CASCADE qui ne fonctionne pas
-// UserSchema.pre('remove', function(next) {
-//   const userId = this._id;
-//   Project.remove({ user: userId }, (err) => {
-//     if (err) {
-//       next(err);
-//     } else {
-//       next();
-//     }
-//   });
-// });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
 

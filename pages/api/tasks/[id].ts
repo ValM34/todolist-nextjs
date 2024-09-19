@@ -2,6 +2,7 @@ import dbConnect from '@/lib/db-connect';
 import Task from '@/models/task';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { updateTaskSchema } from '@/lib/zod/task-schema';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
@@ -32,7 +33,8 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
 
     case 'PUT':
       try {
-        const task = await Task.findOneAndUpdate({_id: id, user: decoded.userId }, req.body, {
+        const validateTask = updateTaskSchema.parse({ ...req.body, user: decoded.userId });
+        const task = await Task.findOneAndUpdate({_id: validateTask._id, user: validateTask.user }, req.body, {
           new: true,
           runValidators: true,
         });

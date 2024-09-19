@@ -5,7 +5,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
-  const { id } = req.query;
   const token = req.headers.authorization;
   if(!token) return res.status(400).json({ success: false });
   const jwtSecret = process.env.JWT_SECRET;

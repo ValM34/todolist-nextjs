@@ -1,9 +1,9 @@
 import dbConnect from '@/lib/db-connect';
 import Task from '@/models/task';
-import User from '../../../models/user';
 import Project from '@/models/project';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { createTaskSchema } from '@/lib/zod/task-schema';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
@@ -21,12 +21,12 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
   switch (method) {
     case 'POST':
       try {
-        const project = await Project.find({_id: req.body.project, user: decoded.userId});
+        const validateTask = createTaskSchema.parse({ ...req.body, user: decoded.userId });
+        const project = await Project.find({_id: validateTask.project, user: decoded.userId});
         if (!project || project.length === 0) {
           return res.status(404).json({ success: false, message: 'Projet non trouvé' });
         }
-        const taskObject = { ...req.body, user: decoded.userId };
-        const task = await Task.create(taskObject);
+        const task = await Task.create(validateTask);
         res.status(201).json({ success: true, data: task });
       } catch (error) {
         res.status(400).json({ success: false });

@@ -3,22 +3,23 @@ import User from '@/models/user';
 import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/db-connect';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { loginSchema } from '@/lib/zod/user-schema';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   await dbConnect();
   const { method } = req;
-  const { email, password } = req.body;
   const jwtSecret = process.env.JWT_SECRET;
   if(!jwtSecret || jwtSecret === undefined) return res.status(400).json({ success: false });
 
   switch (method) {
     case 'POST':
       try {
-        const user = await User.findOne({ email });
+        const validateUser = loginSchema.parse(req.body);
+        const user = await User.findOne({ email: validateUser.email });
         if (!user) {
           return res.status(400).json({ success: false });
         }
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(validateUser.password, user.password);
         if (!isMatch) {
           return res.status(400).json({ success: false });
         }

@@ -13,12 +13,6 @@ const ProjectSchema = new mongoose.Schema(
       maxlength: [500, "La description ne doit pas contenir plus de 500 caractères"],
       required: false,
     },
-    tasks: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Task",
-      },
-    ],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -29,16 +23,5 @@ const ProjectSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-// Suppression en CASCADE qui ne fonctionne pas
-// ProjectSchema.pre('findOneAndDelete', async function(next) {
-//   console.log('flsdkgjdfskljgljkfdgljkgfdljkgfljk')
-//   const doc = await this.model.findOne(this.getFilter()); // Récupère le projet qui est supprimé
-//   if (doc) {
-//     // Supprime toutes les tâches liées au projet
-//     await Task.deleteMany({ _id: { $in: doc.tasks } });
-//   }
-//   next();
-// });
 
 export default mongoose.models.Project || mongoose.model('Project', ProjectSchema);
