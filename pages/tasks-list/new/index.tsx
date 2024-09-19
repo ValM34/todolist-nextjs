@@ -4,6 +4,7 @@ import { fetchProjectsByUser } from "@/pages/services/projects";
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { getJwt } from "@/utils/jwt";
+import { TaskValidationForm } from "@/utils/form-inputs-length-validation/task";
 
 export default function TaskForm() {
   const router = useRouter();
@@ -14,16 +15,18 @@ export default function TaskForm() {
   const selectImportanceRef = useRef<HTMLSelectElement>(null);
   const selectProjectRef = useRef<HTMLSelectElement>(null);
   const [projects, setProjects] = useState<Projects | null>(null);
+  const [formErrorsState, setFormErrorsState] = useState({
+    title: null as string | null,
+    description: null as string | null,
+  })
 
   const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault();
 
     let token = getJwt();
     if (!token) return;
-
+    
     if (
-      !inputTitleRef.current?.value ||
-      !textAreaDescriptionRef.current?.value ||
       !selectCompletedRef.current?.value ||
       !selectEmergencyRef.current?.value ||
       !selectImportanceRef.current?.value ||
@@ -31,15 +34,28 @@ export default function TaskForm() {
     ) {
       return;
     }
-
-    await createTask({
+    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
+    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") {
+      return;
+    }
+    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
+    const newTask = {
       title: inputTitleRef.current?.value,
       completed: selectCompletedRef.current?.value,
       emergency: selectEmergencyRef.current?.value,
       importance: selectImportanceRef.current?.value,
-      description: textAreaDescriptionRef.current?.value,
+      description: description,
       project: selectProjectRef.current?.value,
-    });
+    }
+    
+    const validateForm = new TaskValidationForm();
+    const verifyForm = validateForm.verifyCreateTaskForm(newTask);
+    if(!verifyForm.success) {
+      setFormErrorsState(verifyForm.errorList);
+      return;
+    }
+
+    await createTask(verifyForm.task);
     router.push("/tasks-list");
   };
 
@@ -47,11 +63,9 @@ export default function TaskForm() {
     (async () => {
       const projectsList = await fetchProjectsByUser();
       if (projectsList && projectsList.length > 0 && projects === null) {
-        console.log(projectsList);
         setProjects(projectsList);
       }
     })();
-    
   });
 
   return (
@@ -68,12 +82,17 @@ export default function TaskForm() {
             </label>
             <input
               ref={inputTitleRef}
-              className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className={`${formErrorsState.title ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
               id="title"
               name="title"
               required={true}
               type="text"
             />
+            {formErrorsState.title ? (
+              <p className="mt-2 text-sm text-red-600">
+                {formErrorsState.title}
+              </p>
+            ) : ""}
           </div>
           <div className="flex flex-col mt-4">
             <label
@@ -84,11 +103,16 @@ export default function TaskForm() {
             </label>
             <textarea
               ref={textAreaDescriptionRef}
-              className="resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className={`${formErrorsState.description ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
               id="description"
               name="description"
               required={true}
             ></textarea>
+            {formErrorsState.description ? (
+              <p className="mt-2 text-sm text-red-600">
+                {formErrorsState.description}
+              </p>
+            ) : ""}
           </div>
           <div className="flex flex-col mt-4">
             <label

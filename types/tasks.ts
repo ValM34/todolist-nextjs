@@ -65,15 +65,17 @@ interface TaskFormProps {
 
 interface NewTask {
   title: string;
+  description: string | null;
   completed: string;
   emergency: string;
-  description: string;
+  importance: string;
+  project: string;
 }
 
 interface UpdateTask {
   _id: string;
   title: string;
-  description: string;
+  description: string | null;
   completed: string;
   emergency: string;
   importance: string;

@@ -3,13 +3,17 @@ import { updateProject } from '@/pages/services/projects';
 import { useRouter } from 'next/router';
 import { fetchProjectById } from "@/pages/services/projects";
 import Link from 'next/link';
-import mongoose from 'mongoose';
+import { ProjectValidationForm } from "@/utils/form-inputs-length-validation/project";
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
   const { id } = router.query;
+  const [formErrorsState, setFormErrorsState] = useState({
+    title: null as string | null,
+    description: null as string | null,
+  })
   const [project, setProject] = useState<Project>({
     title: "",
     description: "",
@@ -21,33 +25,38 @@ export default function Projects() {
 
   const handleUpdateProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(
-      !inputTitleRef.current?.value ||
-      !textAreaDescriptionRef.current?.value
-    ) {
+    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
+    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") return;
+    if(!id || Array.isArray(id)) return;
+    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
+    const projectToUpdate = {
+      _id: id,
+      title: inputTitleRef.current?.value,
+      description: description
+    }
+
+    const validateForm = new ProjectValidationForm();
+    const verifyForm = validateForm.verifyUpdateProjectForm(projectToUpdate);
+    if(!verifyForm.success) {
+      setFormErrorsState(verifyForm.errorList);
       return;
     }
 
-    if(!id || Array.isArray(id)) return;
-    await updateProject({
-      _id: id,
-      title: inputTitleRef.current?.value,
-      description: textAreaDescriptionRef.current?.value
-    });
+    await updateProject(verifyForm.project);
     router.push('/projects');
   };
 
   useEffect(() => {
     (async () => {
       if (!id || Array.isArray(id)) return;
-      let data = await fetchProjectById(new mongoose.Schema.Types.ObjectId(id));
+      let data = await fetchProjectById(id);
       setProject(data[0]);
     })();
   }, [id]);
 
   return (
     <>
-      {project?.title && project?.description ? (
+      {project?.title ? (
         <>
           <h1 className="text-3xl font-bold mb-4 text-center">Modifier le projet</h1>
           <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
@@ -59,7 +68,7 @@ export default function Projects() {
                 Titre
               </label>
               <input
-                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className={`${formErrorsState.title ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 id="title"
                 name="title"
                 required={true}
@@ -67,6 +76,11 @@ export default function Projects() {
                 ref={inputTitleRef}
                 defaultValue={project.title}
               />
+              {formErrorsState.title ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {formErrorsState.title}
+                </p>
+              ) : ""}
             </div>
             <div className="flex flex-col mt-4">
               <label
@@ -76,13 +90,18 @@ export default function Projects() {
                 Description
               </label>
               <textarea
-                className="resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className={`${formErrorsState.description ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 id="description"
                 name="description"
                 required={true}
                 ref={textAreaDescriptionRef}
                 defaultValue={project.description}
               ></textarea>
+              {formErrorsState.description ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {formErrorsState.description}
+                </p>
+              ) : ""}
             </div>
     
             <div className="flex justify-center">

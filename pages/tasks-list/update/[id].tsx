@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { fetchTaskById, updateTask, deleteTask } from "@/pages/services/tasks";
 import Link from 'next/link';
 import { fetchProjectsByUser } from "@/pages/services/projects";
+import { TaskValidationForm } from "@/utils/form-inputs-length-validation/task";
 
 export default function TaskFormUpdate() {
   const router = useRouter();
@@ -27,12 +28,14 @@ export default function TaskFormUpdate() {
   const selectImportanceRef = useRef<HTMLSelectElement>(null);
   const selectProjectRef = useRef<HTMLSelectElement>(null);
   const [projects, setProjects] = useState<Projects | null>(null);
+  const [formErrorsState, setFormErrorsState] = useState({
+    title: null as string | null,
+    description: null as string | null,
+  })
  
   const handleUpdateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
-      !inputTitleRef.current?.value ||
-      !textAreaDescriptionRef.current?.value ||
       !selectCompletedRef.current?.value ||
       !selectEmergencyRef.current?.value ||
       !selectImportanceRef.current?.value ||
@@ -40,19 +43,30 @@ export default function TaskFormUpdate() {
     ) {
       return;
     }
-
+    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
+    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") {
+      return;
+    }
+    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
     if(!id || Array.isArray(id)) return;
     const taskUpdated = {
       _id: id,
       title: inputTitleRef.current?.value,
-      description: textAreaDescriptionRef.current?.value,
       completed: selectCompletedRef.current?.value,
       emergency: selectEmergencyRef.current?.value,
       importance: selectImportanceRef.current?.value,
+      description: description,
       project: selectProjectRef.current?.value,
-    };
+    }
 
-    await updateTask(taskUpdated);
+    const validateForm = new TaskValidationForm();
+    const verifyForm = validateForm.verifyUpdateTaskForm(taskUpdated);
+    if(!verifyForm.success) {
+      setFormErrorsState(verifyForm.errorList);
+      return;
+    }
+
+    await updateTask(verifyForm.task);
     router.push("/");
   };
 
@@ -80,7 +94,7 @@ export default function TaskFormUpdate() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-4 text-center">Modifier une tâche</h1>
-      {task?.title && task?.description && task?.completed && task?.emergency && task?.importance && task?.project && projects ? (
+      {task?.title && task?.completed && task?.emergency && task?.importance && task?.project && projects ? (
         <>
           <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
             <div className="flex flex-col">
@@ -92,13 +106,18 @@ export default function TaskFormUpdate() {
               </label>
               <input
                 ref={inputTitleRef}
-                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className={`${formErrorsState.title ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 id="title"
                 name="title"
                 required={true}
                 type="text"
                 defaultValue={task.title}
               />
+              {formErrorsState.title ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {formErrorsState.title}
+                </p>
+              ) : ""}
             </div>
             <div className="flex flex-col mt-4">
               <label
@@ -109,12 +128,17 @@ export default function TaskFormUpdate() {
               </label>
               <textarea
                 ref={textAreaDescriptionRef}
-                className="resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className={`${formErrorsState.description ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 id="description"
                 name="description"
                 required={true}
                 defaultValue={task.description}
               ></textarea>
+              {formErrorsState.description ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {formErrorsState.description}
+                </p>
+              ) : ""}
             </div>
             <div className="flex flex-col mt-4">
               <label

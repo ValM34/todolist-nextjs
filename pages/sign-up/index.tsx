@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { createUser } from "@/pages/services/users";
 import { useRouter } from 'next/router';
+import { UserValidationForm } from "@/utils/form-inputs-length-validation/user";
 
 export default function SignUp() {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -12,33 +13,43 @@ export default function SignUp() {
 
   const router = useRouter();
 
+  const [formErrorsState, setFormErrorsState] = useState({
+    firstName: null as string | null,
+    lastName: null as string | null,
+    email: null as string | null,
+    password: null as string | null,
+    confirmPassword: null as string | null,
+  });
+
   async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
-    console.log(firstNameRef.current?.value)
-    if(
-      !firstNameRef.current?.value ||
-      !lastNameRef.current?.value ||
-      !emailRef.current?.value ||
-      !passwordRef.current?.value ||
-      !confirmPasswordRef.current?.value
-    ) {
-      alert('Veuillez remplir tous les champs');
-      return;
-    }
+    if(!firstNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, firstName: "Le prénom est obligatoire" });
+    if(!lastNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, lastName: "Le nom est obligatoire" });
+    if(!emailRef.current?.value) return setFormErrorsState({ ...formErrorsState, email: "L'email est obligatoire" });
+    if(!passwordRef.current?.value) return setFormErrorsState({ ...formErrorsState, password: "Le mot de passe est obligatoire" });
+    if(!confirmPasswordRef.current?.value) return setFormErrorsState({ ...formErrorsState, confirmPassword: "La confirmation du mot de passe est obligatoire" });
+    
     const data = {
-      firstName: firstNameRef.current?.value ?? '',
-      lastName: lastNameRef.current?.value ?? '',
-      email: emailRef.current?.value ?? '',
-      password: passwordRef.current?.value ?? '',
-      confirmPassword: confirmPasswordRef.current?.value ?? '',
+      firstName: firstNameRef.current?.value,
+      lastName: lastNameRef.current?.value,
+      email: emailRef.current?.value,
+      password: passwordRef.current?.value,
+      confirmPassword: confirmPasswordRef.current?.value,
+    }
+
+    const validateForm = new UserValidationForm();
+    const verifyForm = validateForm.verifyCreateUserForm(data);
+    if(!verifyForm.success) {
+      setFormErrorsState(verifyForm.errorList);
+      return;
     }
 
     try {
-      const user = await createUser(data);
+      const user = await createUser(verifyForm.user);
       if(!user) return; // @TODO gérer erreur
       router.push('/signin');
     } catch (error) {
-      alert("L'utilisateur existe déjà");
+      setFormErrorsState({ ...formErrorsState, email: "L'email existe déjà" });
     }
   }
   
@@ -62,11 +73,16 @@ export default function SignUp() {
                   ref={firstNameRef}
                   id="firstName"
                   name="firstName"
-                  type="firstName"
+                  type="text"
                   required
                   autoComplete="firstName"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={`${formErrorsState.firstName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 />
+                {formErrorsState.firstName ? (
+                  <p className="mt-2 text-sm text-red-600">
+                    {formErrorsState.firstName}
+                  </p>
+                ) : ""}
               </div>
             </div>
 
@@ -79,11 +95,16 @@ export default function SignUp() {
                   ref={lastNameRef}
                   id="lastName"
                   name="lastName"
-                  type="lastName"
+                  type="text"
                   required
                   autoComplete="lastName"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={`${formErrorsState.lastName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 />
+                {formErrorsState.lastName ? (
+                  <p className="mt-2 text-sm text-red-600">
+                    {formErrorsState.lastName}
+                  </p>
+                ) : ""}
               </div>
             </div>
 
@@ -99,8 +120,13 @@ export default function SignUp() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={`${formErrorsState.email ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 />
+                {formErrorsState.email ? (
+                  <p className="mt-2 text-sm text-red-600">
+                    {formErrorsState.email}
+                  </p>
+                ) : ""}
               </div>
             </div>
 
@@ -118,8 +144,13 @@ export default function SignUp() {
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={`${formErrorsState.password ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 />
+                {formErrorsState.password ? (
+                  <p className="mt-2 text-sm text-red-600">
+                    {formErrorsState.password}
+                  </p>
+                ) : ""}
               </div>
             </div>
 
@@ -136,8 +167,13 @@ export default function SignUp() {
                   name="passwordConfirmation"
                   type="password"
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={`${formErrorsState.confirmPassword ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 />
+                {formErrorsState.confirmPassword ? (
+                  <p className="mt-2 text-sm text-red-600">
+                    {formErrorsState.confirmPassword}
+                  </p>
+                ) : ""}
               </div>
             </div>
 

@@ -1,25 +1,35 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { createProject } from '@/pages/services/projects';
 import { useRouter } from 'next/router';
+import { ProjectValidationForm } from "@/utils/form-inputs-length-validation/project";
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
+  const [formErrorsState, setFormErrorsState] = useState({
+    title: null as string | null,
+    description: null as string | null,
+  })
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(
-      !inputTitleRef.current?.value ||
-      !textAreaDescriptionRef.current?.value
-    ) {
+    if(!inputTitleRef.current?.value) return setFormErrorsState({ ...formErrorsState, title: "Le titre est obligatoire" });
+    if(!textAreaDescriptionRef.current?.value && textAreaDescriptionRef.current?.value !== "") return;
+    const description : string | null = textAreaDescriptionRef.current?.value === "" ? null : textAreaDescriptionRef.current?.value;
+    const projectToUpdate = {
+      title: inputTitleRef.current?.value,
+      description: description
+    }
+
+    const validateForm = new ProjectValidationForm();
+    const verifyForm = validateForm.verifyCreateProjectForm(projectToUpdate);
+    if(!verifyForm.success) {
+      setFormErrorsState(verifyForm.errorList);
       return;
     }
 
-    await createProject({
-      title: inputTitleRef.current?.value,
-      description: textAreaDescriptionRef.current?.value
-    });
+    await createProject(projectToUpdate);
     router.push('/projects');
   };
 
@@ -36,13 +46,18 @@ export default function Projects() {
             Titre
           </label>
           <input
-            className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className={`${formErrorsState.title ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="title"
             name="title"
             required={true}
             type="text"
             ref={inputTitleRef}
           />
+          {formErrorsState.title ? (
+            <p className="mt-2 text-sm text-red-600">
+              {formErrorsState.title}
+            </p>
+          ) : ""}
         </div>
         <div className="flex flex-col mt-4">
           <label
@@ -52,12 +67,17 @@ export default function Projects() {
             Description
           </label>
           <textarea
-            className="resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className={`${formErrorsState.description ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="description"
             name="description"
             required={true}
             ref={textAreaDescriptionRef}
           ></textarea>
+          {formErrorsState.description ? (
+            <p className="mt-2 text-sm text-red-600">
+              {formErrorsState.description}
+            </p>
+          ) : ""}
         </div>
 
         <div className="flex justify-center">

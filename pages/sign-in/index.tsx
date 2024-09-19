@@ -1,27 +1,35 @@
 import Link from "next/link";
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { authUser } from "@/pages/services/users/auth";
 import { useRouter } from 'next/router';
+import { UserValidationForm } from "@/utils/form-inputs-length-validation/user";
 
 export default function SignUp() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const [formErrorsState, setFormErrorsState] = useState({
+    email: null as string | null,
+    password: null as string | null,
+  });
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
-    if(
-      !emailRef.current?.value ||
-      !passwordRef.current?.value
-    ) {
-      alert('Veuillez remplir tous les champs');
-      return;
-    }
+    if(!emailRef.current?.value) return setFormErrorsState({ ...formErrorsState, email: "L'email est obligatoire" });
+    if(!passwordRef.current?.value) return setFormErrorsState({ ...formErrorsState, password: "Le mot de passe est obligatoire" });
     const data = {
       email: emailRef.current?.value,
       password: passwordRef.current?.value,
     }
-    const res = await authUser(data);
+
+    const validateForm = new UserValidationForm();
+    const verifyForm = validateForm.verifyAuthUserForm(data);
+    if(!verifyForm.success) {
+      setFormErrorsState(verifyForm.errorList);
+      return;
+    }
+
+    const res = await authUser(verifyForm.user);
     const user = res.data;
     localStorage.setItem('user', JSON.stringify(user));
     router.push('/');
@@ -49,8 +57,13 @@ export default function SignUp() {
                 type="email"
                 required
                 autoComplete="email"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className={`${formErrorsState.email ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
               />
+              {formErrorsState.email ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {formErrorsState.email}
+                </p>
+              ) : ""}
             </div>
           </div>
 
@@ -68,8 +81,13 @@ export default function SignUp() {
                 type="password"
                 required
                 autoComplete="current-password"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className={`${formErrorsState.password ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
               />
+              {formErrorsState.password ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {formErrorsState.password}
+                </p>
+              ) : ""}
             </div>
           </div>
 

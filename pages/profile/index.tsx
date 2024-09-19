@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { updateUser, getUser } from "@/pages/services/users";
+import { UserValidationForm } from "@/utils/form-inputs-length-validation/user";
 
 export default function Profil() {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -10,6 +11,10 @@ export default function Profil() {
   }>({
     firstName: null,
     lastName: null,
+  });
+  const [formErrorsState, setFormErrorsState] = useState({
+    firstName: null as string | null,
+    lastName: null as string | null,
   });
 
   useEffect(() => {
@@ -24,16 +29,24 @@ export default function Profil() {
   
   const handleUpdateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(
-      firstNameRef.current?.value === undefined ||
-      lastNameRef.current?.value === undefined
-    ) {
-      return;
-    }
+    if(!firstNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, firstName: "Le prénom est obligatoire" });
+    if(!lastNameRef.current?.value) return setFormErrorsState({ ...formErrorsState, lastName: "Le nom est obligatoire" });
     const firstName = firstNameRef.current?.value === '' ? null : firstNameRef.current?.value;
     const lastName = lastNameRef.current?.value === '' ? null : lastNameRef.current?.value;
     const user = { firstName, lastName };
-    await updateUser(user);
+
+    const validateForm = new UserValidationForm();
+    const verifyForm = validateForm.verifyUpdateProfilForm(user);
+    if(!verifyForm.success) {
+      setFormErrorsState(verifyForm.errorList);
+      return;
+    }
+
+    await updateUser(verifyForm.user);
+    setFormErrorsState({
+      firstName: null as string | null,
+      lastName: null as string | null,
+    })
   }
 
   return (
@@ -49,13 +62,18 @@ export default function Profil() {
             Prénom
           </label>
           <input
-            className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className={`${formErrorsState.firstName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="firstName"
             name="firstName"
             type="text"
             ref={firstNameRef}
             defaultValue={user.firstName ?? ""}
           />
+          {formErrorsState.firstName ? (
+            <p className="mt-2 text-sm text-red-600">
+              {formErrorsState.firstName}
+            </p>
+          ) : ""}
         </div>
         <div className="flex flex-col mt-4">
           <label
@@ -65,13 +83,18 @@ export default function Profil() {
             Nom
           </label>
           <input
-            className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className={`${formErrorsState.lastName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="lastName"
             name="lastName"
             type="text"
             ref={lastNameRef}
             defaultValue={user.lastName ?? ""}
           />
+          {formErrorsState.lastName ? (
+            <p className="mt-2 text-sm text-red-600">
+              {formErrorsState.lastName}
+            </p>
+          ) : ""}
         </div>
 
         <div className="flex justify-center">

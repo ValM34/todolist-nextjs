@@ -5,10 +5,14 @@ const ProjectSchema = new mongoose.Schema(
     title: {
       type: String,
       required: [true, "Le titre est requis"],
+      minlength: [3, "Le titre doit contenir au moins 3 caractères"],
+      maxlength: [100, "Le titre ne doit pas contenir plus de 100 caractères"],
     },
     description: {
       type: String,
-      required: [true, "La description est requise"],
+      minlength: [10, "La description doit contenir au moins 10 caractères"],
+      maxlength: [500, "La description ne doit pas contenir plus de 500 caractères"],
+      required: false,
     },
     tasks: [
       {

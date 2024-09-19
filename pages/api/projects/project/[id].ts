@@ -27,8 +27,7 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       break;
 
     case 'PUT':
-      console.log(req.body._id);
-      console.log(decoded.userId);
+      console.log(req.body);
       try {
         const project = await Project.findOneAndUpdate({ _id: req.body._id, user: decoded.userId }, req.body, {
           new: true,
@@ -36,7 +35,7 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
         });
         res.status(200).json({ success: true, data: project });
       } catch (error) {
-        res.status(400).json({ success: false });
+        res.status(400).json({ success: false, message: error });//@TODO supprimer error
       }
       break;
 
