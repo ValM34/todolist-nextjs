@@ -16,11 +16,11 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
     case 'GET':
       try {
         if(!jwtSecret || !token) {
-          return res.status(400).json({ success: false, message: 'Unauthorized action' });
+          return res.status(401).json({ success: false });
         }
         const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
         if(!decoded) {
-          return res.status(400).json({ success: false, message: 'Invalid token' });
+          return res.status(401).json({ success: false });
         }
         const user = await User.findById(decoded.userId);
         res.status(200).json({ success: true, data: { firstName: user.firstName, lastName: user.lastName } });
@@ -36,10 +36,10 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       const isUserExist = await User.findOne({ email: validateUser.email });
       try {
         if(validateUser.password !== validateUser.confirmPassword) {
-          return res.status(400).json({ success: false, message: 'Password and confirm password must be the same' });
+          return res.status(401).json({ success: false });
         }
         if (isUserExist) {
-          return res.status(400).json({ success: false, message: 'User already exists' });
+          return res.status(401).json({ success: false });
         }
         const user = await User.create({ ...validateUser, password: hashedPassword });
         res.status(201).json({ success: true, data: user });
@@ -51,11 +51,11 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
     case 'PUT':
       try {
         if(!jwtSecret || !token) {
-          return res.status(400).json({ success: false, message: 'Unauthorized action' });
+          return res.status(401).json({ success: false });
         }
         const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
         if(!decoded) {
-          return res.status(400).json({ success: false, message: 'Invalid token' });
+          return res.status(401).json({ success: false });
         }
         const validateUser = updateUserSchema.parse(req.body);
         const user = await User.findByIdAndUpdate(decoded.userId, validateUser, {

@@ -8,12 +8,12 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
   const { method } = req;
   const { id } = req.query;
   const token = req.headers.authorization;
-  if(!token) return res.status(400).json({ success: false });
+  if(!token) return res.status(401).json({ success: false });
   const jwtSecret = process.env.JWT_SECRET;
-  if(!jwtSecret || jwtSecret === undefined) return res.status(400).json({ success: false });
+  if(!jwtSecret || jwtSecret === undefined) return res.status(401).json({ success: false });
   const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
   if(!decoded) {
-    return res.status(400).json({ success: false, message: 'Invalid token' });
+    return res.status(401).json({ success: false });
   }
 
   await dbConnect();
@@ -23,7 +23,7 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       try {
         const task = await Task.find({ _id: id, user: decoded.userId });
         if (!task) {
-          return res.status(404).json({ success: false });
+          return res.status(404).json({ success: false, message: 'Task not found' });
         }
         res.status(200).json({ success: true, data: task });
       } catch (error) {
@@ -39,7 +39,7 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
           runValidators: true,
         });
         if (!task) {
-          return res.status(404).json({ success: false });
+          return res.status(404).json({ success: false, message: 'Task not found' });
         }
         res.status(200).json({ success: true, data: task });
       } catch (error) {
@@ -51,12 +51,16 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       try {
         const deletedTask = await Task.deleteOne({ _id: id, user: decoded.userId });
         if (!deletedTask) {
-          return res.status(404).json({ success: false });
+          return res.status(404).json({ success: false, message: 'Task not found' });
         }
         res.status(200).json({ success: true, data: {} });
       } catch (error) {
         res.status(400).json({ success: false });
       }
+      break;
+
+    default:
+      res.status(405).json({ success: false });
       break;
   }
 }

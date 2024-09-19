@@ -7,13 +7,11 @@ import { updateProjectSchema } from '@/lib/zod/project-schema';
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
   const token = req.headers.authorization;
-  if(!token) return res.status(400).json({ success: false });
+  if(!token) return res.status(401).json({ success: false });
   const jwtSecret = process.env.JWT_SECRET;
-  if(!jwtSecret || jwtSecret === undefined) return res.status(400).json({ success: false });
+  if(!jwtSecret || jwtSecret === undefined) return res.status(401).json({ success: false });
   const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
-  if(!decoded) {
-    return res.status(400).json({ success: false, message: 'Invalid token' });
-  }
+  if(!decoded) return res.status(401).json({ success: false });
   
   await dbConnect();
 
@@ -53,7 +51,7 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       break;
 
     default:
-      res.status(400).json({ success: false });
+      res.status(405).json({ success: false });
       break;
   }
 }

@@ -17,11 +17,11 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
         const validateUser = loginSchema.parse(req.body);
         const user = await User.findOne({ email: validateUser.email });
         if (!user) {
-          return res.status(400).json({ success: false });
+          return res.status(401).json({ success: false });
         }
         const isMatch = await bcrypt.compare(validateUser.password, user.password);
         if (!isMatch) {
-          return res.status(400).json({ success: false });
+          return res.status(401).json({ success: false });
         }
         const token = jwt.sign({ userId: user._id, email: user.email }, jwtSecret, {
           expiresIn: '1d',
@@ -38,7 +38,7 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       }
       break;
     default:
-      res.status(400).json({ success: false });
+      res.status(405).json({ success: false });
       break;
   }
 }

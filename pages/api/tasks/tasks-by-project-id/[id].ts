@@ -6,13 +6,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
   const token = req.headers.authorization;
-  if(!token) return res.status(400).json({ success: false });
+  if(!token) return res.status(401).json({ success: false });
   const jwtSecret = process.env.JWT_SECRET;
-  if(!jwtSecret || jwtSecret === undefined) return res.status(400).json({ success: false });
+  if(!jwtSecret || jwtSecret === undefined) return res.status(401).json({ success: false });
   const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
-  if(!decoded) {
-    return res.status(400).json({ success: false, message: 'Invalid token' });
-  }
+  if(!decoded) return res.status(401).json({ success: false });
 
   await dbConnect();
 
@@ -22,7 +20,7 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       try {
         const tasks = await Task.find({ project: req.query.id, user: decoded.userId });
         if (!tasks) {
-          return res.status(404).json({ success: false });
+          return res.status(404).json({ success: false, message: 'Tasks not found' });
         }
         res.status(200).json({ success: true, data: tasks });
       } catch (error) {
