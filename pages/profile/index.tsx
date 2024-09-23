@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { updateUser, getUser } from "@/pages/services/users";
+import { updateUser, getUser } from "@/services/users";
 import { UserValidationForm } from "@/utils/form-validation/user";
 
 export default function Profil() {

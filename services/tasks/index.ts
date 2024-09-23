@@ -1,4 +1,4 @@
-import { getJwt } from "../../../utils/jwt";
+import { getJwt } from "@/utils/jwt";
 
 // @TODO réussir à mettre le type ObjectId
 export async function fetchTasksByProjectId(projectId : string) {

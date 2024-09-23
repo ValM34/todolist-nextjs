@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { updateProject } from "@/pages/services/projects";
+import { updateProject } from "@/services/projects";
 import { useRouter } from "next/router";
-import { fetchProjectById } from "@/pages/services/projects";
+import { fetchProjectById } from "@/services/projects";
 import Link from "next/link";
 import { ProjectValidationForm } from "@/utils/form-validation/project";
 import LoadingSpinner from "@/components/animations/loading-spinner";

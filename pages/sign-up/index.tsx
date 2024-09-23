@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRef, useState } from 'react';
-import { createUser } from "@/pages/services/users";
+import { createUser } from "@/services/users";
 import { useRouter } from 'next/router';
 import { UserValidationForm } from "@/utils/form-validation/user";
 

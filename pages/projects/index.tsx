@@ -1,4 +1,4 @@
-import { fetchProjectsByUser, deleteProject } from "@/pages/services/projects";
+import { fetchProjectsByUser, deleteProject } from "@/services/projects";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";

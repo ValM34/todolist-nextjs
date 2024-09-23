@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { createProject } from '@/pages/services/projects';
+import { createProject } from '@/services/projects';
 import { useRouter } from 'next/router';
 import { ProjectValidationForm } from "@/utils/form-validation/project";
 

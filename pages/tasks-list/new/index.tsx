@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { createTask } from "../../services/tasks";
-import { fetchProjectsByUser } from "@/pages/services/projects";
+import { createTask } from "@/services/tasks";
+import { fetchProjectsByUser } from "@/services/projects";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { getJwt } from "@/utils/jwt";

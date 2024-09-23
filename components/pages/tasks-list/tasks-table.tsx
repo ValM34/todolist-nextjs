@@ -1,40 +1,5 @@
 import Link from "next/link";
 
-// interface Task {
-//   _id: string;
-//   title: string;
-//   completed: string;
-//   emergency: string;
-//   importance: string;
-//   project: string;
-//   createdAt: string;
-//   updatedAt: string;
-//   description: string;
-// }
-
-// interface TasksList {
-//   tasks: Task[];
-// }
-
-// interface TasksListProps {
-//   tasks: Task[];
-//   emergencyFilter: {
-//     forte: boolean,
-//     moyenne: boolean,
-//     faible: boolean,
-//   }
-//   completedFilter: {
-//     aFaire: boolean,
-//     enCours: boolean,
-//     terminee: boolean,
-//   }
-//   importanceFilter: {
-//     forte: boolean,
-//     moyenne: boolean,
-//     faible: boolean,
-//   }
-// }
-
 export default function TasksTable(props: TasksListProps) {
   const { tasks, emergencyFilter, completedFilter, importanceFilter } = props;
   return (
