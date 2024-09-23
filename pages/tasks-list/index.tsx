@@ -97,8 +97,8 @@ export default function TasksList() {
         const firstProjectId = projectsList[0]._id;
         const data = await fetchTasksByProjectId(firstProjectId);
         filterTasksByEmergencyAndImportance(data);
-        setLoading(false);
       }
+      setLoading(false);
     })();
   }, [projects]);
 

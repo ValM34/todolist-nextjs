@@ -21,8 +21,8 @@ export default function Projects() {
       const projectsList = await fetchProjectsByUser();
       if (projectsList && projects === null && projectsList.length > 0) {
         setProjects(projectsList);
-        setLoading(false);
       }
+      setLoading(false);
     })();
   });
 

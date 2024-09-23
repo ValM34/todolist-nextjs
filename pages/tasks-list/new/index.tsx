@@ -53,8 +53,8 @@ export default function TaskForm() {
       const projectsList = await fetchProjectsByUser();
       if (projectsList && projectsList.length > 0 && projects === null) {
         setProjects(projectsList);
-        setLoading(false);
       }
+      setLoading(false);
     })();
   });
 
