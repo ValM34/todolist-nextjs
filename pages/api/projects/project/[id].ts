@@ -1,8 +1,10 @@
 import dbConnect from '@/lib/db-connect';
 import Project from '@/models/project';
+import Task from '@/models/task';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { updateProjectSchema } from '@/lib/zod/project-schema';
+import mongoose from 'mongoose';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
@@ -39,14 +41,24 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       break;
 
     case 'DELETE':
+      const session = await mongoose.startSession();
       try {
-        const projectDeleted = await Project.findOneAndDelete({
-          _id: req.body,
-          user: decoded.userId
+        await session.withTransaction(async () => {
+          await Task.deleteMany({
+            project: req.body,
+            user: decoded.userId
+          }, { session });
+          await Project.findOneAndDelete({
+            _id: req.body,
+            user: decoded.userId
+          }, { session });
         });
-        res.status(200).json({ success: true, data: projectDeleted });
+        await session.commitTransaction();
+        res.status(200).json({ success: true });
       } catch (error) {
         res.status(400).json({ success: false });
+      } finally {
+        await session.endSession();
       }
       break;
 

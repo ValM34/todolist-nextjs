@@ -4,7 +4,8 @@ import TasksTable from "@/components/pages/tasks-list/tasks-table";
 import { fetchTasksByProjectId } from "@/pages/services/tasks";
 import { fetchProjectsByUser } from "@/pages/services/projects";
 import Filters from "@/components/pages/tasks-list/filters";
-import Link from 'next/link';
+import Link from "next/link";
+import LoadingSpinner from "@/components/animations/loading-spinner";
 
 export default function TasksList() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -24,6 +25,7 @@ export default function TasksList() {
     faible: true,
   });
   const [projects, setProjects] = useState<Projects | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const handleEmergencyFilter = (e: React.MouseEvent<HTMLInputElement>) => {
     setEmergencyFilter({
@@ -55,28 +57,28 @@ export default function TasksList() {
     let tasksListOrdered: Task[] = [];
     tasks.forEach((task: Task) => {
       task.score = 0;
-      if (task.emergency === 'Forte') {
-        if (task.importance === 'Forte') {
+      if (task.emergency === "Forte") {
+        if (task.importance === "Forte") {
           task.score = 9;
-        } else if (task.importance === 'Moyenne') {
+        } else if (task.importance === "Moyenne") {
           task.score = 8;
-        } else if (task.importance === 'Faible') {
+        } else if (task.importance === "Faible") {
           task.score = 7;
         }
-      } else if (task.emergency === 'Moyenne') {
-        if (task.importance === 'Forte') {
+      } else if (task.emergency === "Moyenne") {
+        if (task.importance === "Forte") {
           task.score = 6;
-        } else if (task.importance === 'Moyenne') {
+        } else if (task.importance === "Moyenne") {
           task.score = 5;
-        } else if (task.importance === 'Faible') {
+        } else if (task.importance === "Faible") {
           task.score = 4;
         }
-      } else if (task.emergency === 'Faible') {
-        if (task.importance === 'Forte') {
+      } else if (task.emergency === "Faible") {
+        if (task.importance === "Forte") {
           task.score = 3;
-        } else if (task.importance === 'Moyenne') {
+        } else if (task.importance === "Moyenne") {
           task.score = 2;
-        } else if (task.importance === 'Faible') {
+        } else if (task.importance === "Faible") {
           task.score = 1;
         }
       }
@@ -95,48 +97,67 @@ export default function TasksList() {
         const firstProjectId = projectsList[0]._id;
         const data = await fetchTasksByProjectId(firstProjectId);
         filterTasksByEmergencyAndImportance(data);
+        setLoading(false);
       }
     })();
   }, [projects]);
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-4 text-center">Mes listes de tâches</h1>
-      {Array.isArray(projects) ? (
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
         <>
-          <Filters
-            handleEmergencyFilter={handleEmergencyFilter}
-            handleCompletedFilter={handleCompletedFilter}
-            handleImportanceFilter={handleImportanceFilter}
-            handleTasksFilter={handleTasksFilter}
-            projects={projects}
-          />
-          {Array.isArray(tasks) && tasks.length > 0 ? (
-            <TasksTable
-              tasks={tasks}
-              emergencyFilter={emergencyFilter}
-              completedFilter={completedFilter}
-              importanceFilter={importanceFilter}
-            />
+          <h1 className="text-3xl font-bold mb-4 text-center">
+            Mes listes de tâches
+          </h1>
+          {Array.isArray(projects) ? (
+            <>
+              <Filters
+                handleEmergencyFilter={handleEmergencyFilter}
+                handleCompletedFilter={handleCompletedFilter}
+                handleImportanceFilter={handleImportanceFilter}
+                handleTasksFilter={handleTasksFilter}
+                projects={projects}
+              />
+              {Array.isArray(tasks) && tasks.length > 0 ? (
+                <TasksTable
+                  tasks={tasks}
+                  emergencyFilter={emergencyFilter}
+                  completedFilter={completedFilter}
+                  importanceFilter={importanceFilter}
+                />
+              ) : (
+                <div>
+                  <div className="">
+                    Vous n&apos;avez pas encore créé de tâche liée au projet
+                    sélectionné. Il vous faut <b>créer une tâche</b>.
+                  </div>
+                  <Link
+                    href="/tasks-list/new"
+                    className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+                  >
+                    Cliquez ici pour ajouter une nouvelle tâche.
+                  </Link>
+                </div>
+              )}
+            </>
           ) : (
             <div>
               <div className="">
-                Vous n&apos;avez pas encore créé de
-                tâche liée au projet sélectionné. Il vous faut <b>créer une tâche</b>.
+                Chaque tâche est liée à un projet. Vous n&apos;avez pas encore
+                créé de projet. Il vous faut créer un projet pour pouvoir
+                ajouter des tâches.
               </div>
-              <Link href="/tasks-list/new" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour ajouter une nouvelle tâche.</Link>
+              <Link
+                href="/projects/new"
+                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+              >
+                Cliquez ici pour ajouter un nouveau projet.
+              </Link>
             </div>
           )}
         </>
-      ) : (
-        <div>
-          <div className="">
-            Chaque tâche est liée à un projet. Vous n&apos;avez pas encore créé de
-            projet. Il vous faut créer un projet pour pouvoir ajouter des
-            tâches.
-          </div>
-          <Link href="/projects/new" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour ajouter un nouveau projet.</Link>
-        </div>
       )}
     </>
   );
