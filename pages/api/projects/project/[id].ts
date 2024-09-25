@@ -6,6 +6,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { updateProjectSchema } from '@/lib/zod/project-schema';
 import mongoose from 'mongoose';
 
+import { ProjectService, projectService } from '@/src/services/project.service';
+
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
   const token = req.headers.authorization;
@@ -19,48 +21,26 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
 
   switch (method) {
     case 'GET':
-      try {
-        const project = await Project.find({ _id: req.query.id, user: decoded.userId });
-        res.status(200).json({ success: true, data: project });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
+      const { id } = req.query;
+      if(typeof id !== 'string') return res.status(400).json({ success: false });
+      const project = await projectService.getProjectByIdAndUserId(id, decoded.userId);
+      res.status(200).json({ success: true, data: project });
       break;
 
     case 'PUT':
       const validateProject = updateProjectSchema.parse(req.body);
       try {
-        const project = await Project.findOneAndUpdate({ _id: validateProject._id, user: decoded.userId }, validateProject, {
-          new: true,
-          runValidators: true,
-        });
-        res.status(200).json({ success: true, data: project });
-      } catch (error) {
+        const projectUpdated = await projectService.update(validateProject, decoded.userId);
+        res.status(200).json({ success: true, data: projectUpdated });
+      } catch {
         res.status(400).json({ success: false });
       }
       break;
 
     case 'DELETE':
-      const session = await mongoose.startSession();
-      try {
-        await session.withTransaction(async () => {
-          await Task.deleteMany({
-            project: req.body,
-            user: decoded.userId
-          }, { session });
-          await Project.findOneAndDelete({
-            _id: req.body,
-            user: decoded.userId
-          }, { session });
-        });
-        await session.commitTransaction();
-        res.status(200).json({ success: true });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      } finally {
-        await session.endSession();
-      }
-      break;
+      const success = await projectService.delete(req.body, decoded.userId);
+      if(!success) return res.status(400).json({ success: false });
+      return res.status(200).json({ success: true });
 
     default:
       res.status(405).json({ success: false });

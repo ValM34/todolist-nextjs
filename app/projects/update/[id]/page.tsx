@@ -52,7 +52,7 @@ export default function Projects() {
     (async () => {
       if (!id || Array.isArray(id)) return;
       let data = await fetchProjectById(id);
-      setProject(data[0]);
+      setProject(data);
       setLoading(false);
     })();
   }, [id]);
