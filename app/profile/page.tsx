@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
 import { updateUser, getUser } from "@/services/users";
 import { UserValidationForm } from "@/utils/form-validation/user";
