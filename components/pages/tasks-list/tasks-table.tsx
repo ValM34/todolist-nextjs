@@ -88,7 +88,7 @@ function Task(props: TaskProps) {
     <tr 
       className={`${ display === true ? "" : "hidden" }`}
       key={task._id}>
-    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
+    <td className="max-w-40 py-5 pl-4 pr-3 text-sm sm:pl-0">
       <div className="flex items-center">
         <div>
           <div className="font-medium text-gray-900">{task.title}</div>
