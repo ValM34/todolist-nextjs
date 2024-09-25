@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { useRef, useState } from 'react';
 import { createUser } from "@/services/users";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { UserValidationForm } from "@/utils/form-validation/user";
 
 export default function SignUp() {

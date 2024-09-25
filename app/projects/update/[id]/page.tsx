@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { updateProject } from "@/services/projects";
-import { useRouter } from "next/router";
+import { useRouter, useParams } from "next/navigation";
 import { fetchProjectById } from "@/services/projects";
 import Link from "next/link";
 import { ProjectValidationForm } from "@/utils/form-validation/project";
@@ -10,7 +12,8 @@ export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
-  const { id } = router.query;
+  const params = useParams();
+  const { id } = params as { id: string };
   const [formErrorsState, setFormErrorsState] = useState({
     title: null as string | null,
     description: null as string | null,

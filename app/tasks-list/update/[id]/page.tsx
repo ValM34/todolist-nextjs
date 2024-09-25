@@ -1,14 +1,31 @@
-import { useState, useRef, useEffect } from "react";
-import { createTask } from "@/services/tasks";
-import { fetchProjectsByUser } from "@/services/projects";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { getJwt } from "@/utils/jwt";
-import { TaskValidationForm } from "@/utils/form-validation/task";
-import LoadingSpinner from "@/components/animations/loading-spinner";
+"use client";
 
-export default function TaskForm() {
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useParams } from 'next/navigation';
+import { fetchTaskById, updateTask, deleteTask } from "@/services/tasks";
+import Link from 'next/link';
+import { fetchProjectsByUser } from "@/services/projects";
+import { TaskValidationForm } from "@/utils/form-validation/task";
+import LoadingSpinner from '@/components/animations/loading-spinner';
+
+export default function TaskFormUpdate() {
   const router = useRouter();
+  const params = useParams();
+  const { id } = params as { id: string };
+  const [loading, setLoading] = useState(true);
+  const [task, setTask] = useState<Task>({
+    title: "",
+    description: "",
+    completed: "",
+    emergency: "",
+    importance: "",
+    project: "",
+    _id: "",
+    createdAt: "",
+    updatedAt: "",
+    score: 0,
+    user: "",
+  });
   const inputTitleRef = useRef<HTMLInputElement>(null);
   const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const selectCompletedRef = useRef<HTMLSelectElement>(null);
@@ -19,34 +36,37 @@ export default function TaskForm() {
   const [formErrorsState, setFormErrorsState] = useState({
     title: null as string | null,
     description: null as string | null,
-  });
-  const [loading, setLoading] = useState(true);
-
-  const handleAddTodo = async (e: React.FormEvent) => {
+  })
+ 
+  const handleUpdateTask = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    let token = getJwt();
-    if (!token) return;
-
-    const newTask = {
+    if(!id || Array.isArray(id)) return;
+    const taskUpdated = {
+      _id: id,
       title: inputTitleRef.current?.value,
       completed: selectCompletedRef.current?.value,
       emergency: selectEmergencyRef.current?.value,
       importance: selectImportanceRef.current?.value,
       description: textAreaDescriptionRef.current?.value,
       project: selectProjectRef.current?.value,
-    };
+    }
 
     const validateForm = new TaskValidationForm();
-    const verifyForm = validateForm.verifyCreateTaskForm(newTask);
-    if (!verifyForm.success) {
+    const verifyForm = validateForm.verifyUpdateTaskForm(taskUpdated);
+    if(!verifyForm.success) {
       setFormErrorsState(verifyForm.errorList);
       return;
     }
 
-    await createTask(verifyForm.taskVerified);
-    router.push("/tasks-list");
+    await updateTask(verifyForm.taskVerified);
+    router.push("/");
   };
+
+  const handleDeleteTask = async () => {
+    if (!id || Array.isArray(id)) return;
+    await deleteTask(id);
+    router.push("/");
+  }
 
   useEffect(() => {
     (async () => {
@@ -54,9 +74,15 @@ export default function TaskForm() {
       if (projectsList && projectsList.length > 0 && projects === null) {
         setProjects(projectsList);
       }
+    })();
+    
+    (async () => {
+      if (!id || Array.isArray(id)) return;
+      let data = await fetchTaskById(id);
+      setTask(data[0]);
       setLoading(false);
     })();
-  });
+  }, [id, projects]);
 
   return (
     <>
@@ -64,11 +90,9 @@ export default function TaskForm() {
         <LoadingSpinner />
       ) : (
         <>
-          {projects ? (
+          {task?.title && task?.completed && task?.emergency && task?.importance && task?.project && projects ? (
             <>
-              <h1 className="text-3xl font-bold mb-4 text-center">
-                Ajouter une tâche
-              </h1>
+              <h1 className="text-3xl font-bold mb-4 text-center">Modifier une tâche</h1>
               <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
                 <div className="flex flex-col">
                   <label
@@ -79,23 +103,18 @@ export default function TaskForm() {
                   </label>
                   <input
                     ref={inputTitleRef}
-                    className={`${
-                      formErrorsState.title
-                        ? "ring-red-300 focus:ring-red-500"
-                        : "ring-gray-300 focus:ring-indigo-600"
-                    } mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                    className={`${formErrorsState.title ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                     id="title"
                     name="title"
                     required={true}
                     type="text"
+                    defaultValue={task.title}
                   />
                   {formErrorsState.title ? (
                     <p className="mt-2 text-sm text-red-600">
                       {formErrorsState.title}
                     </p>
-                  ) : (
-                    ""
-                  )}
+                  ) : ""}
                 </div>
                 <div className="flex flex-col mt-4">
                   <label
@@ -106,22 +125,17 @@ export default function TaskForm() {
                   </label>
                   <textarea
                     ref={textAreaDescriptionRef}
-                    className={`${
-                      formErrorsState.description
-                        ? "ring-red-300 focus:ring-red-500"
-                        : "ring-gray-300 focus:ring-indigo-600"
-                    } resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                    className={`${formErrorsState.description ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                     id="description"
                     name="description"
                     required={true}
+                    defaultValue={task.description}
                   ></textarea>
                   {formErrorsState.description ? (
                     <p className="mt-2 text-sm text-red-600">
                       {formErrorsState.description}
                     </p>
-                  ) : (
-                    ""
-                  )}
+                  ) : ""}
                 </div>
                 <div className="flex flex-col mt-4">
                   <label
@@ -136,6 +150,7 @@ export default function TaskForm() {
                     id="completed"
                     name="completed"
                     required={true}
+                    defaultValue={task.completed}
                   >
                     <option value="A faire">A faire</option>
                     <option value="En cours">En cours</option>
@@ -155,6 +170,7 @@ export default function TaskForm() {
                     id="emergency"
                     name="emergency"
                     required={true}
+                    defaultValue={task.emergency}
                   >
                     <option value="Forte">Forte</option>
                     <option value="Moyenne">Moyenne</option>
@@ -174,6 +190,7 @@ export default function TaskForm() {
                     id="importance"
                     name="importance"
                     required={true}
+                    defaultValue={task.importance}
                   >
                     <option value="Forte">Forte</option>
                     <option value="Moyenne">Moyenne</option>
@@ -193,6 +210,7 @@ export default function TaskForm() {
                     id="project"
                     name="project"
                     required={true}
+                    defaultValue={task.project}
                   >
                     {Array.isArray(projects) &&
                       projects.map((project: Project) => (
@@ -202,31 +220,32 @@ export default function TaskForm() {
                       ))}
                   </select>
                 </div>
-
+    
                 <div className="flex justify-center">
                   <button
                     className="mt-4 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     type="submit"
-                    onClick={handleAddTodo}
+                    onClick={handleUpdateTask}
                   >
-                    Ajouter
+                    Modifier
                   </button>
                 </div>
               </form>
+              <div className="flex justify-center">
+                <button 
+                  className="mt-4 rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                  onClick={handleDeleteTask}
+                >
+                  Supprimer la tâche
+                </button>
+              </div>
             </>
           ) : (
             <div>
               <div className="">
-                Chaque tâche est liée à un projet. Vous n&apos;avez pas encore
-                créé de projet. Il vous faut créer un projet pour pouvoir
-                ajouter des tâches.
+                Il semble qu&apos;aucune tâche ne corresponde à votre recherche.
               </div>
-              <Link
-                href="/projects/new"
-                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-              >
-                Cliquez ici pour ajouter un nouveau projet.
-              </Link>
+              <Link href="/" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Cliquez ici pour retourner sur la liste des tâches.</Link>
             </div>
           )}
         </>

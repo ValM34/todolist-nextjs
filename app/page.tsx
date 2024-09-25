@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useEffect, useState } from "react";
 import TasksTable from "@/components/pages/tasks-list/tasks-table";

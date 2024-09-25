@@ -1,7 +1,9 @@
+"use client";
+
 import { fetchProjectsByUser, deleteProject } from "@/services/projects";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Modale from "@/components/modale";
 import LoadingSpinner from "@/components/animations/loading-spinner";
 

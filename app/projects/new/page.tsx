@@ -1,6 +1,8 @@
+"use client"
+;
 import { useRef, useState } from 'react';
 import { createProject } from '@/services/projects';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { ProjectValidationForm } from "@/utils/form-validation/project";
 
 export default function Projects() {

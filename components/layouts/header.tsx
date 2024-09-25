@@ -1,20 +1,25 @@
+"use client";
+
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import { signOutUser } from '@/services/users/sign-out';
 
 export default function Header() {
+  const pathname = usePathname();
   const router = useRouter();
+
+  console.log(pathname);
 
   const handleSignOut = async () => {
     await signOutUser();
     localStorage.clear();
     router.push('/');
-    if(router.asPath === '/signin'){
-      router.reload();
+    if(pathname === '/signin'){
+      router.refresh();
     } else {
       router.push('/signin');
     }
@@ -52,7 +57,7 @@ export default function Header() {
                 href="/"
                 className={`
                   inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium
-                  ${router.asPath === '/' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}
+                  ${pathname === '/' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}
                 `}
               >
                 Mes listes
@@ -61,7 +66,7 @@ export default function Header() {
                 href="/projects"
                 className={`
                   inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium
-                  ${router.asPath === '/projects' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}
+                  ${pathname === '/projects' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}
                 `}
               >
                 Mes projects
