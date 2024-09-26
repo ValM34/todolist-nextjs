@@ -79,7 +79,7 @@ export default function TaskFormUpdate() {
     (async () => {
       if (!id || Array.isArray(id)) return;
       let data = await fetchTaskById(id);
-      setTask(data[0]);
+      setTask(data);
       setLoading(false);
     })();
   }, [id, projects]);

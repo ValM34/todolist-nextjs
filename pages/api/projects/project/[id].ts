@@ -1,11 +1,7 @@
 import dbConnect from '@/lib/db-connect';
-import Project from '@/models/project';
-import Task from '@/models/task';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { updateProjectSchema } from '@/lib/zod/project-schema';
-import mongoose from 'mongoose';
-
 import { ProjectService, projectService } from '@/src/services/project.service';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
@@ -24,18 +20,14 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
       const { id } = req.query;
       if(typeof id !== 'string') return res.status(400).json({ success: false });
       const project = await projectService.getProjectByIdAndUserId(id, decoded.userId);
-      res.status(200).json({ success: true, data: project });
-      break;
+      if(!project) return res.status(400).json({ success: false });
+      return res.status(200).json({ success: true, data: project });
 
     case 'PUT':
       const validateProject = updateProjectSchema.parse(req.body);
-      try {
-        const projectUpdated = await projectService.update(validateProject, decoded.userId);
-        res.status(200).json({ success: true, data: projectUpdated });
-      } catch {
-        res.status(400).json({ success: false });
-      }
-      break;
+      const projectUpdated = await projectService.update(validateProject, decoded.userId);
+      if(!projectUpdated) return res.status(400).json({ success: false });
+      return res.status(200).json({ success: true, data: projectUpdated });
 
     case 'DELETE':
       const success = await projectService.delete(req.body, decoded.userId);

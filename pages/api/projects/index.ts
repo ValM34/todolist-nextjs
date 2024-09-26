@@ -3,6 +3,7 @@ import Project from '@/models/project';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createProjectSchema } from '@/lib/zod/project-schema';
+import { ProjectService, projectService } from '@/src/services/project.service';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
@@ -17,23 +18,15 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
 
   switch (method) {
     case 'GET':
-      try {
-        const projects = await Project.find({ user: decoded.userId });
-        res.status(200).json({ success: true, data: projects });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
+      const projects = await projectService.getProjectsByUserId(decoded.userId);
+      if(!projects) return res.status(400).json({ success: false });
+      return res.status(200).json({ success: true, data: projects });
 
     case 'POST':
-      try {
-        const validateProject = createProjectSchema.parse(req.body);
-        const project = await Project.create({...validateProject, user: decoded.userId});
-        res.status(201).json({ success: true, data: project });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
+      const validateProject = createProjectSchema.parse(req.body);
+      const project = await projectService.create(validateProject, decoded.userId);
+      if(!project) return res.status(400).json({ success: false });
+      return res.status(200).json({ success: true, data: project });
       
     default:
       res.status(405).json({ success: false });

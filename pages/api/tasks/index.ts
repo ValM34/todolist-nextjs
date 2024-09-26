@@ -18,18 +18,10 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
 
   switch (method) {
     case 'POST':
-      try {
-        const validateTask = createTaskSchema.parse({ ...req.body, user: decoded.userId });
-        const project = await Project.find({_id: validateTask.project, user: decoded.userId});
-        if (!project || project.length === 0) {
-          return res.status(404).json({ success: false, message: 'Project not found' });
-        }
-        const task = await Task.create(validateTask);
-        res.status(201).json({ success: true, data: task });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
+      const validateTask = createTaskSchema.parse({ ...req.body, user: decoded.userId });
+      const newTask = await Task.create(validateTask);
+      if(!newTask) return res.status(400).json({ success: false });
+      return res.status(201).json({ success: true, data: newTask });
 
     default:
       res.status(405).json({ success: false });
