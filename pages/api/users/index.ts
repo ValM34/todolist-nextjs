@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createUserSchema, updateUserSchema } from '@/lib/zod/user-schema';
+import { userService } from '@/src/services/user.service';
 
 export default async function handler(req : NextApiRequest, res : NextApiResponse) {
   const { method } = req;
@@ -14,62 +15,56 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
 
   switch (method) {
     case 'GET':
-      try {
-        if(!jwtSecret || !token) {
-          return res.status(401).json({ success: false });
-        }
-        const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
-        if(!decoded) {
-          return res.status(401).json({ success: false });
-        }
-        const user = await User.findById(decoded.userId);
-        res.status(200).json({ success: true, data: { firstName: user.firstName, lastName: user.lastName } });
-      } catch (error) {
-        res.status(400).json({ success: false });
+      if(!jwtSecret || !token) {
+        return res.status(401).json({ success: false });
       }
-    break;
+      const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+      if(!decoded) {
+        return res.status(401).json({ success: false });
+      }
+      const user = await userService.get(decoded.userId);
+      if(!user) return res.status(404).json({ success: false, message: 'User not found' });
+      return res.status(200).json({
+        success: true,
+        data: {
+          firstName: user.firstName,
+          lastName: user.lastName
+        } 
+      });
 
     case 'POST':
       const validateUser = createUserSchema.parse(req.body);
+      if(validateUser.password !== validateUser.confirmPassword) return res.status(401).json({ success: false });
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(validateUser.password, salt);
-      const isUserExist = await User.findOne({ email: validateUser.email });
-      try {
-        if(validateUser.password !== validateUser.confirmPassword) {
-          return res.status(401).json({ success: false });
-        }
-        if (isUserExist) {
-          return res.status(401).json({ success: false });
-        }
-        const user = await User.create({ ...validateUser, password: hashedPassword });
-        res.status(201).json({ success: true, data: user });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
+      validateUser.password = await bcrypt.hash(validateUser.password, salt);
+      const newUser = await userService.create(validateUser);
+      if(!newUser) return res.status(401).json({ success: false });
+      return res.status(201).json({
+        success: true,
+        data: {
+          firstName: newUser.firstName,
+          lastName: newUser.lastName
+        } 
+      });
     
     case 'PUT':
-      try {
-        if(!jwtSecret || !token) {
-          return res.status(401).json({ success: false });
-        }
-        const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
-        if(!decoded) {
-          return res.status(401).json({ success: false });
-        }
-        const validateUser = updateUserSchema.parse(req.body);
-        const user = await User.findByIdAndUpdate(decoded.userId, validateUser, {
-          new: true,
-          runValidators: true,
-        });
-        if (!user) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: { firstName: user.firstName, lastName: user.lastName } });
-      } catch (error) {
-        res.status(400).json({ success: false });
+      if(!jwtSecret || !token) {
+        return res.status(401).json({ success: false });
       }
-      break;
+      const decodedToUpdate = jwt.verify(token, jwtSecret) as JwtPayload;
+      if(!decodedToUpdate) {//@TODO : Revoir comment je peux gérer les decoded plutôt que de changer le nom de variable
+        return res.status(401).json({ success: false });
+      }
+      const validateUserToUpdate = updateUserSchema.parse(req.body);//@TODO passer en safeParse car il n'est plus dans le try/catch - voir toutes les routes
+      const userUpdated = await userService.update(validateUserToUpdate, decodedToUpdate.userId);
+      if(!userUpdated) return res.status(400).json({ success: false });
+      return res.status(200).json({
+        success: true,
+        data: {
+          firstName: userUpdated.firstName,
+          lastName: userUpdated.lastName
+        } 
+      });
 
     default:
       res.status(405).json({ success: false });

@@ -1,5 +1,3 @@
-import { deleteTask } from "@/services/tasks";
-
 export interface ITaskRepo {
   create(task: any): Promise<any>;
   getTasksByProjectIdAndUserId(projectId: string, userId: string): Promise<any>;
