@@ -1,4 +1,6 @@
-interface User {
+
+
+type User = {
   _id: string;
   firstName: string;
   lastName: string;
@@ -20,7 +22,7 @@ interface NewUser {
 }
 
 interface NewUserValidation {
-  firstName: string | undefined;
+  firstName?: string ;
   lastName: string | undefined;
   email: string | undefined;
   password: string | undefined;

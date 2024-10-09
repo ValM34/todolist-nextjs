@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRef, useState } from 'react';
-import { createUser } from "@/services/users";
 import { useRouter } from 'next/navigation';
-import { UserValidationForm } from "@/utils/form-validation/user";
+import { registerSchema } from "@/validators";
+import {createUser} from "@/infrastructure/repositories";
 
 export default function SignUp() {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -32,24 +32,15 @@ export default function SignUp() {
       password: passwordRef.current?.value,
       confirmPassword: confirmPasswordRef.current?.value,
     }
-
-    const validateForm = new UserValidationForm();
-    const verifyForm = validateForm.verifyCreateUserForm(data);
-    if(!verifyForm.success) {
-      setFormErrorsState(verifyForm.errorList);
-      return;
-    }
-
+    const {confirmPassword, ...user} = registerSchema.parse(data);
     try {
-      const user = await createUser(verifyForm.userVerified);
-      if(!user) return; // @TODO gérer erreur
-      router.push('/signin');
+      await createUser(user);
+      console.log('User created successfully');
     } catch (error) {
-      setFormErrorsState({ ...formErrorsState, email: "L'email existe déjà" });
+      console.error('An error occurred while creating user:', error);
     }
-    
   }
-  
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
