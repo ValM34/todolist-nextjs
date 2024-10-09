@@ -11,6 +11,8 @@ export default async function handler(req : NextApiRequest, res : NextApiRespons
   if(!token) return res.status(401).json({ success: false });
   const jwtSecret = process.env.JWT_SECRET;
   if(!jwtSecret || jwtSecret === undefined) return res.status(401).json({ success: false });
+
+
   const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
   if(!decoded) return res.status(401).json({ success: false });
 
