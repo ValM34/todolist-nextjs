@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRef, useState } from 'react';
-import { authUser } from "@/services/users/auth";
 import { useRouter } from 'next/navigation';
 import { UserValidationForm } from "@/utils/form-validation/user";
+import { authUser } from "@/infrastructure/repositories";
+import { loginSchema } from "@/validators";
 
 export default function SignUp() {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -29,10 +30,13 @@ export default function SignUp() {
       return;
     }
 
-    const res = await authUser(verifyForm.userVerified);
-    const user = res.data;
-    localStorage.setItem('user', JSON.stringify(user));
-    router.push('/');
+    const user = loginSchema.parse(data);
+    console.log(user)
+    const res = await authUser(user);
+    console.log(res);
+    // const user = res.data;
+    // localStorage.setItem('user', JSON.stringify(user));
+    // router.push('/');
   }
   
   return (
