@@ -1,10 +1,10 @@
 interface Project {
-  _id: string;
+  id: string;
   title: string;
-  description: string;
-  user: string;
-  updatedAt: string;
-  createdAt: string;
+  description: string | null;
+  ownerId: string;
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 interface Projects extends Array<Project> {}

@@ -34,9 +34,9 @@ export default function SignUp() {
     console.log(user)
     const res = await authUser(user);
     console.log(res);
-    // const user = res.data;
-    // localStorage.setItem('user', JSON.stringify(user));
-    // router.push('/');
+    if(!res) return;
+    localStorage.setItem('user', JSON.stringify(res.token));
+    router.push('/');
   }
   
   return (

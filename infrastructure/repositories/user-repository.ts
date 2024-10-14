@@ -18,3 +18,19 @@ export async function createUser(data: Pick<User, 'firstName' | 'lastName' | 'em
     throw e;
   }
 }
+
+export async function update(data: Pick<User, 'id' | 'firstName' | 'lastName'>) {
+  try {
+    await prisma.user.update({
+      where: {
+        id: data.id
+      },
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+      }
+    })
+  } catch(e) {
+    console.error('An error occurred while updating user:', e);
+  }
+}

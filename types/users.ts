@@ -1,7 +1,7 @@
 
 
 type User = {
-  _id: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -9,8 +9,8 @@ type User = {
   confirmPassword: string;
   projects: string[];
   tasks: string[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface NewUser {

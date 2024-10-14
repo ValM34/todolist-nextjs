@@ -1,15 +1,26 @@
 interface Task {
-  _id: string;
+  id: string;
   title: string;
-  completed: string;
-  emergency: string;
-  importance: string;
-  project: string;
-  createdAt: string;
-  updatedAt: string;
+  status: string;
+  emergency: Emergency;
+  importance: Importance;
+  projectId: string;
+  createdAt: Date;
+  updatedAt: Date;
   description: string;
-  score: number;
-  user: string;
+  score: number | undefined;
+}
+
+enum Emergency {
+  HIGHT = "HIGHT",
+  AVERAGE = "AVERAGE",
+  LOW = "LOW",
+}
+
+enum Importance {
+  HIGHT = "HIGHT",
+  AVERAGE = "AVERAGE",
+  LOW = "LOW",
 }
 
 // @TODO revoir cette interface

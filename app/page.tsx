@@ -59,28 +59,28 @@ export default function TasksList() {
     let tasksListOrdered: Task[] = [];
     tasks.forEach((task: Task) => {
       task.score = 0;
-      if (task.emergency === "Forte") {
-        if (task.importance === "Forte") {
+      if (task.emergency === "HIGHT") {
+        if (task.importance === "HIGHT") {
           task.score = 9;
-        } else if (task.importance === "Moyenne") {
+        } else if (task.importance === "AVERAGE") {
           task.score = 8;
-        } else if (task.importance === "Faible") {
+        } else if (task.importance === "LOW") {
           task.score = 7;
         }
-      } else if (task.emergency === "Moyenne") {
-        if (task.importance === "Forte") {
+      } else if (task.emergency === "AVERAGE") {
+        if (task.importance === "HIGHT") {
           task.score = 6;
-        } else if (task.importance === "Moyenne") {
+        } else if (task.importance === "AVERAGE") {
           task.score = 5;
-        } else if (task.importance === "Faible") {
+        } else if (task.importance === "LOW") {
           task.score = 4;
         }
-      } else if (task.emergency === "Faible") {
-        if (task.importance === "Forte") {
+      } else if (task.emergency === "LOW") {
+        if (task.importance === "HIGHT") {
           task.score = 3;
-        } else if (task.importance === "Moyenne") {
+        } else if (task.importance === "AVERAGE") {
           task.score = 2;
-        } else if (task.importance === "Faible") {
+        } else if (task.importance === "LOW") {
           task.score = 1;
         }
       }
