@@ -35,7 +35,7 @@ export default function SignUp() {
     const {confirmPassword, ...user} = registerSchema.parse(data);
     try {
       await createUser(user);
-      console.log('User created successfully');
+        return router.push('/sign-in');
     } catch (error) {
       console.error('An error occurred while creating user:', error);
     }

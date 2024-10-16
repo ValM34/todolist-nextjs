@@ -31,12 +31,15 @@ export default function SignUp() {
     }
 
     const user = loginSchema.parse(data);
-    console.log(user)
-    const res = await authUser(user);
-    console.log(res);
-    if(!res) return;
-    localStorage.setItem('user', JSON.stringify(res.token));
-    router.push('/');
+    try {
+      await authUser(user);
+      return router.push('/');
+    } catch (e) {
+        console.error('An error occurred while authenticating user:', e);
+        setFormErrorsState({email: 'Invalid credentials', password: 'Invalid credentials'});
+    }
+
+
   }
   
   return (

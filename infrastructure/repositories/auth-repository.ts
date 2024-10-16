@@ -1,31 +1,44 @@
 "use server";
+
+import { cookies } from 'next/headers'
 import {PrismaClient} from '@prisma/client';
 import jwt from 'jsonwebtoken';
+import {setCookie} from "undici-types";
 
 const prisma = new PrismaClient();
 
 export async function authUser(data: Pick<User, 'email' | 'password'>) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: data.email
-      }
-    });
-    if(!user) {
-      throw new Error('User not found');
+    let user;
+
+    try {
+        user = await prisma.user.findUnique({
+            where: {
+                email: data.email
+            }
+        });
+    } catch (e) {
+        throw new Error('An error occurred while finding user...');
     }
+
     // const isMatch = await bcrypt.compare(data.password, user.password);
-    const isMatch = user.password === data.password;
-    if(!isMatch) {
-      throw new Error('Invalid password');
+
+    if (!user || user?.password !== data.password) {
+        throw new Error('Invalid credentials');
     }
+
     const jwtSecret = process.env.JWT_SECRET;
-    if(!jwtSecret || jwtSecret === undefined) throw new Error('JWT secret not found');
-    const token = jwt.sign({ userId: user.id, email: user.email }, jwtSecret, {
-      expiresIn: '1d',
+    if (!jwtSecret) {
+        throw new Error('JWT secret not found');
+    }
+
+    const token = jwt.sign({ email: user.email, firstname: user.firstName, lastname: user.lastName }, jwtSecret, {
+        expiresIn: 60 * 60,
     });
-    return { user, token };
-  } catch(e) {
-    console.error('An error occurred while authenticating user', e);
-  }
+
+    cookies().set('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24,
+    });
 }

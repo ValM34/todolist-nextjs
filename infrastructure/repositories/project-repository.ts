@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function createProject(data: Omit<Project, "_id" | "createdAt" | "updatedAt">){
+
   try {
     await prisma.project.create({
       data: {
