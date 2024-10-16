@@ -1,7 +1,8 @@
 "use client"
 ;
 import { useRef, useState } from 'react';
-import { createProject } from '@/services/projects';
+// import { createProject } from '@/services/projects';
+import { createProject } from '@/infrastructure/repositories/project-repository';
 import { useRouter } from 'next/navigation';
 import { ProjectValidationForm } from "@/utils/form-validation/project";
 
@@ -27,9 +28,12 @@ export default function Projects() {
       setFormErrorsState(verifyForm.errorList);
       return;
     }
-
-    await createProject(verifyForm.projectVerified);
-    router.push('/projects');
+    try {
+      await createProject(verifyForm.projectVerified);
+      router.push('/projects');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

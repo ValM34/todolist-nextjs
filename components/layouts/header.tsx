@@ -18,10 +18,10 @@ export default function Header() {
     await signOutUser();
     localStorage.clear();
     router.push('/');
-    if(pathname === '/signin'){
+    if(pathname === '/sign-in'){
       router.refresh();
     } else {
-      router.push('/signin');
+      router.push('/sign-in');
     }
   }
 

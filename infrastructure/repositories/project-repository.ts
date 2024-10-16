@@ -1,21 +1,27 @@
 "use server";
 import { PrismaClient } from '@prisma/client';
+import { getTokenByCookiesAndDecode } from '@/utils/get-owner-id';
 
 const prisma = new PrismaClient();
 
-export async function createProject(data: Omit<Project, "_id" | "createdAt" | "updatedAt">){
-
+export async function createProject(data: Pick<Project, "title" | "description">){
+  const owner = await getTokenByCookiesAndDecode();
+  if(!owner) throw new Error();
   try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: owner.email as string
+      }
+    })
     await prisma.project.create({
       data: {
         title: data.title,
         description: data.description,
-        ownerId: data.ownerId,
+        ownerId: user?.id as string
       }
     });
   } catch (e) {
-    console.error('An error occurred while creating project:', e);
-    throw e;
+    throw new Error('An error occurred while creating project...');
   }
 }
 
