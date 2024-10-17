@@ -42,3 +42,12 @@ export async function authUser(data: Pick<User, 'email' | 'password'>) {
         maxAge: 60 * 60 * 24,
     });
 }
+
+export async function disconnectUser() {
+    cookies().set('token', '', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 0,
+    });
+}

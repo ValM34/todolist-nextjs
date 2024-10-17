@@ -2,29 +2,31 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-import TasksTable from "@/components/pages/tasks-list/tasks-table";
+import TasksTable from "@/app/tasks-table";
 import { fetchTasksByProjectId } from "@/services/tasks";
 import { fetchProjectsByUser } from "@/services/projects";
-import Filters from "@/components/pages/tasks-list/filters";
+import { getAllProjectsByOwnerId } from "@/infrastructure/repositories/project-repository";
+import { getAllTasksByProjectId } from "@/infrastructure/repositories/task-repository";
+import Filters from "@/app/filters";
 import Link from "next/link";
 import LoadingSpinner from "@/components/animations/loading-spinner";
 
 export default function TasksList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [emergencyFilter, setEmergencyFilter] = useState<EmergencyFilter>({
-    forte: true,
-    moyenne: true,
-    faible: true,
+    HIGHT: true,
+    AVERAGE: true,
+    LOW: true,
   });
-  const [completedFilter, setCompletedFilter] = useState<CompletedFilter>({
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>({
     aFaire: true,
     enCours: true,
     terminee: false,
   });
   const [importanceFilter, setImportanceFilter] = useState<ImportanceFilter>({
-    forte: true,
-    moyenne: true,
-    faible: true,
+    HIGHT: true,
+    AVERAGE: true,
+    LOW: true,
   });
   const [projects, setProjects] = useState<Projects | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,9 +38,9 @@ export default function TasksList() {
     });
   };
 
-  const handleCompletedFilter = (e: React.MouseEvent<HTMLInputElement>) => {
-    setCompletedFilter({
-      ...completedFilter,
+  const handleStatusFilter = (e: React.MouseEvent<HTMLInputElement>) => {
+    setStatusFilter({
+      ...statusFilter,
       [e.currentTarget.value]: e.currentTarget.checked,
     });
   };
@@ -51,8 +53,14 @@ export default function TasksList() {
   };
 
   const handleTasksFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newTasksList = await fetchTasksByProjectId(e.target.value);
-    filterTasksByEmergencyAndImportance(newTasksList);
+    try {
+      const tasksList = await getAllTasksByProjectId(e.target.value);
+      if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found');
+      filterTasksByEmergencyAndImportance(tasksList);
+    } catch (e) {
+      console.error(e);
+      setTasks([]);
+    }
   };
 
   const filterTasksByEmergencyAndImportance = (tasks: Task[]) => {
@@ -93,12 +101,24 @@ export default function TasksList() {
 
   useEffect(() => {
     (async () => {
-      const projectsList = await fetchProjectsByUser();
-      if (projectsList && projectsList.length > 0 && projects === null) {
-        setProjects(projectsList);
-        const firstProjectId = projectsList[0]._id;
-        const data = await fetchTasksByProjectId(firstProjectId);
-        filterTasksByEmergencyAndImportance(data);
+      let projectsList;
+      try {
+        projectsList = await getAllProjectsByOwnerId();
+      } catch (e) {
+        console.error(e);
+      }
+
+      if (!projectsList || projectsList.length === 0 || projects !== null) return;
+      setProjects(projectsList);
+      const firstProjectId = projectsList[0].id;
+
+      try {
+        const tasksList = await getAllTasksByProjectId(firstProjectId);
+        if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found');
+        filterTasksByEmergencyAndImportance(tasksList);
+      } catch (e) {
+        console.error(e);
+        setTasks([]);
       }
       setLoading(false);
     })();
@@ -117,7 +137,7 @@ export default function TasksList() {
             <>
               <Filters
                 handleEmergencyFilter={handleEmergencyFilter}
-                handleCompletedFilter={handleCompletedFilter}
+                handleStatusFilter={handleStatusFilter}
                 handleImportanceFilter={handleImportanceFilter}
                 handleTasksFilter={handleTasksFilter}
                 projects={projects}
@@ -126,7 +146,7 @@ export default function TasksList() {
                 <TasksTable
                   tasks={tasks}
                   emergencyFilter={emergencyFilter}
-                  completedFilter={completedFilter}
+                  statusFilter={statusFilter}
                   importanceFilter={importanceFilter}
                 />
               ) : (
@@ -136,7 +156,7 @@ export default function TasksList() {
                     sélectionné. Il vous faut <b>créer une tâche</b>.
                   </div>
                   <Link
-                    href="/tasks-list/new"
+                    href="/tasks/new"
                     className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
                   >
                     Cliquez ici pour ajouter une nouvelle tâche.

@@ -1,40 +1,15 @@
 import { ChangeEvent } from "react";
 
-interface Project {
-  _id: string,
-  title: string,
-  description: string,
-  user: string,
-  updatedAt: string,
-  createdAt: string,
-}
-
-interface Task {
-  _id: string;
-  title: string;
-  completed: string;
-  emergency: string;
-  importance: string;
-  project: string;
-  createdAt: string;
-  updatedAt: string;
-  description: string;
-}
-
-interface TasksList {
-  tasks: Task[];
-}
-
 interface HandleEmergencyFilterProps {
   handleEmergencyFilter: (e: React.MouseEvent<HTMLInputElement>) => void;
-  handleCompletedFilter: (e: React.MouseEvent<HTMLInputElement>) => void;
+  handleStatusFilter: (e: React.MouseEvent<HTMLInputElement>) => void;
   handleImportanceFilter: (e: React.MouseEvent<HTMLInputElement>) => void;
   handleTasksFilter: (e: ChangeEvent<HTMLSelectElement>) => void;
   projects: Project[];
 }
 
 export default function Filters(props: HandleEmergencyFilterProps) {
-  const { handleEmergencyFilter, handleCompletedFilter, handleImportanceFilter, handleTasksFilter, projects } = props;
+  const { handleEmergencyFilter, handleStatusFilter, handleImportanceFilter, handleTasksFilter, projects } = props;
   return (
     <div className="border border-gray-200 my-10 p-6">
       <h2 className="mb-4 font-bold text-2xl">Filtres</h2>
@@ -48,17 +23,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleEmergencyFilter(e)}
-                    value="forte"
-                    id="forte"
-                    name="forte"
+                    value="HIGHT"
+                    id="HIGHT"
+                    name="HIGHT"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="forte" className="font-medium text-gray-900">
-                    Forte
+                  <label htmlFor="HIGHT" className="font-medium text-gray-900">
+                    HIGHT
                   </label>
                 </div>
               </div>
@@ -66,17 +41,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleEmergencyFilter(e)}
-                    value="moyenne"
-                    id="moyenne"
-                    name="moyenne"
+                    value="AVERAGE"
+                    id="AVERAGE"
+                    name="AVERAGE"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="moyenne" className="font-medium text-gray-900">
-                    Moyenne
+                  <label htmlFor="AVERAGE" className="font-medium text-gray-900">
+                    AVERAGE
                   </label>
                 </div>
               </div>
@@ -84,9 +59,9 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleEmergencyFilter(e)}
-                    value="faible"
-                    id="faible"
-                    name="faible"
+                    value="LOW"
+                    id="LOW"
+                    name="LOW"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -94,10 +69,10 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 </div>
                 <div className="ml-3 text-sm leading-6">
                   <label
-                    htmlFor="faible"
+                    htmlFor="LOW"
                     className="font-medium text-gray-900"
                   >
-                    Faible
+                    LOW
                   </label>
                 </div>
               </div>
@@ -113,17 +88,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleImportanceFilter(e)}
-                    value="forte"
-                    id="forte"
-                    name="forte"
+                    value="HIGHT"
+                    id="HIGHT"
+                    name="HIGHT"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="forte" className="font-medium text-gray-900">
-                    Forte
+                  <label htmlFor="HIGHT" className="font-medium text-gray-900">
+                    HIGHT
                   </label>
                 </div>
               </div>
@@ -131,17 +106,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleImportanceFilter(e)}
-                    value="moyenne"
-                    id="moyenne"
-                    name="moyenne"
+                    value="AVERAGE"
+                    id="AVERAGE"
+                    name="AVERAGE"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="moyenne" className="font-medium text-gray-900">
-                    Moyenne
+                  <label htmlFor="AVERAGE" className="font-medium text-gray-900">
+                    AVERAGE
                   </label>
                 </div>
               </div>
@@ -149,9 +124,9 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleImportanceFilter(e)}
-                    value="faible"
-                    id="faible"
-                    name="faible"
+                    value="LOW"
+                    id="LOW"
+                    name="LOW"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -159,10 +134,10 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 </div>
                 <div className="ml-3 text-sm leading-6">
                   <label
-                    htmlFor="faible"
+                    htmlFor="LOW"
                     className="font-medium text-gray-900"
                   >
-                    Faible
+                    LOW
                   </label>
                 </div>
               </div>
@@ -177,7 +152,7 @@ export default function Filters(props: HandleEmergencyFilterProps) {
               <div className="relative flex items-start">
                 <div className="flex h-6 items-center">
                   <input
-                    onClick={(e) => handleCompletedFilter(e)}
+                    onClick={(e) => handleStatusFilter(e)}
                     value="aFaire"
                     id="aFaire"
                     name="aFaire"
@@ -195,7 +170,7 @@ export default function Filters(props: HandleEmergencyFilterProps) {
               <div className="relative flex items-start">
                 <div className="flex h-6 items-center">
                   <input
-                    onClick={(e) => handleCompletedFilter(e)}
+                    onClick={(e) => handleStatusFilter(e)}
                     value="enCours"
                     id="enCours"
                     name="enCours"
@@ -213,7 +188,7 @@ export default function Filters(props: HandleEmergencyFilterProps) {
               <div className="relative flex items-start">
                 <div className="flex h-6 items-center">
                   <input
-                    onClick={(e) => handleCompletedFilter(e)}
+                    onClick={(e) => handleStatusFilter(e)}
                     value="terminee"
                     id="terminee"
                     name="terminee"
@@ -247,7 +222,7 @@ export default function Filters(props: HandleEmergencyFilterProps) {
           >
             {
               Array.isArray(projects) && projects.map((project) => {
-                return <option key={project._id} value={project._id}>{project.title}</option>
+                return <option key={project.id} value={project.id}>{project.title}</option>
               })
             }
           </select>

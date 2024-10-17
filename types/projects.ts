@@ -31,9 +31,3 @@ interface UpdateProject {
   title: string;
   description: string;
 }
-
-interface UpdateProjectValidation {
-  _id: string;
-  title: string | undefined;
-  description: string | undefined;
-}

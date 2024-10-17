@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { updateProject } from "@/services/projects";
 import { useRouter, useParams } from "next/navigation";
 import { fetchProjectById } from "@/services/projects";
+import { getOneProjectById, update } from "@/infrastructure/repositories/project-repository";
 import Link from "next/link";
 import { ProjectValidationForm } from "@/utils/form-validation/project";
 import LoadingSpinner from "@/components/animations/loading-spinner";
@@ -18,41 +19,45 @@ export default function Projects() {
     title: null as string | null,
     description: null as string | null,
   });
-  const [project, setProject] = useState<Project>({
-    title: "",
-    description: "",
-    _id: "",
-    createdAt: "",
-    updatedAt: "",
-    user: "",
-  });
+  const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
   const handleUpdateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id || Array.isArray(id)) return;
+    if(!inputTitleRef.current?.value) return;
     const projectToUpdate = {
-      _id: id,
+      id: id,
       title: inputTitleRef.current?.value,
-      description: textAreaDescriptionRef.current?.value,
+      description: textAreaDescriptionRef.current?.value as string,
     };
 
-    const validateForm = new ProjectValidationForm();
-    const verifyForm = validateForm.verifyUpdateProjectForm(projectToUpdate);
-    if (!verifyForm.success) {
-      setFormErrorsState(verifyForm.errorList);
-      return;
-    }
+    // const validateForm = new ProjectValidationForm();
+    // const verifyForm = validateForm.verifyUpdateProjectForm(projectToUpdate);
+    // if (!verifyForm.success) {
+    //   setFormErrorsState(verifyForm.errorList);
+    //   return;
+    // }
 
-    await updateProject(verifyForm.projectVerified);
-    router.push("/projects");
+    try {
+      await update(projectToUpdate);
+      router.push("/projects");
+    } catch (e) {
+      console.error(e);
+    }
+    // await updateProject(verifyForm.projectVerified);
   };
 
   useEffect(() => {
     (async () => {
       if (!id || Array.isArray(id)) return;
-      let data = await fetchProjectById(id);
-      setProject(data);
+      try {
+        const data = await getOneProjectById(id);
+        if (!data) throw new Error('An error occurred while finding project...');
+        setProject(data);
+      } catch (e) {
+        console.error(e);
+      }
       setLoading(false);
     })();
   }, [id]);
@@ -114,7 +119,7 @@ export default function Projects() {
                     name="description"
                     required={true}
                     ref={textAreaDescriptionRef}
-                    defaultValue={project.description}
+                    defaultValue={project.description as string}
                   ></textarea>
                   {formErrorsState.description ? (
                     <p className="mt-2 text-sm text-red-600">

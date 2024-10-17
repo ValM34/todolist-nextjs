@@ -7,7 +7,7 @@ interface Task {
   projectId: string;
   createdAt: Date;
   updatedAt: Date;
-  description: string;
+  description: string | null;
   score: number | undefined;
 }
 
@@ -32,30 +32,30 @@ interface TasksList {
 interface TasksListProps {
   tasks: Task[];
   emergencyFilter: {
-    forte: boolean,
-    moyenne: boolean,
-    faible: boolean,
+    HIGHT: boolean,
+    AVERAGE: boolean,
+    LOW: boolean,
   }
-  completedFilter: {
+  statusFilter: {
     aFaire: boolean,
     enCours: boolean,
     terminee: boolean,
   }
   importanceFilter: {
-    forte: boolean,
-    moyenne: boolean,
-    faible: boolean,
+    HIGHT: boolean,
+    AVERAGE: boolean,
+    LOW: boolean,
   }
 }
 
 interface EmergencyFilter {
   [key: string]: boolean;
-  forte: boolean;
-  moyenne: boolean;
-  faible: boolean;
+  HIGHT: boolean;
+  AVERAGE: boolean;
+  LOW: boolean;
 }
 
-interface CompletedFilter {
+interface StatusFilter {
   [key: string]: boolean;
   aFaire: boolean;
   enCours: boolean;
@@ -64,9 +64,9 @@ interface CompletedFilter {
 
 interface ImportanceFilter {
   [key: string]: boolean;
-  forte: boolean;
-  moyenne: boolean;
-  faible: boolean;
+  HIGHT: boolean;
+  AVERAGE: boolean;
+  LOW: boolean;
 }
 
 interface TaskFormProps {
@@ -77,37 +77,38 @@ interface TaskFormProps {
 interface NewTask {
   title: string;
   description: string;
-  completed: string;
+  status: string;
   emergency: string;
   importance: string;
-  project: string;
+  projectId: string;
 }
 
 interface NewTaskValidation {
   title: string | undefined;
   description: string | undefined;
-  completed: string | undefined;
+  status: string | undefined;
   emergency: string | undefined;
   importance: string | undefined;
   project: string | undefined;
 }
 
 interface UpdateTask {
-  _id: string;
+  id: string;
   title: string;
   description: string;
-  completed: string;
+  status: string;
   emergency: string;
   importance: string;
-  project: string;
+  projectId: string;
+  score: number | undefined;
 }
 
 interface UpdateTaskValidation {
-  _id: string;
+  id: string;
   title: string | undefined;
   description: string | undefined;
-  completed: string | undefined;
+  status: string | undefined;
   emergency: string | undefined;
   importance: string | undefined;
-  project: string | undefined;
+  projectId: string | undefined;
 }

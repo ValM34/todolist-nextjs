@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOutUser } from '@/services/users/sign-out';
+import { disconnectUser } from '@/infrastructure/repositories/auth-repository';
 
 export default function Header() {
   const pathname = usePathname();
@@ -15,8 +16,7 @@ export default function Header() {
   console.log(pathname);
 
   const handleSignOut = async () => {
-    await signOutUser();
-    localStorage.clear();
+    await disconnectUser();//@TODO est ce que j'ai besoin de faire un try/catch vue que je touche juste aux cookies ?
     router.push('/');
     if(pathname === '/sign-in'){
       router.refresh();
@@ -76,7 +76,7 @@ export default function Header() {
           <div className="flex items-center">
             <div className="flex-shrink-0 mr-6">
               <Link
-                href="/tasks-list/new"
+                href="/tasks/new"
                 className="relative inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <PlusIcon aria-hidden="true" className="-ml-0.5 h-5 w-5" />

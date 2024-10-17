@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function createTask(data: Omit<Task, "_id" | "createdAt" | "updatedAt" | "score">){
+export async function createTask(data: Omit<Task, "id" | "createdAt" | "updatedAt" | "score">){
   try {
     await prisma.task.create({
       data: {
@@ -16,8 +16,7 @@ export async function createTask(data: Omit<Task, "_id" | "createdAt" | "updated
       }
     });
   } catch (e) {
-    console.error('An error occurred while creating task:', e);
-    throw e;
+    throw new Error('An error occurred while creating task...');
   }
 }
 
@@ -31,7 +30,7 @@ export async function getAllTasksByProjectId(projectId: string): Promise<Task[] 
 
     return tasksList as Task[];
   } catch(e) {
-    console.error('An error occurred while finding projects:', e);
+    throw new Error('An error occurred while finding tasks:...');
   }
 }
 
@@ -43,12 +42,12 @@ export async function getOneTaskById(id: string): Promise<Task | undefined> {
       },
     });
     if(!task) {
-      throw new Error('An error occurred while finding task');
+      throw new Error('An error occurred while finding task...');
     }
 
     return task as Task;
   } catch(e) {
-    console.error('An error occurred while finding task:', e);
+    throw new Error('An error occurred while finding task...');
   }
 }
 
@@ -64,10 +63,11 @@ export async function update(data: Omit<Task, "updatedAt" | "createdAt">) {
         status: data.status,
         importance: data.importance,
         emergency: data.emergency,
+        projectId: data.projectId
       }
     })
   } catch(e) {
-    console.error('An error occurred while updating task:', e);
+    throw new Error('An error occurred while updating task...');
   }
 }
 
@@ -79,6 +79,6 @@ export async function deleteTask(id: string) {
       },
     })
   } catch(e) {
-    console.error('An error occurred while deleting task:', e);
+    throw new Error('An error occurred while deleting task...');
   }
 }

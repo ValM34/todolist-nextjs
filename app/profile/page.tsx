@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { updateUser, getUser } from "@/services/users";
+import { update } from "@/infrastructure/repositories/user-repository";
 import { UserValidationForm } from "@/utils/form-validation/user";
+import { getUserByEmail } from "@/infrastructure/repositories/user-repository";
 
 export default function Profil() {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -22,9 +24,17 @@ export default function Profil() {
   useEffect(() => {
     async function loadUser() {
       const userData = await getUser();
-      if(!userData) return;
-      if(user.firstName || user.lastName) return;
-      setUser(userData.data);
+      try {
+        const data = await getUserByEmail();
+        if(user.firstName || user.lastName) return;
+        if(!data || !data.firstName || !data.lastName) throw new Error('An error occurred while finding user...');
+        setUser({
+          firstName: data.firstName,
+          lastName: data.lastName
+        });
+      } catch(e) {
+        console.error(e);
+      }
     }
     loadUser();
   }, [user]);
@@ -41,7 +51,11 @@ export default function Profil() {
       return;
     }
 
-    await updateUser(verifyForm.userVerified);
+    try {
+      await update(verifyForm.userVerified);
+    } catch(e) {
+      console.error(e);
+    }
     setFormErrorsState({
       firstName: null as string | null,
       lastName: null as string | null,

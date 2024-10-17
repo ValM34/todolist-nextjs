@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchProjectsByUser, deleteProject } from "@/services/projects";
+import { getAllProjectsByOwnerId, deleteProject } from "@/infrastructure/repositories/project-repository";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,11 +20,16 @@ export default function Projects() {
 
   useEffect(() => {
     (async () => {
-      const projectsList = await fetchProjectsByUser();
-      if (projectsList && projects === null && projectsList.length > 0) {
-        setProjects(projectsList);
+      try {
+        const projectsList = await getAllProjectsByOwnerId();
+        if (projectsList && projects === null && projectsList.length > 0) {
+          setProjects(projectsList);
+        }
+        setLoading(false);
+      } catch (e) {
+        console.error(e);
       }
-      setLoading(false);
+
     })();
   });
 
@@ -32,10 +37,13 @@ export default function Projects() {
     (async () => {
       if (!projects) return;
       console.log(projectId);
-
-      await deleteProject(projectId);
+      try {
+        await deleteProject(projectId);
+      } catch (e) {
+        console.error(e);
+      }
       let projectsFilteredAfterDeletion = projects.filter(
-        (project) => project._id !== projectId
+        (project) => project.id !== projectId
       );
       setProjects(projectsFilteredAfterDeletion);
     })();
@@ -52,14 +60,14 @@ export default function Projects() {
             {Array.isArray(projects) ? (
               projects.map((project) => (
                 <div
-                  key={project._id}
+                  key={project.id}
                   className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
                 >
                   <div className="min-w-0 flex-1">
                     <div>
                       <div className="flex justify-between">
                         <Link
-                          href={`/tasks-list/${project._id}`}
+                          href={`/tasks/${project.id}`}
                           className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
                         >
                           {project.title}
@@ -67,7 +75,7 @@ export default function Projects() {
                         <button
                           className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
                           onClick={() =>
-                            router.push(`/projects/update/${project._id}`)
+                            router.push(`/projects/update/${project.id}`)
                           }
                         >
                           Modifier

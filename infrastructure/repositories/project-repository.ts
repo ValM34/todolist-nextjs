@@ -25,17 +25,18 @@ export async function createProject(data: Pick<Project, "title" | "description">
   }
 }
 
-export async function getAllProjectsByOwnerId(ownerId: string): Promise<Project[] | undefined> {
+export async function getAllProjectsByOwnerId(): Promise<Project[] | undefined> {
+  const owner = await getTokenByCookiesAndDecode();
+  if(!owner) throw new Error();
   try {
     const projectsList = await prisma.project.findMany({
       where: {
-        ownerId
+        ownerId: owner.ownerId as string
       }
     });
-
     return projectsList;
   } catch(e) {
-    console.error('An error occurred while finding projects:', e);
+    throw new Error('An error occurred while finding projects...');
   }
 }
 
@@ -47,12 +48,11 @@ export async function getOneProjectById(id: string): Promise<Project | undefined
       },
     });
     if(!project) {
-      throw new Error('An error occurred while finding project');
+      throw new Error('An error occurred while finding project...');
     }
-
     return project;
   } catch(e) {
-    console.error('An error occurred while finding project:', e);
+    throw new Error('An error occurred while finding project...');
   }
 }
 
@@ -68,18 +68,18 @@ export async function update(data: Pick<Project, "id" | "title" | "description">
       }
     })
   } catch(e) {
-    console.error('An error occurred while updating project:', e);
+    throw new Error('An error occurred while deleting project...');
   }
 }
 
 export async function deleteProject(id: string) {
   try {
-    await prisma.project.delete({
+    const projectDeleted = await prisma.project.delete({
       where: {
         id
       },
     })
   } catch(e) {
-    console.error('An error occurred while deleting project:', e);
+    throw new Error('An error occurred while deleting project...');
   }
 }

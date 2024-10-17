@@ -14,21 +14,21 @@ export class TaskValidationForm {
     this.errorList = errorList;
   }
 
-  verifyCreateTaskForm(task: NewTaskValidation) {
+  verifyCreateTaskForm(task: NewTask) {
     const title = this.validateTitle(task.title);
     const description = this.validateDescription(task.description);
-    const completed = this.validateCompleted(task.completed);
+    const status = this.validateCompleted(task.status);
     const emergency = this.validateEmergency(task.emergency);
     const importance = this.validateImportance(task.importance);
-    const project = this.validateProject(task.project);
+    const projectId = this.validateProject(task.projectId);
 
     const taskVerified: NewTask = {
       title,
       description,
-      completed,
+      status,
       emergency,
       importance,
-      project,
+      projectId,
     }
   
     return { success: this.success, errorList: this.errorList, taskVerified };
@@ -37,19 +37,19 @@ export class TaskValidationForm {
   verifyUpdateTaskForm(task: UpdateTaskValidation) {
     const title = this.validateTitle(task.title);
     const description = this.validateDescription(task.description);
-    const completed = this.validateCompleted(task.completed);
+    const status = this.validateCompleted(task.status);
     const emergency = this.validateEmergency(task.emergency);
     const importance = this.validateImportance(task.importance);
-    const project = this.validateProject(task.project);
+    const projectId = this.validateProject(task.projectId);
 
-    const taskVerified: UpdateTask = {
-      _id: task._id,
+    const taskVerified: Omit<UpdateTask, "score"> = {
+      id: task.id,
       title,
       description,
-      completed,
+      status,
       emergency,
       importance,
-      project,
+      projectId,
     }
   
     return { success: this.success, errorList: this.errorList, taskVerified };

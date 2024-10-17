@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen, act } from "@testing-library/react";
-import TaskForm from "../pages/tasks-list/new";
+import TaskForm from "../pages/tasks/new";
 import { createTask } from "@/services/tasks";
 import { useRouter } from "next/router";
 import { fetchProjectsByUser } from "@/services/projects";
@@ -104,6 +104,6 @@ describe("TaskForm", () => {
 
 //     expect(createTask).toHaveBeenCalled();
 
-//     expect(router.push).toHaveBeenCalledWith("/tasks-list");
+//     expect(router.push).toHaveBeenCalledWith("/tasks");
 //   });
 // });
