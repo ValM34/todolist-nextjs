@@ -1,12 +1,16 @@
 "use server";
 import { PrismaClient } from '@prisma/client';
 import { getTokenByCookiesAndDecode } from '@/utils/get-owner-id';
+import { createProjectSchema } from '@/validators/project';
 
 const prisma = new PrismaClient();
 
 export async function createProject(data: Pick<Project, "title" | "description">){
   const owner = await getTokenByCookiesAndDecode();
   if(!owner) throw new Error();
+  const verifyData = createProjectSchema.safeParse(data);
+  if(!verifyData.success) throw new Error('An error occurred while creating project...');
+
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -15,8 +19,8 @@ export async function createProject(data: Pick<Project, "title" | "description">
     })
     await prisma.project.create({
       data: {
-        title: data.title,
-        description: data.description,
+        title: verifyData.data.title,
+        description: verifyData.data.description,
         ownerId: user?.id as string
       }
     });
