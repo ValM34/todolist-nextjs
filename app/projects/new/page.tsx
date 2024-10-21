@@ -1,10 +1,8 @@
-"use client"
-;
+"use client";
+
 import { useRef, useState } from 'react';
-// import { createProject } from '@/services/projects';
 import { createProject } from '@/infrastructure/repositories/project-repository';
 import { useRouter } from 'next/navigation';
-import { ProjectValidationForm } from "@/utils/form-validation/project";
 
 export default function Projects() {
   const inputTitleRef = useRef<HTMLInputElement>(null);
@@ -18,18 +16,20 @@ export default function Projects() {
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
     const projectToUpdate = {
-      title: inputTitleRef.current?.value,
-      description: textAreaDescriptionRef.current?.value
+      title: inputTitleRef.current?.value as string,
+      description: textAreaDescriptionRef.current?.value as string | null,
     }
 
-    const validateForm = new ProjectValidationForm();
-    const verifyForm = validateForm.verifyCreateProjectForm(projectToUpdate);
-    if(!verifyForm.success) {
-      setFormErrorsState(verifyForm.errorList);
+    if(!projectToUpdate.title || !projectToUpdate.description) {
+      setFormErrorsState({
+        title: !projectToUpdate.title ? "Veuillez renseigner ce champ" : null,
+        description: !projectToUpdate.description ? "Veuillez renseigner ce champ" : null
+      });
       return;
     }
+
     try {
-      await createProject(verifyForm.projectVerified);
+      await createProject(projectToUpdate);
       router.push('/projects');
     } catch (e) {
       console.error(e);

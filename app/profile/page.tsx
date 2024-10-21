@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { updateUser, getUser } from "@/services/users";
 import { update } from "@/infrastructure/repositories/user-repository";
-import { UserValidationForm } from "@/utils/form-validation/user";
 import { getUserByEmail } from "@/infrastructure/repositories/user-repository";
 
 export default function Profil() {
@@ -23,7 +21,6 @@ export default function Profil() {
 
   useEffect(() => {
     async function loadUser() {
-      const userData = await getUser();
       try {
         const data = await getUserByEmail();
         if(user.firstName || user.lastName) return;
@@ -43,16 +40,18 @@ export default function Profil() {
     e.preventDefault();
     const firstName = firstNameRef.current?.value;
     const lastName = lastNameRef.current?.value;
-    const user = { firstName, lastName };
-    const validateForm = new UserValidationForm();
-    const verifyForm = validateForm.verifyUpdateProfilForm(user);
-    if(!verifyForm.success) {
-      setFormErrorsState(verifyForm.errorList);
-      return;
+
+    if(!firstName || !lastName) {
+      setFormErrorsState({
+        firstName: !firstName ? 'Veuillez renseigner ce champ' : null,
+        lastName: !lastName ? 'Veuillez renseigner ce champ' : null,
+      })
+      return
     }
+    const user = { firstName, lastName };
 
     try {
-      await update(verifyForm.userVerified);
+      await update(user);
     } catch(e) {
       console.error(e);
     }

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserValidationForm } from "@/utils/form-validation/user";
 import { authUser } from "@/infrastructure/repositories";
 import { loginSchema } from "@/validators";
 
@@ -21,13 +20,6 @@ export default function SignUp() {
     const data = {
       email: emailRef.current?.value,
       password: passwordRef.current?.value,
-    }
-
-    const validateForm = new UserValidationForm();
-    const verifyForm = validateForm.verifyAuthUserForm(data);
-    if(!verifyForm.success) {
-      setFormErrorsState(verifyForm.errorList);
-      return;
     }
 
     const user = loginSchema.parse(data);

@@ -1,12 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { updateProject } from "@/services/projects";
 import { useRouter, useParams } from "next/navigation";
-import { fetchProjectById } from "@/services/projects";
 import { getOneProjectById, update } from "@/infrastructure/repositories/project-repository";
 import Link from "next/link";
-import { ProjectValidationForm } from "@/utils/form-validation/project";
 import LoadingSpinner from "@/components/animations/loading-spinner";
 
 export default function Projects() {

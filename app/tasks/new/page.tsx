@@ -1,14 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-// import { createTask } from "@/services/tasks";
-import { fetchProjectsByUser } from "@/services/projects";
 import { getAllProjectsByOwnerId } from "@/infrastructure/repositories/project-repository";
 import { createTask } from "@/infrastructure/repositories/task-repository";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getJwt } from "@/utils/jwt";
-import { TaskValidationForm } from "@/utils/form-validation/task";
 import LoadingSpinner from "@/components/animations/loading-spinner";
 
 export default function TaskForm() {
@@ -30,22 +26,23 @@ export default function TaskForm() {
     e.preventDefault();
 
     const newTask = {
-      title: inputTitleRef.current?.value,
-      status: selectStatusRef.current?.value,
-      emergency: selectEmergencyRef.current?.value,
-      importance: selectImportanceRef.current?.value,
-      description: textAreaDescriptionRef.current?.value,
-      projectId: selectProjectRef.current?.value,
+      title: inputTitleRef.current?.value as string,
+      status: selectStatusRef.current?.value as string,
+      emergency: selectEmergencyRef.current?.value as Emergency,
+      importance: selectImportanceRef.current?.value as Importance,
+      description: textAreaDescriptionRef.current?.value as string | null,
+      projectId: selectProjectRef.current?.value as string,
     };
+    //@TODO: comment fonctionne "as string" ? Si le type n'est pas correct que se passe-t-il ?
 
-    const validateForm = new TaskValidationForm();
-    const verifyForm = validateForm.verifyCreateTaskForm(newTask);
-    if (!verifyForm.success) {
-      setFormErrorsState(verifyForm.errorList);
-      return;
-    }
+    // const validateForm = new TaskValidationForm();
+    // const verifyForm = validateForm.verifyCreateTaskForm(newTask);
+    // if (!verifyForm.success) {
+    //   setFormErrorsState(verifyForm.errorList);
+    //   return;
+    // }
 
-    await createTask(verifyForm.taskVerified);
+    await createTask(newTask);
     router.push("/");
   };
 
@@ -53,9 +50,10 @@ export default function TaskForm() {
     (async () => {
       try {
         const projectsList = await getAllProjectsByOwnerId();
-        if (projectsList && projectsList.length > 0 && projects === null) {
-          setProjects(projectsList);// @TODO faire le if en négation
+        if(!projectsList || projectsList.length === 0 || projects !== null) {
+          return;
         }
+        setProjects(projectsList);
       } catch(e) {
         console.error(e);
       }

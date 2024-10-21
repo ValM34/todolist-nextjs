@@ -51,7 +51,7 @@ export async function getOneTaskById(id: string): Promise<Task | undefined> {
   }
 }
 
-export async function update(data: Omit<Task, "updatedAt" | "createdAt">) {
+export async function update(data: Omit<Task, "updatedAt" | "createdAt" | "score">) {
   try {
     await prisma.task.update({
       where: {

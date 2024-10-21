@@ -3,8 +3,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import TasksTable from "@/app/tasks-table";
-import { fetchTasksByProjectId } from "@/services/tasks";
-import { fetchProjectsByUser } from "@/services/projects";
 import { getAllProjectsByOwnerId } from "@/infrastructure/repositories/project-repository";
 import { getAllTasksByProjectId } from "@/infrastructure/repositories/task-repository";
 import Filters from "@/app/filters";
@@ -94,7 +92,7 @@ export default function TasksList() {
       }
       tasksListOrdered.push(task);
     });
-    tasksListOrdered.sort((a, b) => b.score - a.score);
+    tasksListOrdered.sort((a, b) => b.score ?? 0 - (a.score ?? 0));
 
     setTasks(tasksListOrdered);
   };

@@ -6,7 +6,6 @@ import { PlusIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { signOutUser } from '@/services/users/sign-out';
 import { disconnectUser } from '@/infrastructure/repositories/auth-repository';
 
 export default function Header() {

@@ -2,10 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
-// import { fetchTaskById, updateTask, deleteTask } from "@/services/tasks";
 import Link from 'next/link';
-import { fetchProjectsByUser } from "@/services/projects";
-import { TaskValidationForm } from "@/utils/form-validation/task";
 import LoadingSpinner from '@/components/animations/loading-spinner';
 import { getAllProjectsByOwnerId } from '@/infrastructure/repositories/project-repository';
 import { getOneTaskById, update, deleteTask } from '@/infrastructure/repositories/task-repository';
@@ -33,23 +30,23 @@ export default function TaskFormUpdate() {
     if(!id || Array.isArray(id)) return;
     const taskUpdated = {
       id: id,
-      title: inputTitleRef.current?.value,
-      status: selectStatusRef.current?.value,
-      emergency: selectEmergencyRef.current?.value,
-      importance: selectImportanceRef.current?.value,
-      description: textAreaDescriptionRef.current?.value,
-      projectId: selectProjectIdRef.current?.value,
+      title: inputTitleRef.current?.value as string,
+      status: selectStatusRef.current?.value as string,
+      emergency: selectEmergencyRef.current?.value as Emergency,
+      importance: selectImportanceRef.current?.value as Importance,
+      description: textAreaDescriptionRef.current?.value as string | null,
+      projectId: selectProjectIdRef.current?.value as string,
     }
 
-    const validateForm = new TaskValidationForm();
-    const verifyForm = validateForm.verifyUpdateTaskForm(taskUpdated);
-    if(!verifyForm.success) {
-      setFormErrorsState(verifyForm.errorList);
-      return;
-    }
+    // const validateForm = new TaskValidationForm();
+    // const verifyForm = validateForm.verifyUpdateTaskForm(taskUpdated);
+    // if(!verifyForm.success) {
+    //   setFormErrorsState(verifyForm.errorList);
+    //   return;
+    // }
 
     try {
-      await update(verifyForm.taskVerified);
+      await update(taskUpdated);
     } catch(e) {
       console.error(e);
     }
