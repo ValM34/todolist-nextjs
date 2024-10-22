@@ -1,8 +1,8 @@
-interface Project {
+type Project = {
   id: string;
   title: string;
   description: string | null;
-  ownerId: string;
+  userFk: string;
   updatedAt: Date;
   createdAt: Date;
 }

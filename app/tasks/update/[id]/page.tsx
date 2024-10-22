@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/animations/loading-spinner';
-import { getAllProjectsByOwnerId } from '@/infrastructure/repositories/project-repository';
+import { findProjectBy } from '@/infrastructure/repositories/project-repository';
 import { getOneTaskById, update, deleteTask } from '@/infrastructure/repositories/task-repository';
 
 export default function TaskFormUpdate() {
@@ -66,7 +66,7 @@ export default function TaskFormUpdate() {
   useEffect(() => {
     (async () => {
       try {
-        const projectsList = await getAllProjectsByOwnerId();
+        const projectsList = await findProjectBy();
         if(!projectsList || projectsList.length === 0 || projects) return;
         setProjects(projectsList);
       } catch(e) {

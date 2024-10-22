@@ -1,5 +1,3 @@
-
-
 type User = {
   id: string;
   firstName: string;
@@ -12,6 +10,8 @@ type User = {
   createdAt: Date;
   updatedAt: Date;
 }
+
+type UserVerify = Pick<User, 'email' | 'firstName' | 'lastName'>
 
 interface NewUser {
   firstName: string;

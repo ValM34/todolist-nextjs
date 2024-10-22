@@ -1,6 +1,6 @@
 "use server";
 import {PrismaClient} from '@prisma/client';
-import { getTokenByCookiesAndDecode } from '@/utils/get-owner-id';
+import {getUser} from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
@@ -20,7 +20,7 @@ export async function createUser(data: Pick<User, 'firstName' | 'lastName' | 'em
 }
 
 export async function getUserByEmail(): Promise<Pick<User, 'firstName' | 'lastName'> | undefined> {
-  const owner = await getTokenByCookiesAndDecode();
+  const owner = await getUser();
   if(!owner) throw new Error();
   try {
     const user = await prisma.user.findUnique({
@@ -39,7 +39,7 @@ export async function getUserByEmail(): Promise<Pick<User, 'firstName' | 'lastNa
 }
 
 export async function update(data: Pick<User, 'firstName' | 'lastName'>) {
-  const owner = await getTokenByCookiesAndDecode();
+  const owner = await getUser();
   if(!owner) throw new Error();
   try {
     await prisma.user.update({

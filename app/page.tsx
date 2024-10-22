@@ -3,11 +3,12 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import TasksTable from "@/app/tasks-table";
-import { getAllProjectsByOwnerId } from "@/infrastructure/repositories/project-repository";
+import { findProjectBy } from "@/infrastructure/repositories/project-repository";
 import { getAllTasksByProjectId } from "@/infrastructure/repositories/task-repository";
 import Filters from "@/app/filters";
 import Link from "next/link";
 import LoadingSpinner from "@/components/animations/loading-spinner";
+import {getUser} from "@/utils/auth";
 
 export default function TasksList() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -101,7 +102,9 @@ export default function TasksList() {
     (async () => {
       let projectsList;
       try {
-        projectsList = await getAllProjectsByOwnerId();
+        const email = (await getUser())!.email;
+        projectsList = await findProjectBy([{ userFk: email }]);
+        console.log(projectsList)
       } catch (e) {
         console.error(e);
       }

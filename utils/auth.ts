@@ -2,15 +2,21 @@
 
 
 import {cookies} from "next/headers";
-import {jwtVerify} from "jose";
+import {decodeJwt, jwtVerify} from "jose";
 import jwt from "jsonwebtoken";
 
-export async function isAuth(): Promise<boolean> {
+export async function getToken(): Promise<string | null> {
     const token = cookies().get('token');
+    if (!token) return null;
+    return token.value;
+}
+
+export async function isAuth(): Promise<boolean> {
+    const token = await getToken();
     if (!token) return false;
     try {
         const {payload} = await jwtVerify(
-            token.value,
+            token,
             new TextEncoder().encode(process.env.JWT_SECRET)
         );
 
@@ -30,6 +36,12 @@ export async function isAuth(): Promise<boolean> {
         return false;
     }
 
-
     return true;
+}
+
+export async function getUser(): Promise<UserVerify | null> {
+    const token = await getToken()
+    if (!token) return null;
+    const { iat, exp, ...userPayload } = decodeJwt(token);
+    return userPayload as UserVerify;
 }

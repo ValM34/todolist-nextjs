@@ -1,11 +1,12 @@
 "use client";
 
-import { getAllProjectsByOwnerId, deleteProject } from "@/infrastructure/repositories/project-repository";
+import { findProjectBy, deleteProject } from "@/infrastructure/repositories/project-repository";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Modale from "@/components/modale";
 import LoadingSpinner from "@/components/animations/loading-spinner";
+import {getUser} from "@/utils/auth";
 
 export default function Projects() {
   const router = useRouter();
@@ -21,7 +22,8 @@ export default function Projects() {
   useEffect(() => {
     (async () => {
       try {
-        const projectsList = await getAllProjectsByOwnerId();
+        const email = (await getUser())!.email;
+        const projectsList = await findProjectBy([{ userFk: email }, { title: 'Test'}]);
         if (projectsList && projects === null && projectsList.length > 0) {
           setProjects(projectsList);
         }

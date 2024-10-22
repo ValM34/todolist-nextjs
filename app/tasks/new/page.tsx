@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { getAllProjectsByOwnerId } from "@/infrastructure/repositories/project-repository";
+import { findProjectBy } from "@/infrastructure/repositories/project-repository";
 import { createTask } from "@/infrastructure/repositories/task-repository";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -49,7 +49,7 @@ export default function TaskForm() {
   useEffect(() => {
     (async () => {
       try {
-        const projectsList = await getAllProjectsByOwnerId();
+        const projectsList = await findProjectBy();
         if(!projectsList || projectsList.length === 0 || projects !== null) {
           return;
         }

@@ -29,11 +29,11 @@ model Project {
   id          String   @id @default(cuid())
   title       String
   description String?
-  ownerId     String
+  userFk      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  owner       User     @relation(fields: [ownerId], references: [id])
+  user        User     @relation(fields: [userFk], references: [email])
   tasks       Task[]
 }
 
@@ -41,7 +41,7 @@ model Task {
   id          String      @id @default(cuid())
   title       String
   description String?
-  status      String
+  status      Status
   projectId   String
   emergency   Emergency   
   importance  Importance  
@@ -61,4 +61,10 @@ enum Importance {
   HIGHT
   AVERAGE
   LOW
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  DONE
 }
