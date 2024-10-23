@@ -73,9 +73,9 @@ interface TaskProps {
     LOW: boolean;
   };
   statusFilter: {
-    aFaire: boolean;
-    enCours: boolean;
-    terminee: boolean;
+    OPEN: boolean;
+    IN_PROGRESS: boolean;
+    DONE: boolean;
   };
   importanceFilter: {
     HIGHT: boolean;
@@ -95,11 +95,11 @@ function Task(props: TaskProps) {
   if (task.emergency === "LOW" && emergencyFilter.LOW === false)
     return (display = false);
 
-  if (task.status === "A faire" && statusFilter.aFaire === false)
+  if (task.status === "OPEN" && statusFilter.OPEN === false)
     return (display = false);
-  if (task.status === "En cours" && statusFilter.enCours === false)
+  if (task.status === "IN_PROGRESS" && statusFilter.IN_PROGRESS === false)
     return (display = false);
-  if (task.status === "Terminée" && statusFilter.terminee === false)
+  if (task.status === "DONE" && statusFilter.DONE === false)
     return (display = false);
 
   if (task.importance === "HIGHT" && importanceFilter.HIGHT === false)

@@ -1,6 +1,6 @@
 "use client";
 
-import { findProjectBy, deleteProject } from "@/infrastructure/repositories/project-repository";
+import { findProjectsBy, deleteProject } from "@/infrastructure/repositories/project-repository";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ export default function Projects() {
     (async () => {
       try {
         const email = (await getUser())!.email;
-        const projectsList = await findProjectBy([{ userFk: email }, { title: 'Test'}]);
+        const projectsList = await findProjectsBy([{ userFk: email }]);
         if (projectsList && projects === null && projectsList.length > 0) {
           setProjects(projectsList);
         }

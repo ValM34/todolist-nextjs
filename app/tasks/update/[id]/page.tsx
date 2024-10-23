@@ -4,8 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/animations/loading-spinner';
-import { findProjectBy } from '@/infrastructure/repositories/project-repository';
-import { getOneTaskById, update, deleteTask } from '@/infrastructure/repositories/task-repository';
+import { findProjectsBy } from '@/infrastructure/repositories/project-repository';
+import { findOneTaskById, updateTask, deleteTask } from '@/infrastructure/repositories/task-repository';
+import { getUser } from '@/utils/auth';
 
 export default function TaskFormUpdate() {
   const router = useRouter();
@@ -46,7 +47,7 @@ export default function TaskFormUpdate() {
     // }
 
     try {
-      await update(taskUpdated);
+      await updateTask(taskUpdated);
     } catch(e) {
       console.error(e);
     }
@@ -66,7 +67,8 @@ export default function TaskFormUpdate() {
   useEffect(() => {
     (async () => {
       try {
-        const projectsList = await findProjectBy();
+        const email = (await getUser())!.email;
+        const projectsList = await findProjectsBy([{ userFk: email }]);
         if(!projectsList || projectsList.length === 0 || projects) return;
         setProjects(projectsList);
       } catch(e) {
@@ -77,7 +79,7 @@ export default function TaskFormUpdate() {
     (async () => {
       if (!id || Array.isArray(id)) return;
       try {
-        const data = await getOneTaskById(id);
+        const data = await findOneTaskById(id);
         if(!data) throw new Error('Task not found');
         setTask(data);
       } catch(e) {
@@ -155,9 +157,9 @@ export default function TaskFormUpdate() {
                     required={true}
                     defaultValue={task.status}
                   >
-                    <option value="A faire">A faire</option>
-                    <option value="En cours">En cours</option>
-                    <option value="Terminée">Terminée</option>
+                    <option value="OPEN">OPEN</option>
+                    <option value="IN_PROGRESS">IN_PROGRESS</option>
+                    <option value="DONE">DONE</option>
                   </select>
                 </div>
                 <div className="flex flex-col mt-4">

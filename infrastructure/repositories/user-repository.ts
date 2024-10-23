@@ -25,7 +25,7 @@ export async function getUserByEmail(): Promise<Pick<User, 'firstName' | 'lastNa
   try {
     const user = await prisma.user.findUnique({
       where: {
-        email: owner.email as string,//@TODO question : pourquoi as string enlève l'erreur typescript
+        email: owner.email as string,
       },
     });
     if(!user) {
@@ -44,7 +44,7 @@ export async function update(data: Pick<User, 'firstName' | 'lastName'>) {
   try {
     await prisma.user.update({
       where: {
-        email: owner.email as string//@TODO est-ce que c'est sécurisé d'utiliser l'email qui provient des cookies ?
+        email: owner.email as string
       },
       data: {
         firstName: data.firstName,

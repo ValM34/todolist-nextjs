@@ -1,7 +1,7 @@
 interface Task {
   id: string;
   title: string;
-  status: string;
+  status: Status;
   emergency: Emergency;
   importance: Importance;
   projectId: string;
@@ -23,6 +23,12 @@ enum Importance {
   LOW = "LOW",
 }
 
+enum Status {
+  OPEN = "OPEN",
+  IN_PROGRESS = "IN_PROGRESS",
+  DONE = "DONE",
+}
+
 // @TODO revoir cette interface
 // Exemple de ce qui serait peut-être mieux : interface TasksList extends Array<Task> {}
 interface TasksList {
@@ -37,9 +43,9 @@ interface TasksListProps {
     LOW: boolean,
   }
   statusFilter: {
-    aFaire: boolean,
-    enCours: boolean,
-    terminee: boolean,
+    OPEN: boolean,
+    IN_PROGRESS: boolean,
+    DONE: boolean,
   }
   importanceFilter: {
     HIGHT: boolean,
@@ -57,9 +63,9 @@ interface EmergencyFilter {
 
 interface StatusFilter {
   [key: string]: boolean;
-  aFaire: boolean;
-  enCours: boolean;
-  terminee: boolean;
+  OPEN: boolean;
+  IN_PROGRESS: boolean;
+  DONE: boolean;
 }
 
 interface ImportanceFilter {

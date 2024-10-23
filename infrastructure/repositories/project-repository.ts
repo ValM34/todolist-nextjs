@@ -2,7 +2,6 @@
 import {PrismaClient} from '@prisma/client';
 import {createProjectSchema} from '@/validators/project';
 import {getUser} from "@/utils/auth";
-import {Project} from "@/types/projects";
 
 const prisma = new PrismaClient();
 
@@ -25,8 +24,7 @@ export async function createProject(data: Pick<Project, "title" | "description">
     }
 }
 
-
-export async function findProjectBy(criteria: { [key: string]: any }[]): Promise<Project[] | undefined> {
+export async function findProjectsBy(criteria: { [key: string]: any }[]): Promise<Project[] | undefined> {
     if(!criteria) return [];
     //declaration des criteres de recherche formattés -> Retrait de undefined de la liste
     let formatedCriteria = {};

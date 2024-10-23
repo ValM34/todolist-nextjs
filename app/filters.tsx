@@ -153,17 +153,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleStatusFilter(e)}
-                    value="aFaire"
-                    id="aFaire"
-                    name="aFaire"
+                    value="OPEN"
+                    id="OPEN"
+                    name="OPEN"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="aFaire" className="font-medium text-gray-900">
-                    A faire
+                  <label htmlFor="OPEN" className="font-medium text-gray-900">
+                    OPEN
                   </label>
                 </div>
               </div>
@@ -171,17 +171,17 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleStatusFilter(e)}
-                    value="enCours"
-                    id="enCours"
-                    name="enCours"
+                    value="IN_PROGRESS"
+                    id="IN_PROGRESS"
+                    name="IN_PROGRESS"
                     type="checkbox"
                     defaultChecked={true}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
                 </div>
                 <div className="ml-3 text-sm leading-6">
-                  <label htmlFor="enCours" className="font-medium text-gray-900">
-                    En cours
+                  <label htmlFor="IN_PROGRESS" className="font-medium text-gray-900">
+                    IN_PROGRESS
                   </label>
                 </div>
               </div>
@@ -189,9 +189,9 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 <div className="flex h-6 items-center">
                   <input
                     onClick={(e) => handleStatusFilter(e)}
-                    value="terminee"
-                    id="terminee"
-                    name="terminee"
+                    value="DONE"
+                    id="DONE"
+                    name="DONE"
                     type="checkbox"
                     defaultChecked={false}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -199,10 +199,10 @@ export default function Filters(props: HandleEmergencyFilterProps) {
                 </div>
                 <div className="ml-3 text-sm leading-6">
                   <label
-                    htmlFor="terminee"
+                    htmlFor="DONE"
                     className="font-medium text-gray-900"
                   >
-                    Terminée
+                    DONE
                   </label>
                 </div>
               </div>

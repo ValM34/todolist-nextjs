@@ -1,5 +1,7 @@
 "use server";
 import { PrismaClient } from '@prisma/client';
+import { z } from 'zod';
+import { updateTaskSchema } from '@/validators';
 
 const prisma = new PrismaClient();
 
@@ -20,27 +22,34 @@ export async function createTask(data: Omit<Task, "id" | "createdAt" | "updatedA
   }
 }
 
-export async function getAllTasksByProjectId(projectId: string): Promise<Task[] | undefined> {
+export async function findTasksBy(criteria: { [key: string]: any }[]): Promise<Task[] | undefined> {
+  if(!criteria) return [];
+
+  let formatedCriteria = {};
+  criteria.forEach((criterion) => {
+    if(!Object.values(criterion).includes(undefined)) {
+      formatedCriteria = { ...formatedCriteria, ...criterion };
+    }
+  })
+  if (Object.keys(formatedCriteria).length === 0) return [];
+  console.log(formatedCriteria)
+
   try {
     const tasksList = await prisma.task.findMany({
-      where: {
-        projectId
-      }
+      where: formatedCriteria
     });
 
     return tasksList as Task[];
   } catch(e) {
-    throw new Error('An error occurred while finding tasks:...');
+    console.error('An error occurred while finding tasks...');
+    return [];
   }
 }
-
-export async function getOneTaskById(id: string): Promise<Task | undefined> {
+// criteria: { [key: string]: any }): Promise<Task | undefined>
+// getOneTaskById
+export async function findOneTaskById(id: string): Promise<Task | null> {
   try {
-    const task = await prisma.task.findUnique({
-      where: {
-        id,
-      },
-    });
+    const task = await prisma.task.findUnique({ where: { id } });
     if(!task) {
       throw new Error('An error occurred while finding task...');
     }
@@ -51,7 +60,10 @@ export async function getOneTaskById(id: string): Promise<Task | undefined> {
   }
 }
 
-export async function update(data: Omit<Task, "updatedAt" | "createdAt" | "score">) {
+export async function updateTask(data: Omit<Task, "updatedAt" | "createdAt" | "score">) {
+  const verifyData = updateTaskSchema.safeParse(data);
+  if (!verifyData.success) throw new Error('An error occurred while updating task...');
+
   try {
     await prisma.task.update({
       where: {

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { findProjectBy } from "@/infrastructure/repositories/project-repository";
+import { findProjectsBy } from "@/infrastructure/repositories/project-repository";
 import { createTask } from "@/infrastructure/repositories/task-repository";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/animations/loading-spinner";
+import { getUser } from "@/utils/auth";
 
 export default function TaskForm() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function TaskForm() {
 
     const newTask = {
       title: inputTitleRef.current?.value as string,
-      status: selectStatusRef.current?.value as string,
+      status: selectStatusRef.current?.value as Status,
       emergency: selectEmergencyRef.current?.value as Emergency,
       importance: selectImportanceRef.current?.value as Importance,
       description: textAreaDescriptionRef.current?.value as string | null,
@@ -49,7 +50,8 @@ export default function TaskForm() {
   useEffect(() => {
     (async () => {
       try {
-        const projectsList = await findProjectBy();
+        const email = (await getUser())!.email;
+        const projectsList = await findProjectsBy([{ userFk: email }]);
         if(!projectsList || projectsList.length === 0 || projects !== null) {
           return;
         }
@@ -140,9 +142,9 @@ export default function TaskForm() {
                     name="status"
                     required={true}
                   >
-                    <option value="A faire">A faire</option>
-                    <option value="En cours">En cours</option>
-                    <option value="Terminée">Terminée</option>
+                    <option value="OPEN">OPEN</option>
+                    <option value="IN_PROGRESS">IN_PROGRESS</option>
+                    <option value="DONE">DONE</option>
                   </select>
                 </div>
                 <div className="flex flex-col mt-4">

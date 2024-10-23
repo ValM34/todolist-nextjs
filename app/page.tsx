@@ -3,8 +3,8 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import TasksTable from "@/app/tasks-table";
-import { findProjectBy } from "@/infrastructure/repositories/project-repository";
-import { getAllTasksByProjectId } from "@/infrastructure/repositories/task-repository";
+import { findProjectsBy } from "@/infrastructure/repositories/project-repository";
+import { findTasksBy } from "@/infrastructure/repositories/task-repository";
 import Filters from "@/app/filters";
 import Link from "next/link";
 import LoadingSpinner from "@/components/animations/loading-spinner";
@@ -18,9 +18,9 @@ export default function TasksList() {
     LOW: true,
   });
   const [statusFilter, setStatusFilter] = useState<StatusFilter>({
-    aFaire: true,
-    enCours: true,
-    terminee: false,
+    OPEN: true,
+    IN_PROGRESS: true,
+    DONE: false,
   });
   const [importanceFilter, setImportanceFilter] = useState<ImportanceFilter>({
     HIGHT: true,
@@ -53,7 +53,7 @@ export default function TasksList() {
 
   const handleTasksFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     try {
-      const tasksList = await getAllTasksByProjectId(e.target.value);
+      const tasksList = await findTasksBy([{ projectId: e.target.value }]);
       if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found');
       filterTasksByEmergencyAndImportance(tasksList);
     } catch (e) {
@@ -103,18 +103,18 @@ export default function TasksList() {
       let projectsList;
       try {
         const email = (await getUser())!.email;
-        projectsList = await findProjectBy([{ userFk: email }]);
+        projectsList = await findProjectsBy([{ userFk: email }]);
         console.log(projectsList)
       } catch (e) {
         console.error(e);
       }
 
-      if (!projectsList || projectsList.length === 0 || projects !== null) return;
+      if (!projectsList || projectsList.length === 0 || projects !== null) return setLoading(false);
       setProjects(projectsList);
       const firstProjectId = projectsList[0].id;
 
       try {
-        const tasksList = await getAllTasksByProjectId(firstProjectId);
+        const tasksList = await findTasksBy([{ projectId: firstProjectId }]);
         if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found');
         filterTasksByEmergencyAndImportance(tasksList);
       } catch (e) {
