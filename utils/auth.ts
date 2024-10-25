@@ -11,6 +11,13 @@ export async function getToken(): Promise<string | null> {
     return token.value;
 }
 
+export async function getUser(): Promise<UserVerify | null> {
+    const token = await getToken()
+    if (!token) return null;
+    const { iat, exp, ...userPayload } = decodeJwt(token);
+    return userPayload as UserVerify;
+}
+
 export async function isAuth(): Promise<boolean> {
     const token = await getToken();
     if (!token) return false;
@@ -39,9 +46,6 @@ export async function isAuth(): Promise<boolean> {
     return true;
 }
 
-export async function getUser(): Promise<UserVerify | null> {
-    const token = await getToken()
-    if (!token) return null;
-    const { iat, exp, ...userPayload } = decodeJwt(token);
-    return userPayload as UserVerify;
+export async function logout() {
+    cookies().delete('token');
 }

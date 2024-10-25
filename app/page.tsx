@@ -1,129 +1,129 @@
-"use client";
+'use client'
 
-import React from "react";
-import { useEffect, useState } from "react";
-import TasksTable from "@/app/tasks-table";
-import { findProjectsBy } from "@/infrastructure/repositories/project-repository";
-import { findTasksBy } from "@/infrastructure/repositories/task-repository";
-import Filters from "@/app/filters";
-import Link from "next/link";
-import LoadingSpinner from "@/components/animations/loading-spinner";
-import {getUser} from "@/utils/auth";
+import React from 'react'
+import { useEffect, useState } from 'react'
+import TasksTable from '@/app/tasks-table'
+import { findProjectsBy } from '@/infrastructure/repositories/project-repository'
+import { findTasksBy } from '@/infrastructure/repositories/task-repository'
+import Filters from '@/app/filters'
+import Link from 'next/link'
+import LoadingSpinner from '@/components/animations/loading-spinner'
+import { getUser } from '@/utils/auth'
 
 export default function TasksList() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([])
   const [emergencyFilter, setEmergencyFilter] = useState<EmergencyFilter>({
     HIGHT: true,
     AVERAGE: true,
     LOW: true,
-  });
+  })
   const [statusFilter, setStatusFilter] = useState<StatusFilter>({
     OPEN: true,
     IN_PROGRESS: true,
     DONE: false,
-  });
+  })
   const [importanceFilter, setImportanceFilter] = useState<ImportanceFilter>({
     HIGHT: true,
     AVERAGE: true,
     LOW: true,
-  });
-  const [projects, setProjects] = useState<Projects | null>(null);
-  const [loading, setLoading] = useState(true);
+  })
+  const [projects, setProjects] = useState<Projects | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const handleEmergencyFilter = (e: React.MouseEvent<HTMLInputElement>) => {
     setEmergencyFilter({
       ...emergencyFilter,
       [e.currentTarget.value]: e.currentTarget.checked,
-    });
-  };
+    })
+  }
 
   const handleStatusFilter = (e: React.MouseEvent<HTMLInputElement>) => {
     setStatusFilter({
       ...statusFilter,
       [e.currentTarget.value]: e.currentTarget.checked,
-    });
-  };
+    })
+  }
 
   const handleImportanceFilter = (e: React.MouseEvent<HTMLInputElement>) => {
     setImportanceFilter({
       ...importanceFilter,
       [e.currentTarget.value]: e.currentTarget.checked,
-    });
-  };
+    })
+  }
 
   const handleTasksFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     try {
-      const tasksList = await findTasksBy([{ projectId: e.target.value }]);
-      if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found');
-      filterTasksByEmergencyAndImportance(tasksList);
+      const tasksList = await findTasksBy([{ projectId: e.target.value }])
+      if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found')
+      filterTasksByEmergencyAndImportance(tasksList)
     } catch (e) {
-      console.error(e);
-      setTasks([]);
+      console.error(e)
+      setTasks([])
     }
-  };
+  }
 
   const filterTasksByEmergencyAndImportance = (tasks: Task[]) => {
-    let tasksListOrdered: Task[] = [];
+    let tasksListOrdered: Task[] = []
     tasks.forEach((task: Task) => {
-      task.score = 0;
-      if (task.emergency === "HIGHT") {
-        if (task.importance === "HIGHT") {
-          task.score = 9;
-        } else if (task.importance === "AVERAGE") {
-          task.score = 8;
-        } else if (task.importance === "LOW") {
-          task.score = 7;
+      task.score = 0
+      if (task.emergency === 'HIGHT') {
+        if (task.importance === 'HIGHT') {
+          task.score = 9
+        } else if (task.importance === 'AVERAGE') {
+          task.score = 8
+        } else if (task.importance === 'LOW') {
+          task.score = 7
         }
-      } else if (task.emergency === "AVERAGE") {
-        if (task.importance === "HIGHT") {
-          task.score = 6;
-        } else if (task.importance === "AVERAGE") {
-          task.score = 5;
-        } else if (task.importance === "LOW") {
-          task.score = 4;
+      } else if (task.emergency === 'AVERAGE') {
+        if (task.importance === 'HIGHT') {
+          task.score = 6
+        } else if (task.importance === 'AVERAGE') {
+          task.score = 5
+        } else if (task.importance === 'LOW') {
+          task.score = 4
         }
-      } else if (task.emergency === "LOW") {
-        if (task.importance === "HIGHT") {
-          task.score = 3;
-        } else if (task.importance === "AVERAGE") {
-          task.score = 2;
-        } else if (task.importance === "LOW") {
-          task.score = 1;
+      } else if (task.emergency === 'LOW') {
+        if (task.importance === 'HIGHT') {
+          task.score = 3
+        } else if (task.importance === 'AVERAGE') {
+          task.score = 2
+        } else if (task.importance === 'LOW') {
+          task.score = 1
         }
       }
-      tasksListOrdered.push(task);
-    });
-    tasksListOrdered.sort((a, b) => b.score ?? 0 - (a.score ?? 0));
+      tasksListOrdered.push(task)
+    })
+    tasksListOrdered.sort((a, b) => b.score ?? 0 - (a.score ?? 0))
 
-    setTasks(tasksListOrdered);
-  };
+    setTasks(tasksListOrdered)
+  }
 
   useEffect(() => {
     (async () => {
-      let projectsList;
+      let projectsList
       try {
-        const email = (await getUser())!.email;
-        projectsList = await findProjectsBy([{ userFk: email }]);
+        const email = (await getUser())!.email
+        projectsList = await findProjectsBy([{ userFk: email }])
         console.log(projectsList)
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
 
-      if (!projectsList || projectsList.length === 0 || projects !== null) return setLoading(false);
-      setProjects(projectsList);
-      const firstProjectId = projectsList[0].id;
+      if (!projectsList || projectsList.length === 0) return setLoading(false)
+      setProjects(projectsList)
+      const firstProjectId = projectsList[0].id
 
       try {
-        const tasksList = await findTasksBy([{ projectId: firstProjectId }]);
-        if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found');
-        filterTasksByEmergencyAndImportance(tasksList);
+        const tasksList = await findTasksBy([{ projectId: firstProjectId }])
+        if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found')
+        filterTasksByEmergencyAndImportance(tasksList)
       } catch (e) {
-        console.error(e);
-        setTasks([]);
+        console.error(e)
+        setTasks([])
       }
-      setLoading(false);
-    })();
-  }, [projects]);
+      setLoading(false)
+    })()
+  }, [])
 
   return (
     <>
@@ -183,5 +183,5 @@ export default function TasksList() {
         </>
       )}
     </>
-  );
+  )
 }

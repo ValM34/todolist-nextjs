@@ -1,7 +1,7 @@
 type Project = {
   id: string;
   title: string;
-  description: string | null;
+  description?: string;
   userFk: string;
   updatedAt: Date;
   createdAt: Date;

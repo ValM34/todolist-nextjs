@@ -32,7 +32,6 @@ export async function findTasksBy(criteria: { [key: string]: any }[]): Promise<T
     }
   })
   if (Object.keys(formatedCriteria).length === 0) return [];
-  console.log(formatedCriteria)
 
   try {
     const tasksList = await prisma.task.findMany({

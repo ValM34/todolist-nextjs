@@ -1,40 +1,40 @@
-"use client";
+'use client'
 
-import { useRef, useState } from 'react';
-import { createProject } from '@/infrastructure/repositories/project-repository';
-import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react'
+import { createProject } from '@/infrastructure/repositories/project-repository'
+import { useRouter } from 'next/navigation'
 
 export default function Projects() {
-  const inputTitleRef = useRef<HTMLInputElement>(null);
-  const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null);
-  const router = useRouter();
+  const inputTitleRef = useRef<HTMLInputElement>(null)
+  const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null)
+  const router = useRouter()
   const [formErrorsState, setFormErrorsState] = useState({
     title: null as string | null,
     description: null as string | null,
   })
 
   const handleAddProject = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     const projectToUpdate = {
       title: inputTitleRef.current?.value as string,
       description: textAreaDescriptionRef.current?.value as string | null,
     }
 
-    if(!projectToUpdate.title || !projectToUpdate.description) {
+    if (!projectToUpdate.title || !projectToUpdate.description) {
       setFormErrorsState({
-        title: !projectToUpdate.title ? "Veuillez renseigner ce champ" : null,
-        description: !projectToUpdate.description ? "Veuillez renseigner ce champ" : null
-      });
-      return;
+        title: !projectToUpdate.title ? 'Veuillez renseigner ce champ' : null,
+        description: projectToUpdate?.description ? null : 'Veuillez renseigner ce champ',
+      })
+      return
     }
 
     try {
-      await createProject(projectToUpdate);
-      router.push('/projects');
+      await createProject(projectToUpdate)
+      router.push('/projects')
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   return (
     <>
@@ -49,7 +49,7 @@ export default function Projects() {
             Titre
           </label>
           <input
-            className={`${formErrorsState.title ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+            className={`${formErrorsState.title ? 'ring-red-300 focus:ring-red-500' : 'ring-gray-300 focus:ring-indigo-600'} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="title"
             name="title"
             required={true}
@@ -60,7 +60,7 @@ export default function Projects() {
             <p className="mt-2 text-sm text-red-600">
               {formErrorsState.title}
             </p>
-          ) : ""}
+          ) : ''}
         </div>
         <div className="flex flex-col mt-4">
           <label
@@ -70,7 +70,7 @@ export default function Projects() {
             Description
           </label>
           <textarea
-            className={`${formErrorsState.description ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+            className={`${formErrorsState.description ? 'ring-red-300 focus:ring-red-500' : 'ring-gray-300 focus:ring-indigo-600'} resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="description"
             name="description"
             required={true}
@@ -80,7 +80,7 @@ export default function Projects() {
             <p className="mt-2 text-sm text-red-600">
               {formErrorsState.description}
             </p>
-          ) : ""}
+          ) : ''}
         </div>
 
         <div className="flex justify-center">
@@ -94,5 +94,5 @@ export default function Projects() {
         </div>
       </form>
     </>
-  );
+  )
 }
