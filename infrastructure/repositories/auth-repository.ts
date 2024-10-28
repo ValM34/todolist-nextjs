@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { PrismaClient } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 import { setCookie } from 'undici-types'
+import { SignJWT } from 'jose'
 
 const prisma = new PrismaClient()
 
@@ -28,9 +29,12 @@ export async function authUser(data: Pick<User, 'email' | 'password'>) {
     throw new Error('JWT secret not found')
   }
 
-  const token = jwt.sign({ email: user.email, firstname: user.firstName, lastname: user.lastName }, jwtSecret, {
-    expiresIn: 60 * 60,
-  })
+  console.log(user)
+
+  const token = await new SignJWT({ firstName: user.firstName, lastName: user.lastName })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setExpirationTime('1h')
+    .sign(new TextEncoder().encode(jwtSecret))
 
   cookies().set('token', token, {
     httpOnly: true,

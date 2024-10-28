@@ -1,22 +1,29 @@
-import { NextResponse } from 'next/server';
-import {isAuth} from "@/utils/auth";
+import { NextResponse } from 'next/server'
+import { isAuth, refreshToken } from '@/utils/auth'
 
 export async function middleware(req: Request) {
-  await isAuth() ? NextResponse.next() : NextResponse.redirect(new URL('/sign-in', req.url))
+  if (await isAuth()) {
+    const token = await refreshToken()
+    if (token) {
+      const res = NextResponse.next()
+      res.cookies.set('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24,
+      })
+      return res
+    }
+  }
+
+  const response = NextResponse.redirect(new URL('/sign-in', req.url))
+  response.cookies.delete('token')
+  return response
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  // matcher: '/about/:path*',
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     * - signin
-     */
     '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|sign-in|sign-up).*)',
   ],
 }

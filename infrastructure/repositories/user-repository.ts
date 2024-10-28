@@ -19,6 +19,19 @@ export async function createUser(data: Pick<User, 'firstName' | 'lastName' | 'em
   }
 }
 
+export async function findOneUserByEmail(email: string): Promise<User | null> {
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if(!user) {
+      throw new Error('An error occurred while finding user...');
+    }
+
+    return user as User;
+  } catch(e) {
+    throw new Error(e as string);
+  }
+}
+
 export async function getUserByEmail(): Promise<Pick<User, 'firstName' | 'lastName'> | undefined> {
   const owner = await getUser();
   if(!owner) throw new Error();

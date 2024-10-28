@@ -12,8 +12,6 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
-  console.log(pathname);
-
   const handleSignOut = async () => {
     await disconnectUser();//@TODO est ce que j'ai besoin de faire un try/catch vue que je touche juste aux cookies ?
     router.push('/');

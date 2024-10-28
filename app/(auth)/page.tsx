@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { useEffect, useState } from 'react'
-import TasksTable from '@/app/tasks-table'
+import TasksTable from '@/app/(auth)/tasks-table'
 import { findProjectsBy } from '@/infrastructure/repositories/project-repository'
 import { findTasksBy } from '@/infrastructure/repositories/task-repository'
-import Filters from '@/app/filters'
+import Filters from '@/app/(auth)/filters'
 import Link from 'next/link'
 import LoadingSpinner from '@/components/animations/loading-spinner'
 import { getUser } from '@/utils/auth'
