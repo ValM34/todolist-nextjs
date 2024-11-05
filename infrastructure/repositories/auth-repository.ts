@@ -28,10 +28,7 @@ export async function authUser(data: Pick<User, 'email' | 'password'>) {
   if (!jwtSecret) {
     throw new Error('JWT secret not found')
   }
-
-  console.log(user)
-
-  const token = await new SignJWT({ firstName: user.firstName, lastName: user.lastName })
+  const token = await new SignJWT({ firstName: user.firstName, lastName: user.lastName, email: user.email })
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('1h')
     .sign(new TextEncoder().encode(jwtSecret))

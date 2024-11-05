@@ -4,6 +4,9 @@ import { isAuth, refreshToken } from '@/utils/auth'
 export async function middleware(req: Request) {
   if (await isAuth()) {
     const token = await refreshToken()
+    // console.log('______________ middleware isAuth ________________')
+    // console.log(token)
+    // console.log('______________ middleware isAuth ________________')
     if (token) {
       const res = NextResponse.next()
       res.cookies.set('token', token, {
@@ -14,6 +17,7 @@ export async function middleware(req: Request) {
       })
       return res
     }
+    return
   }
 
   const response = NextResponse.redirect(new URL('/sign-in', req.url))

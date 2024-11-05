@@ -13,6 +13,7 @@ export async function getToken(): Promise<string | null> {
 export async function getUser(): Promise<UserVerify | null> {
   const token = await getToken()
   if (!token) return null
+  const test = decodeJwt(token)
   const { iat, exp, ...userPayload } = decodeJwt(token)
   return userPayload as UserVerify
 }
@@ -33,6 +34,7 @@ export async function isAuth(): Promise<boolean> {
     )
     console.log('payload:', payload)
     const { iat, exp, ...userPayload } = payload
+    console.log('payload 2:', payload)
     const currentTime = Date.now() / 1000
     return currentTime <= exp!;
   } catch (error) {
@@ -44,10 +46,8 @@ export async function refreshToken(): Promise<string | null> {
   const jwtSecret = process.env.JWT_SECRET as string;
   const user = await getUser();
   if(!user) return null;
-  console.log(user)
-  return await new SignJWT({ email: user.email, firstname: user.firstName, lastname: user.lastName })
+  return await new SignJWT({ firstName: user.firstName, lastName: user.lastName, email: user.email })
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('1h')
     .sign(new TextEncoder().encode(jwtSecret));
 }
-
