@@ -58,6 +58,8 @@ export default function Projects() {
     return formik.isValid && !formik.isSubmitting;
   }, [formik.isSubmitting, formik.isValid]);
 
+  // const formIsValid = formik.isValid && !formik.isSubmitting; @TODO Question : est ce que cela fait la même chose que le useMemo ?
+
 
   if (isError) {
     return (

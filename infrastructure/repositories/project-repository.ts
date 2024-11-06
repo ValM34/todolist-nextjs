@@ -1,20 +1,16 @@
 "use server";
-import {PrismaClient} from '@prisma/client';
-import {createProjectSchema} from '@/validators/project';
-import {getUser} from "@/utils/auth";
+import { PrismaClient } from '@prisma/client';
+import { getUser } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
 export async function createProject(data: Pick<Project, "title" | "description">) {
     const email = (await getUser())!.email;
-    const verifyData = createProjectSchema.safeParse(data);
-    if (!verifyData.success) throw new Error('An error occurred while creating project...');
-
     try {
         await prisma.project.create({
             data: {
-                title: verifyData.data.title,
-                description: verifyData.data.description,
+                title: data.title,
+                description: data.description,
                 userFk: email as string
             }
         });

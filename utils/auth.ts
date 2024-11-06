@@ -32,9 +32,7 @@ export async function isAuth(): Promise<boolean> {
       token,
       new TextEncoder().encode(process.env.JWT_SECRET),
     )
-    console.log('payload:', payload)
     const { iat, exp, ...userPayload } = payload
-    console.log('payload 2:', payload)
     const currentTime = Date.now() / 1000
     return currentTime <= exp!;
   } catch (error) {

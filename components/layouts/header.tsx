@@ -1,7 +1,7 @@
 "use client";
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -36,18 +36,6 @@ export default function Header() {
                 <XMarkIcon aria-hidden="true" className="hidden h-6 w-6 group-data-[open]:block" />
               </DisclosureButton>
             </div>
-            <Link
-              className="flex flex-shrink-0 items-center"
-              href="/"
-            >
-              <Image
-                width={38}
-                height={32}
-                alt="Your Company"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
-            </Link>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
               <Link
@@ -90,15 +78,6 @@ export default function Header() {
               </Link>
             </div>
             <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
-              <button
-                type="button"
-                className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <BellIcon aria-hidden="true" className="h-6 w-6" />
-              </button>
-
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
@@ -109,7 +88,7 @@ export default function Header() {
                       width={32}
                       height={32}
                       alt="Profile"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      src="/images/user-avatar.svg.png"
                       className="h-8 w-8 rounded-full"
                     />
                   </MenuButton>
@@ -174,7 +153,7 @@ export default function Header() {
                 width={32}
                 height={32}
                 alt=""
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                src="/images/user-avatar.svg.png"
                 className="h-10 w-10 rounded-full"
               />
             </div>
@@ -182,14 +161,6 @@ export default function Header() {
               <div className="text-base font-medium text-gray-800">Tom Cook</div>
               <div className="text-sm font-medium text-gray-500">tom@example.com</div>
             </div>
-            <button
-              type="button"
-              className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View notifications</span>
-              <BellIcon aria-hidden="true" className="h-6 w-6" />
-            </button>
           </div>
           <div className="mt-3 space-y-1">
             <DisclosureButton
