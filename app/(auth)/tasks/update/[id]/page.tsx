@@ -32,19 +32,12 @@ export default function TaskFormUpdate() {
     const taskUpdated = {
       id: id,
       title: inputTitleRef.current?.value as string,
-      status: selectStatusRef.current?.value as string,
+      status: selectStatusRef.current?.value as Status,
       emergency: selectEmergencyRef.current?.value as Emergency,
       importance: selectImportanceRef.current?.value as Importance,
       description: textAreaDescriptionRef.current?.value as string | null,
       projectId: selectProjectIdRef.current?.value as string,
     }
-
-    // const validateForm = new TaskValidationForm();
-    // const verifyForm = validateForm.verifyUpdateTaskForm(taskUpdated);
-    // if(!verifyForm.success) {
-    //   setFormErrorsState(verifyForm.errorList);
-    //   return;
-    // }
 
     try {
       await updateTask(taskUpdated);

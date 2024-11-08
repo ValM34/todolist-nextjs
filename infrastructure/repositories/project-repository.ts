@@ -43,9 +43,11 @@ export async function findProjectsBy(criteria: { [key: string]: any }[]): Promis
     if (Object.keys(formatedCriteria).length === 0) return [];
 
     try {
-        return await prisma.project.findMany({
+        const projects = await prisma.project.findMany({
             where: formatedCriteria
         });
+
+        return projects as Project[];
     } catch (e) {
         console.error('An error occurred while finding projects...')
         return [];
@@ -62,7 +64,7 @@ export async function getOneProjectById(id: string): Promise<Project | undefined
         if (!project) {
             throw new Error('An error occurred while finding project...');
         }
-        return project;
+        return project as Project;
     } catch (e) {
         throw new Error('An error occurred while finding project...');
     }
