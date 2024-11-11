@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { getOneProjectById, update } from '@/infrastructure/repositories/project-repository'
+import { getOneProjectById, updateProject } from '@/infrastructure/repositories/project-repository'
 import Link from 'next/link'
 import LoadingSpinner from '@/components/animations/loading-spinner'
 import { useFormik } from 'formik'
@@ -27,7 +27,7 @@ export default function Projects() {
 
   const handleUpdateProject = async (values: Pick<Project, 'title' | 'description'>) => {
     try {
-      await update({ ...values, id });
+      await updateProject({ ...values, id });
       router.push('/projects');
     } catch (e) {
       console.error(e);

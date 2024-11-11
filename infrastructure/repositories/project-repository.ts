@@ -70,7 +70,7 @@ export async function getOneProjectById(id: string): Promise<Project | undefined
     }
 }
 
-export async function update(data: Pick<Project, "id" | "title" | "description">) {
+export async function updateProject(data: Pick<Project, "id" | "title" | "description">) {
     try {
         await prisma.project.update({
             where: {

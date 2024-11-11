@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '@/components/layouts/header'
 import Footer from '@/components/layouts/footer'
 import '@/style/globals.css'
-import { getUser, isAuth } from '@/utils/auth'
+import { isAuth } from '@/utils/auth'
 
 // export const metadata = {
 //   title: 'Next.js',

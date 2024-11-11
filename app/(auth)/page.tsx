@@ -9,6 +9,7 @@ import Filters from '@/app/(auth)/filters'
 import Link from 'next/link'
 import LoadingSpinner from '@/components/animations/loading-spinner'
 import { getUser } from '@/utils/auth'
+import useProjectsStore from '@/stores/project-store'
 
 export default function TasksList() {
   const [tasks, setTasks] = useState<Task[]>([])
@@ -27,7 +28,7 @@ export default function TasksList() {
     AVERAGE: true,
     LOW: true,
   })
-  const [projects, setProjects] = useState<Projects | null>(null)
+  const { projects, setProjects } = useProjectsStore();
   const [loading, setLoading] = useState(true)
 
   const handleEmergencyFilter = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -100,18 +101,24 @@ export default function TasksList() {
 
   useEffect(() => {
     (async () => {
-      let projectsList
-      try {
-        const email = (await getUser())!.email
-        projectsList = await findProjectsBy([{ userFk: email }])
-        console.log(projectsList)
-      } catch (e) {
-        console.error(e)
+      let projectsList: Project[] | undefined ;
+      if(!projects) {
+        console.log('refetch');
+        try {
+          const email = (await getUser())!.email
+          projectsList = await findProjectsBy([{ userFk: email }])
+
+          console.log(projectsList)
+        } catch (e) {
+          console.error(e)
+        }
+
+        if (!projectsList || projectsList.length === 0) return setLoading(false)
+        setProjects(projectsList);
       }
 
-      if (!projectsList || projectsList.length === 0) return setLoading(false)
-      setProjects(projectsList)
-      const firstProjectId = projectsList[0].id
+
+      const firstProjectId = projects?.[0].id
 
       try {
         const tasksList = await findTasksBy([{ projectId: firstProjectId }])

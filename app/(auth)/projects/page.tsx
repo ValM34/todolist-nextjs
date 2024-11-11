@@ -7,33 +7,18 @@ import { useRouter } from "next/navigation";
 import Modale from "@/components/modale";
 import LoadingSpinner from "@/components/animations/loading-spinner";
 import {getUser} from "@/utils/auth";
+import useProjectsStore from '@/stores/project-store'
 
 export default function Projects() {
   const router = useRouter();
-  const [projects, setProjects] = useState<Projects | null>(null);
+  const { projects, setProjects } = useProjectsStore();
   const [openModale, setOpenModale] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const handleOpenModale = (boolean: boolean) => {
     setOpenModale(boolean);
   };
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const email = (await getUser())!.email;
-        const projectsList = await findProjectsBy([{ userFk: email }]);
-        if (projectsList && projects === null && projectsList.length > 0) {
-          setProjects(projectsList);
-        }
-        setLoading(false);
-      } catch (e) {
-        console.error(e);
-      }
-
-    })();
-  });
 
   const handleDeleteProject = async (projectId: string) => {
     (async () => {
@@ -53,7 +38,7 @@ export default function Projects() {
 
   return (
     <>
-      {loading ? (
+      {!projects ? (
         <LoadingSpinner />
       ) : (
         <>
