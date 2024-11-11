@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { authUser } from "@/infrastructure/repositories";
 import { loginSchema } from "@/validators";
+import { useFormik } from 'formik';
 
 export default function SignUp() {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -15,24 +16,28 @@ export default function SignUp() {
     password: null as string | null,
   });
 
-  async function handleSignIn(e: React.FormEvent) {
-    e.preventDefault();
-    const data = {
-      email: emailRef.current?.value,
-      password: passwordRef.current?.value,
-    }
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    onSubmit: async (values: Pick<User, 'email' | 'password'>) => handleSignIn(values),
+    validationSchema: loginSchema,
+  })
 
-    const user = loginSchema.parse(data);
+  async function handleSignIn(values: Pick<User, 'email' | 'password'>) {
     try {
-      await authUser(user);
+      await authUser(values);
       return router.push('/');
     } catch (e) {
         console.error('An error occurred while authenticating user:', e);
         setFormErrorsState({email: 'Invalid credentials', password: 'Invalid credentials'});
     }
-
-
   }
+
+  const formIsValid = useMemo(() => {
+    return formik.isValid && !formik.isSubmitting;
+  }, [formik.isSubmitting, formik.isValid]);
   
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -43,7 +48,7 @@ export default function SignUp() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form action="#" method="POST" className="space-y-6">
+        <form action="#" method="POST" className="space-y-6" onSubmit={formik.handleSubmit}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
               Adresse Email
@@ -56,11 +61,14 @@ export default function SignUp() {
                 type="email"
                 required
                 autoComplete="email"
-                className={`${formErrorsState.email ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                className={`${formik.errors.email ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.email}
               />
-              {formErrorsState.email ? (
+              {formik.errors.email ? (
                 <p className="mt-2 text-sm text-red-600">
-                  {formErrorsState.email}
+                  {formik.errors.email}
                 </p>
               ) : ""}
             </div>
@@ -80,11 +88,14 @@ export default function SignUp() {
                 type="password"
                 required
                 autoComplete="current-password"
-                className={`${formErrorsState.password ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                className={`${formik.errors.password ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
               />
-              {formErrorsState.password ? (
+              {formik.errors.password ? (
                 <p className="mt-2 text-sm text-red-600">
-                  {formErrorsState.password}
+                  {formik.errors.password}
                 </p>
               ) : ""}
             </div>
@@ -92,7 +103,6 @@ export default function SignUp() {
 
           <div>
             <button
-              onClick={handleSignIn}
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
