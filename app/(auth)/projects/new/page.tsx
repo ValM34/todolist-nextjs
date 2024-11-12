@@ -1,14 +1,11 @@
 'use client'
 
-import { useRef, useState } from 'react'
 import { createProject } from '@/infrastructure/repositories/project-repository'
 import { useRouter } from 'next/navigation'
 import { useFormik } from 'formik'
 import { addProjectSchema } from '@/validators'
 
 export default function Projects() {
-  const inputTitleRef = useRef<HTMLInputElement>(null)
-  const textAreaDescriptionRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
 
   const formik = useFormik({
@@ -56,7 +53,6 @@ export default function Projects() {
             id="title"
             name="title"
             type="text"
-            ref={inputTitleRef}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             // value={formik.values.title}
@@ -82,7 +78,6 @@ export default function Projects() {
             } resize-none h-32 mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="description"
             name="description"
-            ref={textAreaDescriptionRef}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             // value={formik.values.description}
