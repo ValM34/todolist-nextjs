@@ -44,7 +44,6 @@ export async function getUserByEmail(): Promise<Pick<User, 'firstName' | 'lastNa
     if(!user) {
       throw new Error('An error occurred while finding user...');
     }
-    console.log(user)
     return { firstName: user.firstName, lastName: user.lastName };
   } catch(e) {
     throw new Error('An error occurred while finding user...');

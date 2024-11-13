@@ -1,70 +1,54 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { update } from "@/infrastructure/repositories/user-repository";
 import { getUserByEmail } from "@/infrastructure/repositories/user-repository";
+import { useFormik } from "formik";
+import { updateUserSchema } from "@/validators";
 
 export default function Profil() {
-  const firstNameRef = useRef<HTMLInputElement>(null);
-  const lastNameRef = useRef<HTMLInputElement>(null);
-  const [user, setUser] = useState<{
-    firstName: string | null;
-    lastName: string | null;
-  }>({
-    firstName: null,
-    lastName: null,
-  });
-  const [formErrorsState, setFormErrorsState] = useState({
-    firstName: null as string | null,
-    lastName: null as string | null,
-  });
+  const formik = useFormik({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+    },
+    onSubmit: async (values : Pick<User, 'firstName' | 'lastName'>) =>
+      handleUpdateUser(values),
+    validationSchema: updateUserSchema,
+  })
+  
+  const handleUpdateUser = async (values : Pick<User, 'firstName' | 'lastName'>) => {
+    try {
+      await update(values);
+    } catch(e) {
+      console.error(e);
+    }
+  }
 
   useEffect(() => {
     async function loadUser() {
       try {
         const data = await getUserByEmail();
-        if(user.firstName || user.lastName) return;
         if(!data || !data.firstName || !data.lastName) throw new Error('An error occurred while finding user...');
-        setUser({
+        await formik.setValues({
           firstName: data.firstName,
-          lastName: data.lastName
+          lastName: data.lastName,
         });
       } catch(e) {
         console.error(e);
       }
     }
     loadUser();
-  }, [user]);
-  
-  const handleUpdateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const firstName = firstNameRef.current?.value;
-    const lastName = lastNameRef.current?.value;
+  }, []);
 
-    if(!firstName || !lastName) {
-      setFormErrorsState({
-        firstName: !firstName ? 'Veuillez renseigner ce champ' : null,
-        lastName: !lastName ? 'Veuillez renseigner ce champ' : null,
-      })
-      return
-    }
-    const user = { firstName, lastName };
-
-    try {
-      await update(user);
-    } catch(e) {
-      console.error(e);
-    }
-    setFormErrorsState({
-      firstName: null as string | null,
-      lastName: null as string | null,
-    })
-  }
+  const formIsValid = useMemo(() => {
+    return formik.isValid && !formik.isSubmitting;
+  }, [formik.isSubmitting, formik.isValid]);
 
   return (
     <>
       <h1 className="text-3xl font-bold mb-4 text-center">Modifier le profil</h1>
-      <form className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
+      <form onSubmit={formik.handleSubmit} className="w-60 mx-auto border-2 border-gray-300 p-4 rounded-xl">
         <h2 className="font-semibold text-xl mb-4">Profil</h2>
         <div className="flex flex-col">
           <label
@@ -74,16 +58,17 @@ export default function Profil() {
             Prénom
           </label>
           <input
-            className={`${formErrorsState.firstName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+            className={`${formik.errors.firstName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="firstName"
             name="firstName"
             type="text"
-            ref={firstNameRef}
-            defaultValue={user.firstName ?? ""}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.firstName}
           />
-          {formErrorsState.firstName ? (
+          {formik.errors.firstName ? (
             <p className="mt-2 text-sm text-red-600">
-              {formErrorsState.firstName}
+              {formik.errors.firstName}
             </p>
           ) : ""}
         </div>
@@ -95,16 +80,17 @@ export default function Profil() {
             Nom
           </label>
           <input
-            className={`${formErrorsState.lastName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+            className={`${formik.errors.lastName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
             id="lastName"
             name="lastName"
             type="text"
-            ref={lastNameRef}
-            defaultValue={user.lastName ?? ""}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.lastName}
           />
-          {formErrorsState.lastName ? (
+          {formik.errors.lastName ? (
             <p className="mt-2 text-sm text-red-600">
-              {formErrorsState.lastName}
+              {formik.errors.lastName}
             </p>
           ) : ""}
         </div>
@@ -113,7 +99,6 @@ export default function Profil() {
           <button
             className="mt-4 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             type="submit"
-            onClick={handleUpdateUser}
           >
             Ajouter
           </button>
