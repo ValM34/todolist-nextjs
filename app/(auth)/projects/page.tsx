@@ -1,19 +1,17 @@
 "use client";
 
-import { findProjectsBy, deleteProject } from "@/infrastructure/repositories/project-repository";
-import { useEffect, useState } from "react";
+import { deleteProject } from "@/infrastructure/repositories/project-repository";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Modale from "@/components/modale";
 import LoadingSpinner from "@/components/animations/loading-spinner";
-import {getUser} from "@/utils/auth";
 import useProjectsStore from '@/stores/project-store'
 
 export default function Projects() {
   const router = useRouter();
-  const { projects, setProjects } = useProjectsStore();
+  const { projects, deleteProject: deleteProjectStore } = useProjectsStore();
   const [openModale, setOpenModale] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
   const handleOpenModale = (boolean: boolean) => {
@@ -29,10 +27,7 @@ export default function Projects() {
       } catch (e) {
         console.error(e);
       }
-      let projectsFilteredAfterDeletion = projects.filter(
-        (project) => project.id !== projectId
-      );
-      setProjects(projectsFilteredAfterDeletion);
+      deleteProjectStore(projectId);
     })();
   };
 
@@ -44,9 +39,10 @@ export default function Projects() {
         <>
           <h1 className="text-3xl font-bold mb-4 text-center">Mes projets</h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {Array.isArray(projects) ? (
+            {(Array.isArray(projects) && projects.length > 0) ? (
               projects.map((project) => (
                 <div
+                  data-testid="project-card"
                   key={project.id}
                   className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
                 >
@@ -85,7 +81,7 @@ export default function Projects() {
                 </div>
               ))
             ) : (
-              <div>
+              <div data-testid="empty-state">
                 <div className="">
                   Vous n&apos;avez pas encore créé de projet. Il vous faut créer
                   un projet pour pouvoir ajouter des tâches.
