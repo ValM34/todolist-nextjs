@@ -20,16 +20,17 @@ export default function TaskForm() {
     initialValues: {
       title: '',
       description: '',
-      status: 'OPEN' as Status,
-      emergency: 'HIGHT' as Emergency,
-      importance: 'HIGHT' as Importance,
+      status: Status.OPEN,
+      emergency: Emergency.HIGHT,
+      importance: Importance.HIGHT,
+      projectId: '',
     },
-    onSubmit: async (values: Pick<Task, 'title' | 'description' | 'status' | 'emergency' | 'importance'>) =>
+    onSubmit: async (values: Pick<Task, 'title' | 'description' | 'status' | 'emergency' | 'importance' | 'projectId'>) =>
     handleAddTodo(values),
     validationSchema: createTaskSchema,
   })
 
-  const handleAddTodo = async (values: Pick<Task, 'title' | 'description' | 'status' | 'emergency' | 'importance'>) => {
+  const handleAddTodo = async (values: Pick<Task, 'title' | 'description' | 'status' | 'emergency' | 'importance' | 'projectId'>) => {
     if(!selectedProjectId) {
       return;
     }
@@ -48,6 +49,7 @@ export default function TaskForm() {
         }
         setProjects(projectsList);
         setSelectedProjectId(projectsList[0].id);
+        formik.setFieldValue('projectId', projectsList[0].id);
       } catch(e) {
         console.error(e);
       }
