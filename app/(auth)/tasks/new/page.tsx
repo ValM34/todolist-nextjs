@@ -10,6 +10,24 @@ import { getUser } from "@/utils/auth";
 import { useFormik } from 'formik'
 import { createTaskSchema } from "@/validators";
 
+enum Status {
+  OPEN = "OPEN",
+  IN_PROGRESS = "IN_PROGRESS",
+  DONE = "DONE",
+}
+
+enum Emergency {
+  HIGHT = "HIGHT",
+  AVERAGE = "AVERAGE",
+  LOW = "LOW",
+}
+
+enum Importance {
+  HIGHT = "HIGHT",
+  AVERAGE = "AVERAGE",
+  LOW = "LOW",
+}
+
 export default function TaskForm() {
   const router = useRouter();
   const [projects, setProjects] = useState<Projects | null>(null);
