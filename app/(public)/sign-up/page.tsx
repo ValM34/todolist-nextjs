@@ -3,38 +3,28 @@
 import Link from "next/link";
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { registerSchema } from "@/validators";
 import {createUser} from "@/infrastructure/repositories";
+import { registerSchema } from "@/validators";
+import { useFormik } from 'formik';
 
 export default function SignUp() {
-  const firstNameRef = useRef<HTMLInputElement>(null);
-  const lastNameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const confirmPasswordRef = useRef<HTMLInputElement>(null);
-
   const router = useRouter();
 
-  const [formErrorsState, setFormErrorsState] = useState({
-    firstName: null as string | null,
-    lastName: null as string | null,
-    email: null as string | null,
-    password: null as string | null,
-    confirmPassword: null as string | null,
-  });
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      firstName: '',
+      lastName: '',
+    },
+    onSubmit: async (values: Pick<User, 'email' | 'password' | 'confirmPassword' | 'firstName' | 'lastName'>) => handleCreateUser(values),
+    validationSchema: registerSchema,
+  })
 
-  async function handleCreateUser(e: React.FormEvent) {
-    e.preventDefault();
-    const data = {
-      firstName: firstNameRef.current?.value,
-      lastName: lastNameRef.current?.value,
-      email: emailRef.current?.value,
-      password: passwordRef.current?.value,
-      confirmPassword: confirmPasswordRef.current?.value,
-    }
-    const {confirmPassword, ...user} = registerSchema.parse(data);
+  async function handleCreateUser(values: Pick<User, 'email' | 'password' | 'confirmPassword' | 'firstName' | 'lastName'>) {
     try {
-      await createUser(user);
+      await createUser(values);
         return router.push('/sign-in');
     } catch (error) {
       console.error('An error occurred while creating user:', error);
@@ -51,24 +41,25 @@ export default function SignUp() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <form onSubmit={formik.handleSubmit} action="#" method="POST" className="space-y-6">
             <div>
               <label htmlFor="firstName" className="block text-sm font-medium leading-6 text-gray-900">
                 Prénom
               </label>
               <div className="mt-2">
                 <input
-                  ref={firstNameRef}
                   id="firstName"
                   name="firstName"
                   type="text"
                   required
                   autoComplete="firstName"
-                  className={`${formErrorsState.firstName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  className={`${formik.errors.firstName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {formErrorsState.firstName ? (
+                {formik.errors.firstName ? (
                   <p className="mt-2 text-sm text-red-600">
-                    {formErrorsState.firstName}
+                    {formik.errors.firstName}
                   </p>
                 ) : ""}
               </div>
@@ -80,17 +71,18 @@ export default function SignUp() {
               </label>
               <div className="mt-2">
                 <input
-                  ref={lastNameRef}
                   id="lastName"
                   name="lastName"
                   type="text"
                   required
                   autoComplete="lastName"
-                  className={`${formErrorsState.lastName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  className={`${formik.errors.lastName ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {formErrorsState.lastName ? (
+                {formik.errors.lastName ? (
                   <p className="mt-2 text-sm text-red-600">
-                    {formErrorsState.lastName}
+                    {formik.errors.lastName}
                   </p>
                 ) : ""}
               </div>
@@ -102,17 +94,18 @@ export default function SignUp() {
               </label>
               <div className="mt-2">
                 <input
-                  ref={emailRef}
                   id="email"
                   name="email"
                   type="email"
                   required
                   autoComplete="email"
-                  className={`${formErrorsState.email ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  className={`${formik.errors.email ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {formErrorsState.email ? (
+                {formik.errors.email ? (
                   <p className="mt-2 text-sm text-red-600">
-                    {formErrorsState.email}
+                    {formik.errors.email}
                   </p>
                 ) : ""}
               </div>
@@ -126,17 +119,18 @@ export default function SignUp() {
               </div>
               <div className="mt-2">
                 <input
-                  ref={passwordRef}
                   id="password"
                   name="password"
                   type="password"
                   required
                   autoComplete="current-password"
-                  className={`${formErrorsState.password ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  className={`${formik.errors.password ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {formErrorsState.password ? (
+                {formik.errors.password ? (
                   <p className="mt-2 text-sm text-red-600">
-                    {formErrorsState.password}
+                    {formik.errors.password}
                   </p>
                 ) : ""}
               </div>
@@ -150,16 +144,17 @@ export default function SignUp() {
               </div>
               <div className="mt-2">
                 <input
-                  ref={confirmPasswordRef}
                   id="passwordConfirmation"
                   name="passwordConfirmation"
                   type="password"
                   required
-                  className={`${formErrorsState.confirmPassword ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  className={`${formik.errors.confirmPassword ? "ring-red-300 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"} mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {formErrorsState.confirmPassword ? (
+                {formik.errors.confirmPassword ? (
                   <p className="mt-2 text-sm text-red-600">
-                    {formErrorsState.confirmPassword}
+                    {formik.errors.confirmPassword}
                   </p>
                 ) : ""}
               </div>
@@ -167,7 +162,6 @@ export default function SignUp() {
 
             <div>
               <button
-                onClick={handleCreateUser}
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >

@@ -6,7 +6,7 @@ import { PlusIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { disconnectUser } from '@/infrastructure/repositories/auth-repository';
+import { disconnectUser } from '@/infrastructure/repositories/user-repository';
 
 export default function Header() {
   const pathname = usePathname();
