@@ -80,10 +80,6 @@ export async function findOneTaskById(id: string): Promise<Task | null> {
 export async function updateTask(
   data: Omit<Task, 'updatedAt' | 'createdAt' | 'score'>
 ) {
-  const verifyData = updateTaskSchema.safeParse(data);
-  if (!verifyData.success)
-    throw new Error('An error occurred while updating task...');
-
   try {
     await prisma.task.update({
       where: {
