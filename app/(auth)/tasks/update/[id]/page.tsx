@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/animations/loading-spinner';
@@ -34,6 +34,7 @@ export default function TaskFormUpdate() {
   const { id } = params as { id: string };
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<Projects | null>(null);
+  const [error, setError] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -99,6 +100,7 @@ export default function TaskFormUpdate() {
         });
       } catch(e) {
         console.error(e);
+        setError(true);
       }
       setLoading(false);
     })();
@@ -110,7 +112,7 @@ export default function TaskFormUpdate() {
         <LoadingSpinner />
       ) : (
         <>
-          {formik?.values.title && formik?.values.status && formik?.values.emergency && formik?.values.importance && formik?.values.projectId && projects ? (
+          {!error ? (
             <>
               <h1 className="text-3xl font-bold mb-4 text-center">Modifier une tâche</h1>
               <form onSubmit={formik.handleSubmit} className="w-80 mx-auto border border-gray-300 p-4 rounded-xl">
