@@ -4,9 +4,11 @@ import { createProject } from '@/infrastructure/repositories/project-repository'
 import { useRouter } from 'next/navigation'
 import { useFormik } from 'formik'
 import { addProjectSchema } from '@/validators'
+import useProjectsStore from '@/stores/project-store'
 
 export default function Projects() {
   const router = useRouter()
+  const { projects, setProjects } = useProjectsStore()
 
   const formik = useFormik({
     initialValues: {
@@ -22,7 +24,9 @@ export default function Projects() {
     values: Pick<Project, 'title' | 'description'>
   ) => {
     try {
-      await createProject(values)
+      if(projects === undefined) throw new Error('Projects not found');
+      const newProject = await createProject(values)
+      setProjects([...projects, newProject])
       router.push('/projects')
     } catch (e) {
       console.error(e)

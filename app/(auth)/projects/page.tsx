@@ -1,6 +1,5 @@
 "use client";
 
-import { deleteProject } from "@/infrastructure/repositories/project-repository";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -21,13 +20,11 @@ export default function Projects() {
   const handleDeleteProject = async (projectId: string) => {
     (async () => {
       if (!projects) return;
-      console.log(projectId);
       try {
-        await deleteProject(projectId);
+        deleteProjectStore(projectId);
       } catch (e) {
         console.error(e);
       }
-      deleteProjectStore(projectId);
     })();
   };
 

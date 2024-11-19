@@ -27,21 +27,7 @@ export async function createTask(
 export async function findTasksBy(
   criteria: { [key: string]: any }[]
 ): Promise<Task[] | undefined> {
-  // console.log(criteria);
-  // console.log(criteria.every((c) => Object.keys(c).length !== 0));
-  // criteria = [{ id: 2 }, {}];
-  // console.log(criteria);
-  // console.log(criteria.every((c) => Object.keys(c).length !== 0));
-  // criteria = [{ id: 2 }, { id: 3 }];
-  // console.log(criteria);
-  // console.log(criteria.every((c) => Object.keys(c).length !== 0));
-  // Est ce que criteria est sous la forme : [ {}, ...]
-  // criteria.every((c) => Object.keys(c).length !== 0)
-  // Si criteria = [{}] => false
-  // Si criteria = [{id: 1}, {}] => false
-  // Si criteria = [{id: 1}, {id: 2}] => true
   if (!criteria || criteria.length === 0 || !criteria.every((c) => Object.keys(c).length !== 0)) return [];
-  console.log('post return');
   let formatedCriteria = {};
   criteria.forEach((criterion) => {
     if (!Object.values(criterion).includes(undefined)) {
@@ -49,9 +35,7 @@ export async function findTasksBy(
     }
   });
   if (Object.keys(formatedCriteria).length === 0) return [];
-  console.log('before try');
   try {
-    console.log('try');
     const tasksList = await prisma.task.findMany({
       where: formatedCriteria,
     });

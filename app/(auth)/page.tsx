@@ -54,9 +54,7 @@ export default function TasksList() {
 
   const handleTasksFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     try {
-      console.log(e.target.value)
       const tasksList = await findTasksBy([{ projectId: e.target.value }])
-      console.log(tasksList)
       if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found')
       filterTasksByEmergencyAndImportance(tasksList)
     } catch (e) {
@@ -105,12 +103,9 @@ export default function TasksList() {
     (async () => {
       let projectsList: Project[] | undefined ;
       if(!projects) {
-        console.log('refetch');
         try {
           const email = (await getUser())!.email
           projectsList = await findProjectsBy([{ userFk: email }])
-
-          console.log(projectsList)
         } catch (e) {
           console.error(e)
         }
@@ -122,7 +117,6 @@ export default function TasksList() {
       const firstProjectId = projects?.[0].id
 
       try {
-        console.log(firstProjectId)
         const tasksList = await findTasksBy([{ projectId: firstProjectId }])
         if (!tasksList || tasksList.length === 0) throw new Error('Tasks not found')
         filterTasksByEmergencyAndImportance(tasksList)
