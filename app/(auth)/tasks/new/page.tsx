@@ -9,6 +9,7 @@ import LoadingSpinner from "@/components/animations/loading-spinner";
 import { getUser } from "@/utils/auth";
 import { useFormik } from 'formik'
 import { createTaskSchema } from "@/validators";
+import useProjectsStore from '@/stores/project-store'
 
 enum Status {
   OPEN = "OPEN",
@@ -30,7 +31,8 @@ enum Importance {
 
 export default function TaskForm() {
   const router = useRouter();
-  const [projects, setProjects] = useState<Projects | null>(null);
+  // const [projects, setProjects] = useState<Projects | null>(null);
+  const { projects, setProjects } = useProjectsStore();
   const [loading, setLoading] = useState(true);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
@@ -59,19 +61,30 @@ export default function TaskForm() {
 
   useEffect(() => {
     (async () => {
-      try {
-        const email = (await getUser())!.email;
-        const projectsList = await findProjectsBy([{ userFk: email }]);
-        if(!projectsList || projectsList.length === 0 || projects !== null) {
-          return;
-        }
-        setProjects(projectsList);
-        setSelectedProjectId(projectsList[0].id);
-        formik.setFieldValue('projectId', projectsList[0].id);
-      } catch(e) {
-        console.error(e);
+      if(Array.isArray(projects)) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+      if(!projects) {
+        try {
+          const email = (await getUser())!.email;
+          const projectsList = await findProjectsBy([{ userFk: email }]);
+          if(!projectsList || projects !== undefined) {
+            return;
+          }
+          if(projectsList.length === 0) {
+            setProjects(projectsList);
+            setLoading(false);
+            return;
+          }
+          setProjects(projectsList);
+          setSelectedProjectId(projectsList[0].id);
+          formik.setFieldValue('projectId', projectsList[0].id);
+        } catch(e) {
+          console.error(e);
+        }
+        setLoading(false);
+      }
     })();
   });
 
@@ -81,7 +94,7 @@ export default function TaskForm() {
         <LoadingSpinner />
       ) : (
         <>
-          {projects ? (
+          {projects && projects.length > 0 ? (
             <>
               <h1 className="text-3xl font-bold mb-4 text-center">
                 Ajouter une tâche
