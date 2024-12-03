@@ -44,7 +44,13 @@ export async function findProjectsBy(criteria: { [key: string]: any }[]): Promis
 
     try {
         const projects = await prisma.project.findMany({
-            where: formatedCriteria
+            where: formatedCriteria,
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                tasks: true
+            }
         });
 
         return projects as Project[];

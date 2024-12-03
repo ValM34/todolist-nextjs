@@ -2,14 +2,12 @@
 
 import { cookies } from 'next/headers'
 import { PrismaClient } from '@prisma/client'
-import jwt from 'jsonwebtoken'
-import { setCookie } from 'undici-types'
 import { SignJWT } from 'jose'
 
 const prisma = new PrismaClient()
 
 export async function authUser(data: Pick<User, 'email' | 'password'>) {
-  let user
+  let user;
 
   try {
     user = await prisma.user.findUniqueOrThrow({
@@ -33,10 +31,11 @@ export async function authUser(data: Pick<User, 'email' | 'password'>) {
     .setExpirationTime('1h')
     .sign(new TextEncoder().encode(jwtSecret))
 
-  cookies().set('token', token, {
+  const cookieStore = await cookies()
+  cookieStore.set('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     maxAge: 60 * 60 * 24,
   })
 }

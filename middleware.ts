@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { isAuth, refreshToken } from '@/utils/auth'
+import { cookies } from 'next/headers';
 
 export async function middleware(req: Request) {
   if (await isAuth()) {

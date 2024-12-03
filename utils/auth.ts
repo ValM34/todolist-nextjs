@@ -12,7 +12,6 @@ export async function getToken(): Promise<string | null> {
 export async function getUser(): Promise<UserVerify | null> {
   const token = await getToken()
   if (!token) return null
-  const test = decodeJwt(token)
   const { iat, exp, ...userPayload } = decodeJwt(token)
   return userPayload as UserVerify
 }

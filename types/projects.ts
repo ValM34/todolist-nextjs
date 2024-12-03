@@ -5,6 +5,7 @@ type Project = {
   userFk: string;
   updatedAt: Date;
   createdAt: Date;
+  tasks?: Task[];
 }
 
 interface Projects extends Array<Project> {}
