@@ -4,18 +4,21 @@ import { getUser } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
-export async function createProject(data: Pick<Project, "title" | "description">) {
+export async function createProject(data: Pick<Project, "title" | "description">) : Promise<Project>  {
     const email = (await getUser())!.email;
     try {
-        await prisma.project.create({
+        let project = await prisma.project.create({
             data: {
                 title: data.title,
                 description: data.description,
                 userFk: email as string
             }
         });
+        return {
+            ...project,
+            description: project.description ?? undefined,
+        };
     } catch (e) {
-        console.log(e)
         throw new Error('An error occurred while creating project...');
     }
 }
@@ -76,9 +79,9 @@ export async function getOneProjectById(id: string): Promise<Project | undefined
     }
 }
 
-export async function updateProject(data: Pick<Project, "id" | "title" | "description">) {
+export async function updateProject(data: Pick<Project, "id" | "title" | "description">) : Promise<Project> {
     try {
-        await prisma.project.update({
+        const project = await prisma.project.update({
             where: {
                 id: data.id
             },
@@ -87,8 +90,13 @@ export async function updateProject(data: Pick<Project, "id" | "title" | "descri
                 description: data.description
             }
         })
+
+        return {
+            ...project,
+            description: project.description ?? undefined,
+        }
     } catch (e) {
-        throw new Error('An error occurred while deleting project...');
+        throw new Error('An error occurred while updating project...');
     }
 }
 

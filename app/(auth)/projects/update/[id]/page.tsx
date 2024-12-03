@@ -1,54 +1,67 @@
-'use client'
+'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import { getOneProjectById, updateProject } from '@/infrastructure/repositories/project-repository'
-import Link from 'next/link'
-import LoadingSpinner from '@/components/animations/loading-spinner'
-import { useFormik } from 'formik'
-import { updateProjectSchema } from '@/validators'
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { getOneProjectById } from '@/infrastructure/repositories/project-repository';
+import Link from 'next/link';
+import LoadingSpinner from '@/components/animations/loading-spinner';
+import { useFormik } from 'formik';
+import { updateProjectSchema } from '@/validators';
+import useProjectsStore from '@/stores/project-store';
 
 export default function Projects() {
-  const router = useRouter()
-  const params = useParams()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [isError, setIsError] = useState<boolean>(false)
+  const router = useRouter();
+  const params = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
+  const { projects, updateProject } = useProjectsStore();
 
-  const { id } = params as { id: string }
+  const { id } = params as { id: string };
 
   const formik = useFormik({
     initialValues: {
       title: '',
       description: '',
     },
-    onSubmit: async (values: Pick<Project, 'title' | 'description'>) => handleUpdateProject(values),
+    onSubmit: async (values: Pick<Project, 'title' | 'description'>) =>
+      handleUpdateProject(values),
     validationSchema: updateProjectSchema,
-  })
+  });
 
-  const handleUpdateProject = async (values: Pick<Project, 'title' | 'description'>) => {
+  const handleUpdateProject = async (
+    values: Pick<Project, 'title' | 'description'>
+  ) => {
     try {
-      await updateProject({ ...values, id });
+      const projectToUpdate = projects?.find((project) => project.id === id);
+      if (!projectToUpdate) throw new Error('Project not found');
+      updateProject({
+        ...values,
+        id: projectToUpdate.id,
+        createdAt: projectToUpdate.createdAt,
+        updatedAt: projectToUpdate.updatedAt,
+        userFk: projectToUpdate.userFk,
+      });
       router.push('/projects');
     } catch (e) {
       console.error(e);
     }
-    // await updateProject(verifyForm.projectVerified);
-  }
+  };
 
   const fetchProject = async () => {
     try {
       const targetProject = await getOneProjectById(id);
-      if (!targetProject) throw new Error('An error occurred while finding project...');
+      if (!targetProject)
+        throw new Error('An error occurred while finding project...');
       await formik.setValues({
         title: targetProject.title,
         description: targetProject.description,
       });
     } catch (e) {
-      setIsError(true)
+      setIsError(true);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchProject();
@@ -59,7 +72,6 @@ export default function Projects() {
   }, [formik.isSubmitting, formik.isValid]);
 
   // const formIsValid = formik.isValid && !formik.isSubmitting; @TODO Question : est ce que cela fait la même chose que le useMemo ?
-
 
   if (isError) {
     return (
@@ -72,7 +84,7 @@ export default function Projects() {
           Cliquez ici pour retourner sur la liste des projets.
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -84,7 +96,10 @@ export default function Projects() {
           <h1 className="text-3xl font-bold mb-4 text-center">
             Modifier le projet
           </h1>
-          <form className="w-80 mx-auto border border-gray-300 p-4 rounded-xl" onSubmit={formik.handleSubmit}>
+          <form
+            className="w-80 mx-auto border border-gray-300 p-4 rounded-xl"
+            onSubmit={formik.handleSubmit}
+          >
             <div className="flex flex-col">
               <label
                 htmlFor="title"
@@ -154,5 +169,5 @@ export default function Projects() {
         </>
       )}
     </>
-  )
+  );
 }

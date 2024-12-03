@@ -1,11 +1,13 @@
-"use server";
+'use server';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { updateTaskSchema } from '@/validators';
 
 const prisma = new PrismaClient();
 
-export async function createTask(data: Omit<Task, "id" | "createdAt" | "updatedAt" | "score">){
+export async function createTask(
+  data: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'score'>
+) {
   try {
     await prisma.task.create({
       data: {
@@ -15,31 +17,31 @@ export async function createTask(data: Omit<Task, "id" | "createdAt" | "updatedA
         importance: data.importance,
         projectId: data.projectId,
         description: data.description,
-      }
+      },
     });
   } catch (e) {
     throw new Error('An error occurred while creating task...');
   }
 }
 
-export async function findTasksBy(criteria: { [key: string]: any }[]): Promise<Task[] | undefined> {
-  if(!criteria) return [];
-
+export async function findTasksBy(
+  criteria: { [key: string]: any }[]
+): Promise<Task[] | undefined> {
+  if (!criteria || criteria.length === 0 || !criteria.every((c) => Object.keys(c).length !== 0)) return [];
   let formatedCriteria = {};
   criteria.forEach((criterion) => {
-    if(!Object.values(criterion).includes(undefined)) {
+    if (!Object.values(criterion).includes(undefined)) {
       formatedCriteria = { ...formatedCriteria, ...criterion };
     }
-  })
+  });
   if (Object.keys(formatedCriteria).length === 0) return [];
-
   try {
     const tasksList = await prisma.task.findMany({
-      where: formatedCriteria
+      where: formatedCriteria,
     });
 
     return tasksList as Task[];
-  } catch(e) {
+  } catch (e) {
     console.error('An error occurred while finding tasks...');
     return [];
   }
@@ -49,24 +51,23 @@ export async function findTasksBy(criteria: { [key: string]: any }[]): Promise<T
 export async function findOneTaskById(id: string): Promise<Task | null> {
   try {
     const task = await prisma.task.findUnique({ where: { id } });
-    if(!task) {
+    if (!task) {
       throw new Error('An error occurred while finding task...');
     }
 
     return task as Task;
-  } catch(e) {
+  } catch (e) {
     throw new Error('An error occurred while finding task...');
   }
 }
 
-export async function updateTask(data: Omit<Task, "updatedAt" | "createdAt" | "score">) {
-  const verifyData = updateTaskSchema.safeParse(data);
-  if (!verifyData.success) throw new Error('An error occurred while updating task...');
-
+export async function updateTask(
+  data: Omit<Task, 'updatedAt' | 'createdAt' | 'score'>
+) {
   try {
     await prisma.task.update({
       where: {
-        id: data.id
+        id: data.id,
       },
       data: {
         title: data.title,
@@ -74,10 +75,10 @@ export async function updateTask(data: Omit<Task, "updatedAt" | "createdAt" | "s
         status: data.status,
         importance: data.importance,
         emergency: data.emergency,
-        projectId: data.projectId
-      }
-    })
-  } catch(e) {
+        projectId: data.projectId,
+      },
+    });
+  } catch (e) {
     throw new Error('An error occurred while updating task...');
   }
 }
@@ -86,10 +87,10 @@ export async function deleteTask(id: string) {
   try {
     await prisma.task.delete({
       where: {
-        id
+        id,
       },
-    })
-  } catch(e) {
+    });
+  } catch (e) {
     throw new Error('An error occurred while deleting task...');
   }
 }

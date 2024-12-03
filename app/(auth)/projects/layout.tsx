@@ -1,6 +1,5 @@
 'use client'
 
-
 import useProjectsStore from '@/stores/project-store'
 import { useEffect } from 'react'
 import { getUser } from '@/utils/auth'
@@ -15,7 +14,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       const email = (await getUser())!.email;
       const projects = await findProjectsBy([{ userFk: email }]);
       if (!projects) throw new Error('Projects not found');
-      console.log(projects);
       setProjects(projects);
     } catch (e) {
       console.error(e)
@@ -23,9 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    console.log('layout');
     if (projects) return;
-    console.log('refetch layout');
     initProjects();
   }, [projects]);
 
